@@ -1,4 +1,5 @@
-/* eslint-disable import/no-unresolved */
+
+// eslint-disable-next-line import/no-unresolved
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -21,21 +22,22 @@ const lato = Lato({
 });
 
 export default async function RootLayout({
+
   children
 }: {
   children: React.ReactNode;
 }) {
   return (
     <ClerkProvider>
-      <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
-        <body className={'overflow-hidden'}>
-          <NextTopLoader showSpinner={false} />
-          <NuqsAdapter>
+        <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
+          <body className={'overflow-hidden'}>
+            <NextTopLoader showSpinner={false} />
+            <NuqsAdapter>
               <Toaster />
               {children}
-          </NuqsAdapter>
-        </body>
-      </html>
+            </NuqsAdapter>
+          </body>
+        </html>
     </ClerkProvider>
   );
 }
