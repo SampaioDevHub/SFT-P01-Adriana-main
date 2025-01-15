@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { NavItem } from 'types';
 
 export type Product = {
@@ -100,7 +101,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Cliente',
-        url: '',
+        url: '/dashboard/client',
         icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false,
