@@ -46,7 +46,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Relatório',
-        url: ''
+        url: '/dashboard/reports'
       },
       {
         title: 'Saldo Inicial',
