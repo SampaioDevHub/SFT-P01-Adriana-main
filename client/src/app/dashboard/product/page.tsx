@@ -14,9 +14,6 @@ export default function Page() {
   );
 }
 
-{/* Cadastrar Quantidade Itens */ }
-
-{/* Cadastar o Tamanhos  */ }
 
 
 

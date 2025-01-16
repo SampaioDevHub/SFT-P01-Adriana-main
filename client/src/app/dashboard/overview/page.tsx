@@ -1,7 +1,7 @@
 import OverViewPage from '@/features/overview/components/overview';
 
 export const metadata = {
-  title: 'Dashboard : Overview'
+  title: 'Dashboard | Painel Adminstrativo'
 };
 
 export default function page() {

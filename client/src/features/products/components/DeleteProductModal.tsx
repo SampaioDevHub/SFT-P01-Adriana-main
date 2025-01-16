@@ -1,5 +1,4 @@
 /* eslint-disable react/no-unescaped-entities */
-/* eslint-disable import/no-unresolved */
 'use client'
 
 import { Product } from '../types/Product'
