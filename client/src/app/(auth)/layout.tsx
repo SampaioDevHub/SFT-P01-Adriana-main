@@ -1,5 +1,6 @@
+/* eslint-disable import/no-unresolved */
 import Image from "next/image";
-import Background from "@/assets/Frame 1370.jpg"
+import Background from "@/assets/Login.svg"
 import React from "react";
 
 const DashboardAuthLayout = ({ children }: { children: React.ReactNode }) => {
