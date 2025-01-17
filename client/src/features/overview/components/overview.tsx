@@ -1,3 +1,4 @@
+'use client'
 import PageContainer from '@/components/layout/page-container';
 import {
   Card,
@@ -11,14 +12,15 @@ import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
 import { RecentSales } from './recent-sales';
-
+import { useUser } from '@clerk/nextjs';
 export default function OverViewPage() {
+  const { user } = useUser(); 
   return (
     <PageContainer scrollable>
       <div className='space-y-2'>
         <div className='flex items-center justify-between space-y-2'>
           <h2 className='text-2xl font-bold tracking-tight'>
-            Seja bem Vinda Adriana 👋
+            Seja bem-vindo {user?.firstName || 'Usuário'} 👋
           </h2>
         </div>
         <Tabs defaultValue='overview' className='space-y-4'>
@@ -27,7 +29,7 @@ export default function OverViewPage() {
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Algoritimo SFP01
+                    Algoritmo SFP01
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -52,7 +54,7 @@ export default function OverViewPage() {
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Algoritimo SFP01
+                    Algoritmo SFP01
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -78,7 +80,7 @@ export default function OverViewPage() {
               </Card>
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Algoritimo SFP01</CardTitle>
+                  <CardTitle className='text-sm font-medium'>Algoritmo SFP01</CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 24 24'
@@ -103,7 +105,7 @@ export default function OverViewPage() {
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Algoritimo SFP01
+                    Algoritmo SFP01
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'

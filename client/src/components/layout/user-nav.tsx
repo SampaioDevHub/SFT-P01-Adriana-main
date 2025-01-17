@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuTrigger
@@ -6,6 +7,17 @@ import {
 import { UserButton } from '@clerk/nextjs';
 
 export function UserNav() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+
+  if (!isClient) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -16,4 +28,3 @@ export function UserNav() {
     </DropdownMenu>
   );
 }
-

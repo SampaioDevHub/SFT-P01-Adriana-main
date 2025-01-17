@@ -31,7 +31,7 @@ export default async function RootLayout({
     <ClerkProvider>
         <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
           <body className={'overflow-hidden'}>
-            <NextTopLoader showSpinner={false} />
+            <NextTopLoader showSpinner={false}  color="#e11d48" />
             <NuqsAdapter>
               <Toaster />
               {children}
