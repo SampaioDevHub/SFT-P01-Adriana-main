@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import * as React from 'react';
 
 import { useCallbackRef } from '@/hooks/use-callback-ref';
