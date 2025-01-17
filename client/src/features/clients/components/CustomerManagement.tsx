@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
 'use client'
 
@@ -14,7 +15,11 @@ export default function CustomerManagement() {
   useEffect(() => {
     const storedCustomers = localStorage.getItem('customers')
     if (storedCustomers) {
-      setCustomers(JSON.parse(storedCustomers))
+      try {
+        setCustomers(JSON.parse(storedCustomers))
+      } catch (error) {
+        console.error("Erro ao carregar os clientes do localStorage:", error)
+      }
     }
   }, [])
 

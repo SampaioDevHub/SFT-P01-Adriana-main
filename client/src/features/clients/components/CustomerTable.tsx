@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, } from 'react'
 import { Customer } from '../types/Customer'
 import { Input } from "@/components/ui/input"
 import {
@@ -15,27 +15,23 @@ import {
 import CustomerDetailsModal from './CustomerDetailsModal'
 import DeleteCustomerModal from './DeleteCustomerModal'
 
-export default function CustomerTable() {
-  const [customers, setCustomers] = useState<Customer[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
+interface CustomerTableProps {
+  customers: Customer[]
+  onUpdateCustomer: (updatedCustomer: Customer) => void
+  onDeleteCustomer: (id: number) => void
+}
 
-  useEffect(() => {
-    const storedCustomers = localStorage.getItem('customers')
-    if (storedCustomers) {
-      setCustomers(JSON.parse(storedCustomers))
-    }
-  }, [])
+export default function CustomerTable({
+  customers,
+  onUpdateCustomer,
+  onDeleteCustomer,
+}: CustomerTableProps) {
+  const [searchTerm, setSearchTerm] = useState('')
 
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.cpf.includes(searchTerm)
   )
-
-  const handleDeleteCustomer = (id: number) => {
-    const updatedCustomers = customers.filter(customer => customer.id !== id)
-    setCustomers(updatedCustomers)
-    localStorage.setItem('customers', JSON.stringify(updatedCustomers))
-  }
 
   return (
     <div className="space-y-4">
@@ -71,7 +67,10 @@ export default function CustomerTable() {
                   <TableCell>
                     <div className="flex space-x-2">
                       <CustomerDetailsModal customer={customer} />
-                      <DeleteCustomerModal customer={customer} onDelete={handleDeleteCustomer} />
+                      <DeleteCustomerModal 
+                        customer={customer} 
+                        onDelete={() => onDeleteCustomer(customer.id)} 
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -83,4 +82,3 @@ export default function CustomerTable() {
     </div>
   )
 }
-
