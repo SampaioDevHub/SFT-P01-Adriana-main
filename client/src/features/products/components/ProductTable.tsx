@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 'use client'
 
 import { useState } from 'react'
@@ -50,10 +51,9 @@ export default function ProductTable({ products, onUpdateProduct, onDeleteProduc
         />
         <Select value={filterCategory} onValueChange={setFilterCategory}>
           <SelectTrigger className="max-w-[180px]">
-            <SelectValue placeholder="Todas as Categorias" />
+            <SelectValue placeholder="Categorias" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas as Categorias</SelectItem>
             <SelectItem value="Roupas">Roupas</SelectItem>
             <SelectItem value="Acessórios">Acessórios</SelectItem>
             <SelectItem value="Perfumaria">Perfumaria</SelectItem>

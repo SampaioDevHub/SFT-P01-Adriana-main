@@ -8,6 +8,7 @@ import NextTopLoader from 'nextjs-toploader';
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
+import { ptBR } from '@clerk/localizations'
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={ptBR}>
         <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
           <body className={'overflow-hidden'}>
             <NextTopLoader showSpinner={false}  color="#e11d48" />

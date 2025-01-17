@@ -31,7 +31,7 @@ export default function ProductForm({ onAddProduct }: ProductFormProps) {
   const categories = {
     'Roupas': ['Masculino', 'Feminino', 'Juvenil', 'Infantil', 'Moda Praia', 'Cama', 'Mesa', 'Banho'],
     'Acessórios': ['Bolsas', 'Carteiras', 'Cintos', 'Óculos', 'Semijoias'],
-    'Perfumaria': ['Mary Kay', 'Natura', 'O Boticário']
+    'Perfumaria': ['Mary Kay', 'Natura', 'O Boticário', 'Avon'],
   }
 
   const availableSizes = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG']

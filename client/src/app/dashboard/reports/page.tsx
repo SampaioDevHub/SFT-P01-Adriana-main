@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import GenerateStoreReport from "@/features/StoreReport/components/GenerateStoreReport";
 
 export default function ReportsPage() {

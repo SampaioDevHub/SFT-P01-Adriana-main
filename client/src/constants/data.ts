@@ -2,47 +2,14 @@
 import { NavItem } from 'types';
 
 
-//Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
-    title: 'Inicio',
+    title: 'Resumo',
     url: '/dashboard/overview',
     icon: 'dashboard',
     isActive: false,
     shortcut: ['d', 'd'],
-    items: [] // Empty array as there are no child items for Dashboard
-  },
-  {
-    title: 'Financeiro',
-    url: '',
-    icon: 'billing',
-    isActive: false,
-    items: [
-      {
-        title: 'Tipos Despesas',
-        url: '/dashboard/capture-revenues'
-      },
-      {
-        title: 'Contas Bancarias',
-        url: '/dashboard/bank-accounts'
-      },
-      {
-        title: 'Laçar Receitas',
-        url: ''
-      },
-      {
-        title: 'Receitas',
-        url: ''
-      },
-      {
-        title: 'Relatório',
-        url: '/dashboard/reports'
-      },
-      {
-        title: 'Saldo Inicial',
-        url: '/dashboard/initial-balance'
-      }
-    ]
+    items: [] 
   },
   {
     title: 'Caixa',
@@ -51,28 +18,20 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [
       {
-        title: 'Caixa Receitas',
-        url: ''
-      },
-      {
-        title: 'Caixa Despesas',
-        url: ''
-      },
-      {
-        title: 'Receita X Despesas',
-        url: ''
-      },
-      {
-        title: 'Receitas',
-        url: ''
-      },
-      {
-        title: 'Relatório',
-        url: ''
-      },
-      {
         title: 'Saldo Inicial',
-        url: ''
+        url: '/dashboard/initial-balance'
+      },
+      {
+        title: 'Tipos Receita',
+        url: '#'
+      },
+      {
+        title: 'Tipos Despesas',
+        url: '/dashboard/capture-revenues'
+      },
+      {
+        title: 'Relatorio Financeiro',
+        url: '/dashboard/reports'
       }
     ]
   },
@@ -83,14 +42,14 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [
       {
-        title: 'Produto',
+        title: 'Cadastrar Produtos',
         url: '/dashboard/product',
         icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false,
       },
       {
-        title: 'Cliente',
+        title: 'Cadastrar Clientes',
         url: '/dashboard/client',
         icon: 'product',
         shortcut: ['p', 'p'],
@@ -98,6 +57,13 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Historico de Vendas',
+        url: '#',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false,
+      },
+      {
+        title: 'Relatorio de Produtos',
         url: '#',
         icon: 'product',
         shortcut: ['p', 'p'],
