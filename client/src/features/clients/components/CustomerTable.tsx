@@ -1,7 +1,6 @@
 /* eslint-disable import/no-unresolved */
 'use client'
-
-import { useState, } from 'react'
+import { useState, useEffect } from 'react'
 import { Customer } from '../types/Customer'
 import { Input } from "@/components/ui/input"
 import {
@@ -14,25 +13,24 @@ import {
 } from "@/components/ui/table"
 import CustomerDetailsModal from './CustomerDetailsModal'
 import DeleteCustomerModal from './DeleteCustomerModal'
-
-interface CustomerTableProps {
-  customers: Customer[]
-  onUpdateCustomer: (updatedCustomer: Customer) => void
-  onDeleteCustomer: (id: number) => void
-}
-
-export default function CustomerTable({
-  customers,
-  onUpdateCustomer,
-  onDeleteCustomer,
-}: CustomerTableProps) {
+export default function CustomerTable() {
+  const [customers, setCustomers] = useState<Customer[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-
+  useEffect(() => {
+    const storedCustomers = localStorage.getItem('customers')
+    if (storedCustomers) {
+      setCustomers(JSON.parse(storedCustomers))
+    }
+  }, [])
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.cpf.includes(searchTerm)
   )
-
+  const handleDeleteCustomer = (id: number) => {
+    const updatedCustomers = customers.filter(customer => customer.id !== id)
+    setCustomers(updatedCustomers)
+    localStorage.setItem('customers', JSON.stringify(updatedCustomers))
+  }
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -67,10 +65,7 @@ export default function CustomerTable({
                   <TableCell>
                     <div className="flex space-x-2">
                       <CustomerDetailsModal customer={customer} />
-                      <DeleteCustomerModal 
-                        customer={customer} 
-                        onDelete={() => onDeleteCustomer(customer.id)} 
-                      />
+                      <DeleteCustomerModal customer={customer} onDelete={handleDeleteCustomer} />
                     </div>
                   </TableCell>
                 </TableRow>

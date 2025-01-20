@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import CustomerTable from '@/features/clients/components/CustomerTable'
 import PageContainer from '@/components/layout/page-container'
-
 export default function CustomersPage() {
   return (
     <PageContainer>
@@ -19,4 +18,3 @@ export default function CustomersPage() {
     </PageContainer>
   )
 }
-

@@ -17,7 +17,7 @@ const DashboardAuthLayout = ({ children }: { children: React.ReactNode }) => {
                 <Image
                     src={Background}
                     alt="Image"
-                    width={300} height={300}
+                    fill
                     className="absolute inset-0 h-[660px] w-full object-cover dark:brightness-[0.2] dark:grayscale"
                 />
             </div>

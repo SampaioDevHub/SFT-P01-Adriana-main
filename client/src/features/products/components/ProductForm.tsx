@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 'use client'
 
 import { useState } from 'react'
@@ -14,7 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 
 interface ProductFormProps {
   onAddProduct: (product: Omit<Product, 'id'>) => void
@@ -54,11 +52,11 @@ export default function ProductForm({ onAddProduct }: ProductFormProps) {
     setSizes([])
   }
 
-  const handleSizeChange = (size: string) => {
+  const handleSizeChange = (selectedSize: string) => {
     setSizes(current =>
-      current.includes(size)
-        ? current.filter(s => s !== size)
-        : [...current, size]
+      current.includes(selectedSize)
+        ? current.filter(s => s !== selectedSize)
+        : [...current, selectedSize]
     )
   }
 
@@ -128,23 +126,21 @@ export default function ProductForm({ onAddProduct }: ProductFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Tamanhos Disponíveis</Label>
-            <div className="flex flex-wrap gap-2">
-              {availableSizes.map((size) => (
-                <div key={size} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`size-${size}`}
-                    checked={sizes.includes(size)}
-                    onCheckedChange={() => handleSizeChange(size)}
-                  />
-                  <label
-                    htmlFor={`size-${size}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {size}
-                  </label>
-                </div>
-              ))}
+            <Label htmlFor="sizes">Tamanhos Disponíveis</Label>
+            <Select onValueChange={handleSizeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione os tamanhos" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableSizes.map((size) => (
+                  <SelectItem key={size} value={size}>
+                    {size} {sizes.includes(size) && "✓"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="mt-2">
+              Tamanhos selecionados: {sizes.join(", ")}
             </div>
           </div>
           <Button type="submit">Adicionar Produto</Button>

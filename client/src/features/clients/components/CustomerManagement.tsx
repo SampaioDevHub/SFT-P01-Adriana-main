@@ -1,33 +1,23 @@
-/* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
 'use client'
-
 import { useState, useEffect } from 'react'
 import CustomerForm from './CustomerForm'
 import CustomerTable from './CustomerTable'
 import { Customer } from '../types/Customer'
 import { useToast } from '@/hooks/use-toast'
-
 export default function CustomerManagement() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const { toast } = useToast()
-
   useEffect(() => {
     const storedCustomers = localStorage.getItem('customers')
     if (storedCustomers) {
-      try {
-        setCustomers(JSON.parse(storedCustomers))
-      } catch (error) {
-        console.error("Erro ao carregar os clientes do localStorage:", error)
-      }
+      setCustomers(JSON.parse(storedCustomers))
     }
   }, [])
-
   const saveCustomers = (updatedCustomers: Customer[]) => {
     setCustomers(updatedCustomers)
     localStorage.setItem('customers', JSON.stringify(updatedCustomers))
   }
-
   const addCustomer = (newCustomer: Omit<Customer, 'id'>) => {
     const customer = { ...newCustomer, id: Date.now() }
     const updatedCustomers = [...customers, customer]
@@ -37,7 +27,6 @@ export default function CustomerManagement() {
       description: `${customer.name} foi adicionado com sucesso.`,
     })
   }
-
   const updateCustomer = (updatedCustomer: Customer) => {
     const updatedCustomers = customers.map(c => 
       c.id === updatedCustomer.id ? updatedCustomer : c
@@ -48,7 +37,6 @@ export default function CustomerManagement() {
       description: `${updatedCustomer.name} foi atualizado com sucesso.`,
     })
   }
-
   const deleteCustomer = (id: number) => {
     const customerToDelete = customers.find(c => c.id === id)
     const updatedCustomers = customers.filter(c => c.id !== id)
@@ -61,7 +49,6 @@ export default function CustomerManagement() {
       })
     }
   }
-
   return (
     <div className="w-full space-y-8">
       <CustomerForm onAddCustomer={addCustomer} />
