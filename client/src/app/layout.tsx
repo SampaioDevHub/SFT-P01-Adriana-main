@@ -9,6 +9,7 @@ import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { ptBR } from '@clerk/localizations'
+import { ThemeProvider } from "@/components/kbar/theme-provider"
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -35,7 +36,14 @@ export default async function RootLayout({
             <NextTopLoader showSpinner={false}  color="#e11d48" />
             <NuqsAdapter>
               <Toaster />
-              {children}
+              <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                  >
+                    {children}
+              </ThemeProvider>
             </NuqsAdapter>
           </body>
         </html>

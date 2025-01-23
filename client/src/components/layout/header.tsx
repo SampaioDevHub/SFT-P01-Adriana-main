@@ -4,6 +4,7 @@ import { Separator } from '../ui/separator';
 import { Breadcrumbs } from '../breadcrumbs';
 import SearchInput from '../search-input';
 import { UserNav } from './user-nav';
+import { ModeToggle } from '../kbar/ModeToggle';
 
 export default function Header() {
   return (
@@ -18,9 +19,9 @@ export default function Header() {
         <div className='hidden md:flex'>
           <SearchInput />
         </div>
-        <div>
           <UserNav />
-        </div>
+          
+          <ModeToggle/>
       </div>
     </header>
   );
