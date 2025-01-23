@@ -1,8 +1,8 @@
-export default function CaptureRevenues() {
+export default function FinancialReport() {
     return (
         <div>
             <div>
-                Tipos de Despesas
+                Relatórios Financeiros
             </div>
         </div>
     )

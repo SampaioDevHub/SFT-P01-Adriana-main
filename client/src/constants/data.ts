@@ -1,10 +1,10 @@
 /* eslint-disable import/no-unresolved */
-import { NavItem } from 'types';
+import { NavItem } from '@/@types/nav-item';
 
 export const navItems: NavItem[] = [
   {
-    title: 'Resumo',
-    url: '/dashboard/overview',
+    title: 'Dashboard',
+    url: '/dashboard',
     icon: 'dashboard',
     isActive: false,
     shortcut: ['d', 'd'],
@@ -18,19 +18,19 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Saldo Inicial',
-        url: '/dashboard/initial-balance'
+        url: '/cashier/initial-balance'
       },
       {
         title: 'Tipos Receita',
-        url: '#'
+        url: '/cashier/types-recipe'
       },
       {
         title: 'Tipos Despesas',
-        url: '/dashboard/capture-revenues'
+        url: '/cashier/types-expenses'
       },
       {
         title: 'Relatorio Financeiro',
-        url: '/dashboard/reports'
+        url: '/cashier/financial-report'
       }
     ]
   },
@@ -42,28 +42,28 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Cadastrar Produtos',
-        url: '/dashboard/product',
+        url: '/manager/register-product',
         icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false
       },
       {
         title: 'Cadastrar Clientes',
-        url: '/dashboard/client',
+        url: '/manager/register-client',
         icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false
       },
       {
-        title: 'Historico de Vendas',
-        url: '#',
+        title: 'Cadastro de vendas',
+        url: '/manager/register-sale',
         icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false
       },
       {
         title: 'Relatorio de Produtos',
-        url: '#',
+        url: '/manager/product-report',
         icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false

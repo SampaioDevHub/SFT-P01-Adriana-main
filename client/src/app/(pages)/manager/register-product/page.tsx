@@ -1,8 +1,8 @@
 /* eslint-disable import/no-unresolved */
 import PageContainer from "@/components/layout/page-container";
-import ProductManagement from "@/features/products/components/ProductManagement";
+import ProductManagement from "./_components/ProductManagement";
 
-export default function Page() {
+export default function RegisterProduct() {
   return (
     <PageContainer>
       <main className="container mx-auto px-4 py-8">

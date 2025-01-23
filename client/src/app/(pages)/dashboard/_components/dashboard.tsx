@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import PageContainer from '@/components/layout/page-container';
 import {
   Card,
@@ -13,8 +13,8 @@ import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
 import { RecentSales } from './recent-sales';
 import { useUser } from '@clerk/nextjs';
-export default function OverViewPage() {
-  const { user } = useUser(); 
+export default function Dasboard() {
+  const { user } = useUser();
   return (
     <PageContainer scrollable>
       <div className='space-y-2'>
@@ -26,7 +26,7 @@ export default function OverViewPage() {
         <Tabs defaultValue='overview' className='space-y-4'>
           <TabsContent value='overview' className='space-y-4'>
             <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-              <Card className="transition-all duration-300 hover:shadow-md hover:scale-105">
+              <Card className='transition-all duration-300 hover:scale-105 hover:shadow-md'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
                     Algoritmo SFP01
@@ -51,7 +51,7 @@ export default function OverViewPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card className='transition-all duration-300 hover:shadow-md hover:scale-105'>
+              <Card className='transition-all duration-300 hover:scale-105 hover:shadow-md'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
                     Algoritmo SFP01
@@ -78,9 +78,11 @@ export default function OverViewPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card className='transition-all duration-300 hover:shadow-md hover:scale-105'>
+              <Card className='transition-all duration-300 hover:scale-105 hover:shadow-md'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Algoritmo SFP01</CardTitle>
+                  <CardTitle className='text-sm font-medium'>
+                    Algoritmo SFP01
+                  </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 24 24'
@@ -102,7 +104,7 @@ export default function OverViewPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card className='transition-all duration-300 hover:shadow-md hover:scale-105'>
+              <Card className='transition-all duration-300 hover:scale-105 hover:shadow-md'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
                     Algoritmo SFP01
@@ -128,16 +130,14 @@ export default function OverViewPage() {
                 </CardContent>
               </Card>
             </div>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7 '>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
               <div className='col-span-4'>
                 <BarGraph />
               </div>
               <Card className='col-span-4 md:col-span-3'>
                 <CardHeader>
                   <CardTitle>Algoritomo Clientes</CardTitle>
-                  <CardDescription>
-                    Algoritimo String
-                  </CardDescription>
+                  <CardDescription>Algoritimo String</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <RecentSales />
