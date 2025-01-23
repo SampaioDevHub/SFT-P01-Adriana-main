@@ -14,7 +14,7 @@ export default function Page() {
         />
       </div>
 
-      <div className="flex dark:hidden justify-center items-center dark:hidden w-full h-[100vh] ">
+      <div className="flex dark:hidden justify-center items-center w-full h-[100vh] ">
         <SignIn appearance={{
           elements: {
             formButtonPrimary: 'bg-[#e11d48] hover:bg-[#be123c]',
