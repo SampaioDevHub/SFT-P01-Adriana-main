@@ -26,7 +26,7 @@ export default function OverViewPage() {
         <Tabs defaultValue='overview' className='space-y-4'>
           <TabsContent value='overview' className='space-y-4'>
             <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:scale-105">
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
                     Algoritmo SFP01
@@ -51,7 +51,7 @@ export default function OverViewPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='transition-all duration-300 hover:shadow-md hover:scale-105'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
                     Algoritmo SFP01
@@ -78,7 +78,7 @@ export default function OverViewPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='transition-all duration-300 hover:shadow-md hover:scale-105'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>Algoritmo SFP01</CardTitle>
                   <svg
@@ -102,7 +102,7 @@ export default function OverViewPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='transition-all duration-300 hover:shadow-md hover:scale-105'>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
                     Algoritmo SFP01
@@ -128,7 +128,7 @@ export default function OverViewPage() {
                 </CardContent>
               </Card>
             </div>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7 '>
               <div className='col-span-4'>
                 <BarGraph />
               </div>

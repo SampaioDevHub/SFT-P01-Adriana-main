@@ -1,7 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { NavItem } from 'types';
 
-
 export const navItems: NavItem[] = [
   {
     title: 'Resumo',
@@ -9,7 +8,7 @@ export const navItems: NavItem[] = [
     icon: 'dashboard',
     isActive: false,
     shortcut: ['d', 'd'],
-    items: [] 
+    items: []
   },
   {
     title: 'Caixa',
@@ -46,29 +45,29 @@ export const navItems: NavItem[] = [
         url: '/dashboard/product',
         icon: 'product',
         shortcut: ['p', 'p'],
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Cadastrar Clientes',
         url: '/dashboard/client',
         icon: 'product',
         shortcut: ['p', 'p'],
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Historico de Vendas',
         url: '#',
         icon: 'product',
         shortcut: ['p', 'p'],
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Relatorio de Produtos',
         url: '#',
         icon: 'product',
         shortcut: ['p', 'p'],
-        isActive: false,
-      },
+        isActive: false
+      }
     ]
-  },
+  }
 ];
