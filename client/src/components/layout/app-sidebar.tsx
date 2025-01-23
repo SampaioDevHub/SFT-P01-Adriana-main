@@ -28,6 +28,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+import { Button } from '../ui/button';
+import { DialogTitle } from '../ui/dialog';
 
 export const company = {
   name: 'Adriana ShowRoom',
@@ -39,8 +41,8 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible='icon'>
-      <SidebarHeader>
+    <Sidebar collapsible='icon' variant='inset' className='pt-2 '>
+      <SidebarHeader className='rounded-md shadow-sm'>
         <div className='flex gap-2 py-2 text-sidebar-accent-foreground'>
           <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
             <company.logo className='size-4' />
@@ -51,10 +53,11 @@ export default function AppSidebar() {
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className='overflow-x-hidden'>
+      
+      <SidebarContent className='overflow-x-hidden flex-col'>
         <SidebarGroup>
-          <SidebarGroupLabel>Painel de Navegação</SidebarGroupLabel>
-          <SidebarMenu>
+          <SidebarGroupLabel className='text-sm'>Painel de Navegação</SidebarGroupLabel>
+          <SidebarMenu className=' rounded-md shadow-sm'>
             {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (

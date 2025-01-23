@@ -17,6 +17,7 @@ export interface Customer {
     };
     birthDate: string;
     maritalStatus: string;
+    clientStatus: "bom" | "regular" | "ruim" | ""
     professional: {
       company: string;
       phone: string;
