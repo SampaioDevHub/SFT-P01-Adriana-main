@@ -22,9 +22,7 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div>
           <UserButton />
-        </div>
       </DropdownMenuTrigger>
     </DropdownMenu>
   );
