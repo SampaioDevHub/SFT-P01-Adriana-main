@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/table"
 import CustomerDetailsModal from './CustomerDetailsModal'
 import DeleteCustomerModal from './DeleteCustomerModal'
-import { ClientStatusBadge } from "@/components/ui/client-status-badge"
 export default function CustomerTable() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -52,7 +51,6 @@ export default function CustomerTable() {
                 <TableHead>Telefone</TableHead>
                 <TableHead>Cidade</TableHead>
                 <TableHead>Estado</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -64,9 +62,6 @@ export default function CustomerTable() {
                   <TableCell>{customer.phone}</TableCell>
                   <TableCell>{customer.residentialAddress.city}</TableCell>
                   <TableCell>{customer.residentialAddress.state}</TableCell>
-                  <TableCell>
-                    <ClientStatusBadge status={customer.clientStatus || ""} />
-                  </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
                       <CustomerDetailsModal customer={customer} />

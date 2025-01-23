@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from '@/hooks/use-toast'
-import { ClientStatusBadge } from '@/components/ui/client-status-badge'
 export default function CustomerForm() {
   const router = useRouter()
   const { toast } = useToast()
@@ -68,21 +67,21 @@ export default function CustomerForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const newCustomer = { ...formData, id: Date.now() }
-
+    
     // Get existing customers from localStorage
     const existingCustomers = JSON.parse(localStorage.getItem('customers') || '[]')
-
+    
     // Add new customer
     const updatedCustomers = [...existingCustomers, newCustomer]
-
+    
     // Save to localStorage
     localStorage.setItem('customers', JSON.stringify(updatedCustomers))
-
+    
     toast({
       title: "Cliente cadastrado",
       description: `${newCustomer.name} foi adicionado com sucesso.`,
     })
-
+    
     // Reset form
     setFormData({
       name: '',
@@ -101,8 +100,8 @@ export default function CustomerForm() {
         issuer: ''
       },
       birthDate: '',
-      clientStatus: '',
       maritalStatus: '',
+      clientStatus: '',
       professional: {
         company: '',
         phone: '',
@@ -129,7 +128,7 @@ export default function CustomerForm() {
       ],
       observations: ''
     })
-
+    
     // Redirect to customer list page
     router.push('/dashboard/client')
   }
@@ -148,7 +147,7 @@ export default function CustomerForm() {
   const handleReferenceChange = (index: number, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      personalReferences: prev.personalReferences.map((ref, i) =>
+      personalReferences: prev.personalReferences.map((ref, i) => 
         i === index ? { ...ref, [field]: value } : ref
       )
     }))
@@ -300,26 +299,6 @@ export default function CustomerForm() {
                     <SelectItem value="viuvo">Viúvo(a)</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="clientStatus">Estado do Client</Label>
-                <Select
-                  value={formData.clientStatus}
-                  onValueChange={(value) => handleInputChange('clientStatus', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o estado do cliente" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bom">Cliente bom</SelectItem>
-                    <SelectItem value="regular">Cliente regular</SelectItem>
-                    <SelectItem value="ruim">Cliente ruim</SelectItem>
-                  </SelectContent>
-                  {formData.clientStatus && (
-                    <ClientStatusBadge status={formData.clientStatus as "bom" | "regular" | "ruim"} />
-                  )}
-                </Select>
-
               </div>
             </div>
           </div>
