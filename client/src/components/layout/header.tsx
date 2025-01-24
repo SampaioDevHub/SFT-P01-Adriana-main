@@ -20,7 +20,6 @@ export default function Header() {
           <SearchInput />
         </div>
           <UserNav />
-          
           <ModeToggle/>
       </div>
     </header>
