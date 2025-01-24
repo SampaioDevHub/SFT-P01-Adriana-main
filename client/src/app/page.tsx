@@ -16,7 +16,7 @@ export default function Dashboard() {
         if (!userId) {
             router.push('/sign-in');
         } else {
-            router.push('/dashboard/overview');
+            router.push('/dashboard');
         }
     }, [isLoaded, userId, router]);
 

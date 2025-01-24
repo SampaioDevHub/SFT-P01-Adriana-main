@@ -1,8 +1,8 @@
-export default function BankAccounts() {
+export default function TypesOfExpenses() {
     return (
         <div>
             <div>
-                Contas Bancarias
+                Tipos de Despesas
             </div>
         </div>
     )

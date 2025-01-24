@@ -8,28 +8,10 @@ type BreadcrumbItem = {
   link: string;
 };
 
-const routeMapping: Record<string, BreadcrumbItem[]> = {
-  '/dashboard': [{ title: 'Painel', link: '/dashboard' }],
-  '/dashboard/employee': [
-    { title: 'Painel', link: '/dashboard' },
-    { title: 'Employee', link: '/dashboard/employee' }
-  ],
-  '/dashboard/product': [
-    { title: 'Dashboard', link: '/dashboard/overview' },
-    { title: 'produto', link: '/dashboard/product' }
-  ]
-  // Add more custom mappings as needed
-};
-
 export function useBreadcrumbs() {
   const pathname = usePathname();
 
   const breadcrumbs = useMemo(() => {
-    // Check if we have a custom mapping for this exact path
-    if (routeMapping[pathname]) {
-      return routeMapping[pathname];
-    }
-
     // If no exact match, fall back to generating breadcrumbs from the path
     const segments = pathname.split('/').filter(Boolean);
     return segments.map((segment, index) => {

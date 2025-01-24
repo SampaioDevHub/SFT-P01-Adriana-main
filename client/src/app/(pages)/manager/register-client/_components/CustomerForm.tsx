@@ -64,6 +64,7 @@ export default function CustomerForm() {
     ],
     observations: ''
   })
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const newCustomer = { ...formData, id: Date.now() }
@@ -132,6 +133,7 @@ export default function CustomerForm() {
     // Redirect to customer list page
     router.push('/dashboard/client')
   }
+
   const handleInputChange = (path: string, value: string) => {
     const pathArray = path.split('.')
     setFormData(prev => {
@@ -144,6 +146,7 @@ export default function CustomerForm() {
       return newData
     })
   }
+
   const handleReferenceChange = (index: number, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -152,6 +155,7 @@ export default function CustomerForm() {
       )
     }))
   }
+  
   return (
     <Card>
       <CardHeader>
