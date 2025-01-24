@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved */
-import { NavItem } from '@/@types/nav-item';
+import { NavItem } from "@/@Types/nav-item";
 
 export const navItems: NavItem[] = [
   {
