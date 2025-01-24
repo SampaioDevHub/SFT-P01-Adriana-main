@@ -1,4 +1,3 @@
-
 // eslint-disable-next-line import/no-unresolved
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
@@ -13,6 +12,7 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/react-query';
+import ReactQueryProvider from '@/components/providers/react-query-provider';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
@@ -44,9 +44,9 @@ export default async function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                   >
-                    <QueryClientProvider client={queryClient}>
+                    <ReactQueryProvider>
                       {children}
-                    </QueryClientProvider>
+                    </ReactQueryProvider>
               </ThemeProvider>
             </NuqsAdapter>
           </body>
