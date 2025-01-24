@@ -11,6 +11,8 @@ import {
 import { ptBR } from '@clerk/localizations'
 import { ThemeProvider } from '@/components/providers/theme-provider'; 
 import './globals.css';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/react-query';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
@@ -42,7 +44,9 @@ export default async function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                   >
-                    {children}
+                    <QueryClientProvider client={queryClient}>
+                      {children}
+                    </QueryClientProvider>
               </ThemeProvider>
             </NuqsAdapter>
           </body>

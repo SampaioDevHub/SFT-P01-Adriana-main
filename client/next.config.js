@@ -5,16 +5,16 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'utfs.io',
-        port: ''
+        port: '',
       },
       {
         protocol: 'https',
         hostname: 'api.slingacademy.com',
-        port: ''
-      }
-    ]
+        port: '',
+      },
+    ],
   },
-  transpilePackages: ['geist']
 };
 
 module.exports = nextConfig;
+
