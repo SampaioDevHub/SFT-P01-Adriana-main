@@ -15,7 +15,7 @@ import { Fragment } from 'react';
 export function Breadcrumbs() {
   const items = useBreadcrumbs();
   if (items.length === 0) return null;
-
+   
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -23,7 +23,7 @@ export function Breadcrumbs() {
           <Fragment key={item.title}>
             {index !== items.length - 1 && (
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>
+                <BreadcrumbLink>{item.title}</BreadcrumbLink>
               </BreadcrumbItem>
             )}
             {index < items.length - 1 && (
