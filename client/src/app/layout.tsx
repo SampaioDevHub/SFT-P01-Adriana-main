@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line import/no-unresolved
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
@@ -8,10 +10,8 @@ import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { ptBR } from '@clerk/localizations'
-import { ThemeProvider } from '@/components/providers/theme-provider'; 
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/react-query';
 import ReactQueryProvider from '@/components/providers/react-query-provider';
 
 export const metadata: Metadata = {
@@ -33,24 +33,24 @@ export default async function RootLayout({
 }) {
   return (
     <ClerkProvider localization={ptBR}>
-        <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
-          <body className={'overflow-hidden'}>
-            <NextTopLoader showSpinner={false}  color="#e11d48" />
-            <NuqsAdapter >
-              <Toaster />
-              <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                  >
-                    <ReactQueryProvider>
-                      {children}
-                    </ReactQueryProvider>
-              </ThemeProvider>
-            </NuqsAdapter>
-          </body>
-        </html>
+      <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
+        <body className={'overflow-hidden'}>
+          <NextTopLoader showSpinner={false} color="#e11d48" />
+          <NuqsAdapter >
+            <Toaster />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ReactQueryProvider>
+                {children}
+              </ReactQueryProvider>
+            </ThemeProvider>
+          </NuqsAdapter>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
