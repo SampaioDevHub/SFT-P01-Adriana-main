@@ -1,4 +1,5 @@
-// eslint-disable-next-line import/no-unresolved
+/* eslint-disable import/no-unresolved */
+
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -8,10 +9,8 @@ import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { ptBR } from '@clerk/localizations'
-import { ThemeProvider } from '@/components/providers/theme-provider'; 
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/react-query';
 import ReactQueryProvider from '@/components/providers/react-query-provider';
 
 export const metadata: Metadata = {
@@ -37,7 +36,7 @@ export default async function RootLayout({
           <body className={'overflow-hidden'}>
             <NextTopLoader showSpinner={false}  color="#e11d48" />
             <NuqsAdapter >
-              <Toaster richColors={true}/>
+              <Toaster />
               <ThemeProvider
                     attribute="class"
                     defaultTheme="system"

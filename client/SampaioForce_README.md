@@ -39,31 +39,6 @@ O MVP do Adriana Showroom é uma plataforma digital projetada para otimizar e mo
 - **Gerenciamento de Projetos:** Azure DevOps
 - **Testes:** JUnit (Backend) e Jest (Frontend)
 
----
-
-## Estrutura do Projeto 🗂️
-
-### Diretório do Frontend
-
-```plaintext
-/src
-  /components
-  /pages
-  /styles
-  /utils
-```
-
-### Diretório do Backend
-
-```plaintext
-/src/main/java/com/adrianashowroom
-  /controller
-  /service
-  /repository
-  /model
-```
-
----
 
 ## Como Executar o Projeto 🏃‍♂️
 
