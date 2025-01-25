@@ -83,6 +83,7 @@
     "react-dom": "19.0.0",
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^7.54.2",
+    "react-number-format": "^5.4.3",
     "react-query": "^3.39.3",
     "react-responsive": "^10.0.0",
     "recharts": "^2.15.0",
@@ -95,6 +96,7 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.7.2",
     "uuid": "^11.0.5",
+    "yup": "^1.6.1",
     "zod": "^3.24.1",
     "zustand": "^5.0.3"
   },

@@ -37,7 +37,7 @@ export default async function RootLayout({
           <body className={'overflow-hidden'}>
             <NextTopLoader showSpinner={false}  color="#e11d48" />
             <NuqsAdapter >
-              <Toaster />
+              <Toaster richColors={true}/>
               <ThemeProvider
                     attribute="class"
                     defaultTheme="system"

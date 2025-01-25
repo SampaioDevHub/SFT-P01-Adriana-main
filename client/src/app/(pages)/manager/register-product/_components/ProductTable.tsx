@@ -1,8 +1,6 @@
 /* eslint-disable import/no-unresolved */
 'use client'
 
-import { useState } from 'react'
-import { Product } from '../types/Product'
 import EditProductModal from './EditProductModal'
 import DeleteProductModal from './DeleteProductModal'
 import { Button } from "@/components/ui/button"
@@ -23,33 +21,16 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-interface ProductTableProps {
-  products: Product[]
-  onUpdateProduct: (product: Product) => void
-  onDeleteProduct: (id: number) => void
-}
-
-export default function ProductTable({ products, onUpdateProduct, onDeleteProduct }: ProductTableProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterCategory, setFilterCategory] = useState('')
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null)
-
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (filterCategory === '' || product.category === filterCategory)
-  )
+export default function ProductTable() {
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <Input
           placeholder="Pesquisar produtos..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
-        <Select value={filterCategory} onValueChange={setFilterCategory}>
+        <Select>
           <SelectTrigger className="max-w-[180px]">
             <SelectValue placeholder="Categorias" />
           </SelectTrigger>
@@ -75,7 +56,7 @@ export default function ProductTable({ products, onUpdateProduct, onDeleteProduc
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProducts.map((product) => (
+              {/* {products.map((product) => (
                 <TableRow key={product.id} className="hover:bg-muted/50">
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>
@@ -87,7 +68,6 @@ export default function ProductTable({ products, onUpdateProduct, onDeleteProduc
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setEditingProduct(product)}
                       className="mr-2"
                     >
                       Editar
@@ -95,37 +75,16 @@ export default function ProductTable({ products, onUpdateProduct, onDeleteProduc
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => setDeletingProduct(product)}
                     >
                       Excluir
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))} */}
             </TableBody>
           </Table>
         </div>
       </div>
-      {editingProduct && (
-        <EditProductModal
-          product={editingProduct}
-          onUpdate={(updatedProduct) => {
-            onUpdateProduct(updatedProduct)
-            setEditingProduct(null)
-          }}
-          onClose={() => setEditingProduct(null)}
-        />
-      )}
-      {deletingProduct && (
-        <DeleteProductModal
-          product={deletingProduct}
-          onDelete={() => {
-            onDeleteProduct(deletingProduct.id)
-            setDeletingProduct(null)
-          }}
-          onClose={() => setDeletingProduct(null)}
-        />
-      )}
     </div>
   )
 }

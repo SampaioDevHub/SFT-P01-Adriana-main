@@ -1,6 +1,7 @@
-import { env } from '@/env'
+'use client'
+
 import axios from 'axios'
 
 export const api = axios.create({
-    baseURL: env.DATABASE_URL,
+    baseURL: process.env.NEXT_PUBLIC_DATABASE_URL,
 })
