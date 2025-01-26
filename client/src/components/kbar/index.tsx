@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+// eslint-disable-next-line import/no-unresolved
 import { navItems } from '@/constants/data';
 import {
   KBarAnimator,
