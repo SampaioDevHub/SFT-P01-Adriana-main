@@ -1,14 +1,10 @@
 /* eslint-disable import/no-unresolved */
 'use client'
 
-import EditProductModal from './EditProductModal'
-import DeleteProductModal from './DeleteProductModal'
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,

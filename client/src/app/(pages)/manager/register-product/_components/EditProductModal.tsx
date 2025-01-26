@@ -1,7 +1,8 @@
+/* eslint-disable import/no-unresolved */
 'use client'
 
 import { useState } from 'react'
-import { Product } from '../types/Product'
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,10 +21,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
+import { CreateProductBody } from '@/api/create-product'
 
 interface EditProductModalProps {
-  product: Product
-  onUpdate: (updatedProduct: Product) => void
+  product: CreateProductBody
+  onUpdate: (updatedProduct: CreateProductBody) => void
   onClose: () => void
 }
 
@@ -47,7 +49,7 @@ export default function EditProductModal({ product, onUpdate, onClose }: EditPro
     setEditedProduct(current => ({
       ...current,
       sizes: current.sizes.includes(size)
-        ? current.sizes.filter(s => s !== size)
+        ? current.sizes.filter((s: string) => s !== size)
         : [...current.sizes, size]
     }))
   }

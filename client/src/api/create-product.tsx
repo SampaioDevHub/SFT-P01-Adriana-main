@@ -1,6 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import { api } from "@/lib/axios";
 
 export interface CreateProductBody {
+    [x: string]: any;
     name: string;
     price: number;
     amount: number;

@@ -1,7 +1,8 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 
-import { Product } from '../types/Product'
+import { CreateProductBody } from "@/api/create-product"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 
 interface DeleteProductModalProps {
-  product: Product
+  product: CreateProductBody
   onDelete: () => void
   onClose: () => void
 }
