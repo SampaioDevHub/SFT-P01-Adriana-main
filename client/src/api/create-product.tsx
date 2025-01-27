@@ -19,7 +19,7 @@ export async function createProduct({
     category,
     subcategory,
 }: CreateProductBody) {
-    await api.post('v1/products/create', {
+    await api.post('/products/create', {
         name,
         price,
         amount,

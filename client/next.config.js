@@ -13,6 +13,9 @@ const nextConfig = {
         port: '',
       },
     ],
+    experimental: {
+      incrementalCacheHandlerPath: 'path/to/cache/handler',
+    },
   },
 };
 
