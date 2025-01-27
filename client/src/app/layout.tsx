@@ -12,6 +12,7 @@ import { ptBR } from '@clerk/localizations'
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
 import ReactQueryProvider from '@/components/providers/react-query-provider';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
@@ -45,6 +46,7 @@ export default async function RootLayout({
                   >
                     <ReactQueryProvider>
                       {children}
+                      <Analytics />
                     </ReactQueryProvider>
               </ThemeProvider>
             </NuqsAdapter>
