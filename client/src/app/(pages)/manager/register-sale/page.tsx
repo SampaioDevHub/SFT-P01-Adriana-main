@@ -1,7 +1,7 @@
 import PageContainer from '@/components/layout/page-container';
 import SelectSales from './_components/SelectSales';
 import CustomerSales from './_components/AddCustomer';
-import AddProducts from './_components/Addproducts';
+import AddProducts from './_components/AddProducts';
 import SelectedProducts from './_components/SelectedProducts';
 import GeneralSummary from './_components/GeneralSummary';
 

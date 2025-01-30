@@ -19,7 +19,6 @@ export default function AddProducts() {
 
   // Simula a adição do produto
   const handleSubmit = () => {
-    console.log('Produto adicionado:', formData);
     alert('Produto adicionado com sucesso!');
 
     // Reseta os campos do formulário
