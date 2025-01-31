@@ -31,6 +31,7 @@ import { updatedProduct } from '@/api/updated-product';
 
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 import { MoneyInput } from './moneyInput';
+import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({
   name: yup.string().required('Informe o nome do produto'),
@@ -65,7 +66,6 @@ export function EditProductModalContent({
 }: ModalProps) {
   const queryClient = useQueryClient();
 
-  const availableSizes = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'FXXG'];
   const [sizesArray, setSizesArray] = useState<string[]>([]);
 
   const toggleSize = (size: string) => {

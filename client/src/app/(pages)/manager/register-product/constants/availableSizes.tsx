@@ -1,0 +1,1 @@
+export const availableSizes = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG'];

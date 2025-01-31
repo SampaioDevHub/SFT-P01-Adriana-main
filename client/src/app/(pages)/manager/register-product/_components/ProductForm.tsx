@@ -24,6 +24,7 @@ import { createProduct } from '@/api/create-product';
 import { getProductsByCategories } from '@/api/get-products-by-categories';
 
 import { MoneyInput } from './moneyInput';
+import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({
   name: yup.string().required('Informe o nome do produto'),
@@ -49,7 +50,6 @@ export default function ProductForm() {
   const queryClient = useQueryClient();
 
   const [sizesArray, setSizesArray] = useState<string[]>([]); // Estado para armazenar os tamanhos
-  const availableSizes = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG'];
 
   const {
     handleSubmit,
@@ -62,6 +62,7 @@ export default function ProductForm() {
     resolver: yupResolver(formSchema),
     defaultValues: {
       category: '',
+      size: '',
       price: ''
     }
   });
@@ -80,12 +81,13 @@ export default function ProductForm() {
   });
 
   async function handleCreateProduct(data: FormSchema) {
+    console.log(data)
     try {
       await createProductFn({
         name: data.name,
         price: Number(data.price.replace(/[^\d.-]/g, '')),
         amount: data.amount,
-        size: isClothingCategory ? sizesString : 'Indefinido',
+        size: isClothingCategory ? sizesString : '',
         category: data.category,
         subcategory: data.subcategory
       });
@@ -99,7 +101,7 @@ export default function ProductForm() {
 
   const category = watch('category');
   const isClothingCategory = category === 'Roupas';
-
+ 
   // Observa o valor do campo "size"
   const selectedSize = watch('size');
 
