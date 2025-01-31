@@ -19,7 +19,7 @@ export interface GetProductsBody {
 }
 
 export async function getProducts({pageIndex, nameFilter, codeFilter, categoryFilter}: GetProductsQuery){
-  const response = await api.get<GetProductsBody[]>(`/products/find-all?size=8?page=${pageIndex}?name=${nameFilter}`)
+  const response = await api.get<GetProductsBody[]>(`/products/find-all?size=8&page=${pageIndex}&name=${nameFilter}`)
 
   return response.data
 }

@@ -75,6 +75,7 @@ export default function ProductForm() {
     mutationFn: createProduct,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['productsLength'] });
     }
   });
 

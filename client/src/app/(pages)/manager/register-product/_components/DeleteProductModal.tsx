@@ -38,6 +38,7 @@ export default function DeleteProductModal({
     mutationFn: () => DeleteProduct({ productId }),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['productsLength'] });
     }
   });
 

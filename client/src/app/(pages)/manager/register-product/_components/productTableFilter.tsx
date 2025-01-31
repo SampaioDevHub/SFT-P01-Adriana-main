@@ -93,7 +93,7 @@ export function ProductTableFilter() {
       onSubmit={handleSubmit(handleSubmitFilter)}
       className='flex w-full items-center gap-2'
     >
-      <span className='text-sm font-semibold'>Filtros:</span>
+      <span className='text-sm'>Filtros:</span>
       <Input {...register('name')} placeholder='Nome do produto'/>
       <Input
         {...register('code')}
