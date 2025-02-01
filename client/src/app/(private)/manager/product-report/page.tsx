@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved */
-import GenerateStoreReport from "@/app/(pages)/manager/product-report/_components/GenerateStoreReport";
+import GenerateStoreReport from "@/app/(private)/manager/product-report/_components/GenerateStoreReport";
 
 export default function ReportsPage() {
     return (
