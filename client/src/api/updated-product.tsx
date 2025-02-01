@@ -1,7 +1,8 @@
 /* eslint-disable import/no-unresolved */
 import { api } from "@/lib/axios";
 
-export interface CreateProductBody {
+export interface UpdatedProductBody {
+    id: string
     name: string;
     price: number;
     amount: number;
@@ -10,15 +11,17 @@ export interface CreateProductBody {
     subcategory: string;
 }
 
-export async function createProduct({
+export async function updatedProduct({
+    id,
     name,
     price,
     amount,
     size,
     category,
     subcategory,
-}: CreateProductBody) {
-    await api.post('/products/create', {
+}: UpdatedProductBody) {
+    console.log(subcategory, price)
+    await api.put(`/products/update/${id}`, {
         name,
         price,
         amount,

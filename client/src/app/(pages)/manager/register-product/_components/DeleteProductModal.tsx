@@ -1,37 +1,73 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/no-unescaped-entities */
-'use client'
+'use client';
 
-import { CreateProductBody } from "@/api/create-product"
-import { Button } from "@/components/ui/button"
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
+  DialogFooter
+} from '@/components/ui/dialog';
+import { CreateProductBody } from '@/api/create-product';
+import { DeleteProduct } from '@/api/delete-product';
+import { getProductsById } from '@/api/get-products-by-id';
+import { Button } from '@/components/ui/button';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-interface DeleteProductModalProps {
-  product: CreateProductBody
-  onDelete: () => void
-  onClose: () => void
+interface ModalProps {
+  productId: string;
+  open: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-export default function DeleteProductModal({ product, onDelete, onClose }: DeleteProductModalProps) {
+export default function DeleteProductModal({
+  productId,
+  open,
+  setIsOpen
+}: ModalProps) {
+
+  const queryClient = useQueryClient();
+
+  const { data: product } = useQuery({
+    queryKey: ['product'],
+    queryFn: () => getProductsById({ productId }),
+    enabled: open
+  });
+
+  const { mutateAsync: deleteProductFn, isPending } = useMutation({
+    mutationFn: () => DeleteProduct({ productId }),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['productsLength'] });
+    }
+  });
+
+  async function handleDeleteProduct() {
+    deleteProductFn();
+    setIsOpen(false);
+  }
+
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Excluir Produto</DialogTitle>
-        </DialogHeader>
-        <p className="py-4">Tem certeza que deseja excluir o produto "{product.name}"?</p>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button variant="destructive" onClick={onDelete}>Excluir</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Excluir Produto</DialogTitle>
+      </DialogHeader>
+      <p className='py-4'>
+        Tem certeza que deseja excluir o produto "{product?.name}"?
+      </p>
+      <DialogFooter>
+        <Button variant='outline' onClick={() => setIsOpen(false)}>
+          Cancelar
+        </Button>
+        <Button
+          disabled={isPending}
+          className='disabled:cursor-not-allowed disabled:opacity-70'
+          variant='destructive'
+          onClick={handleDeleteProduct}
+        >
+          Excluir
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
 }
-

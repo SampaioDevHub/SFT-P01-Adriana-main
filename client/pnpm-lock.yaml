@@ -166,7 +166,7 @@ importers:
         version: 3.7.15(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       nuqs:
         specifier: ^2.3.1
-        version: 2.3.1(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+        version: 2.3.1(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-router-dom@7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-router@7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       object-path:
         specifier: ^0.11.8
         version: 0.11.8
@@ -1139,6 +1139,9 @@ packages:
   '@tanstack/table-core@8.20.5':
     resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
     engines: {node: '>=12'}
+
+  '@types/cookie@0.6.0':
+    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -2940,6 +2943,23 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
 
+  react-router-dom@7.1.4:
+    resolution: {integrity: sha512-p474cAeRKfPNp+9QtpdVEa025iWLIIIBhYCnjsSwFmZH3c5DBHOc7vB7zmL6lL747o0ArfrLblNTebtL6lt0lA==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+
+  react-router@7.1.4:
+    resolution: {integrity: sha512-aJWVrKoLI0nIK1lfbTU3d5al1ZEUiwtSus/xjYL8K5sv2hyPesiOIojHM7QnaNLVtroOB1McZsWk37fMQVoc6A==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+
   react-smooth@4.0.4:
     resolution: {integrity: sha512-gnGKTpYwqL0Iii09gHobNolvX4Kiq4PKx6eWBCYYix+8cdw+cGo3do906l1NBPKkSWx1DghC1dlWG9L2uGd61Q==}
     peerDependencies:
@@ -3070,6 +3090,9 @@ packages:
 
   server-only@0.0.1:
     resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
+
+  set-cookie-parser@2.7.1:
+    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -3336,6 +3359,9 @@ packages:
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
+  turbo-stream@2.4.0:
+    resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -4367,6 +4393,9 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
 
   '@tanstack/table-core@8.20.5': {}
+
+  '@types/cookie@0.6.0':
+    optional: true
 
   '@types/d3-array@3.2.1': {}
 
@@ -6000,12 +6029,14 @@ snapshots:
 
   nprogress@0.2.0: {}
 
-  nuqs@2.3.1(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0):
+  nuqs@2.3.1(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-router-dom@7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-router@7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0):
     dependencies:
       mitt: 3.0.1
       react: 19.0.0
     optionalDependencies:
       next: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-router: 7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-router-dom: 7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
 
   object-assign@4.1.1: {}
 
@@ -6272,6 +6303,24 @@ snapshots:
       react: 19.0.0
       shallow-equal: 3.1.0
 
+  react-router-dom@7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      react-router: 7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+    optional: true
+
+  react-router@7.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@types/cookie': 0.6.0
+      cookie: 1.0.2
+      react: 19.0.0
+      set-cookie-parser: 2.7.1
+      turbo-stream: 2.4.0
+    optionalDependencies:
+      react-dom: 19.0.0(react@19.0.0)
+    optional: true
+
   react-smooth@4.0.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       fast-equals: 5.2.2
@@ -6418,6 +6467,9 @@ snapshots:
   semver@7.6.3: {}
 
   server-only@0.0.1: {}
+
+  set-cookie-parser@2.7.1:
+    optional: true
 
   set-function-length@1.2.2:
     dependencies:
@@ -6753,6 +6805,9 @@ snapshots:
   tslib@2.4.1: {}
 
   tslib@2.8.1: {}
+
+  turbo-stream@2.4.0:
+    optional: true
 
   type-check@0.4.0:
     dependencies:
