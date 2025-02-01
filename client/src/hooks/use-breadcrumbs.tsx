@@ -1,12 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
-
-type BreadcrumbItem = {
-  title: string;
-  link: string;
-};
 
 export function useBreadcrumbs() {
   const pathname = usePathname();
