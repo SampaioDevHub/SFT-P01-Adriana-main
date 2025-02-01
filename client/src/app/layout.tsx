@@ -16,7 +16,7 @@ import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
-  description: "Projeto em Desenvolvimento SampaioForce"
+  description: "Projeto em Desenvolvimento pela SampaioForce"
 };
 
 const lato = Lato({
