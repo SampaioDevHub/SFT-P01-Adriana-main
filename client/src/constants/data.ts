@@ -69,5 +69,114 @@ export const navItems: NavItem[] = [
         isActive: false
       }
     ]
+  },
+  {
+    title: 'Configuração',
+    url: '',
+    icon: 'billing',
+    isActive: false,
+    items: [
+      {
+        title: 'Cadastrar Produtos',
+        url: '/manager/register-product',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Cadastrar Clientes',
+        url: '/manager/register-client',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Cadastro de vendas',
+        url: '/manager/register-sale',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Relatorio de Produtos',
+        url: '/manager/product-report',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      }
+    ]
+  },
+  {
+    title: 'Suporte',
+    url: '',
+    icon: 'billing',
+    isActive: false,
+    items: [
+      {
+        title: 'Cadastrar Produtos',
+        url: '/manager/register-product',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Cadastrar Clientes',
+        url: '/manager/register-client',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Cadastro de vendas',
+        url: '/manager/register-sale',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Relatorio de Produtos',
+        url: '/manager/product-report',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      }
+    ]
+  },
+  {
+    title: 'Relatórios',
+    url: '',
+    icon: 'billing',
+    isActive: false,
+    items: [
+      {
+        title: 'Cadastrar Produtos',
+        url: '/manager/register-product',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Cadastrar Clientes',
+        url: '/manager/register-client',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Cadastro de vendas',
+        url: '/manager/register-sale',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Relatorio de Produtos',
+        url: '/manager/product-report',
+        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      }
+    ]
   }
+  
 ];

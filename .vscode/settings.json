@@ -1,7 +1,8 @@
 {
     "java.compile.nullAnalysis.mode": "disabled",
     "cSpell.words": [
-        "jdbc"
+        "jdbc",
+        "kbar"
     ],
     "files.exclude": {
         "**/.git": true,
