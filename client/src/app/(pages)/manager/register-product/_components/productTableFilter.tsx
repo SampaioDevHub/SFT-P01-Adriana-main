@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import {
   Select,
   SelectContent,
@@ -12,8 +13,6 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getProducts } from '@/api/get-products';
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { usePathname, useSearchParams } from 'next/navigation';
 

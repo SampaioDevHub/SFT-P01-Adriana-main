@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable import/no-unresolved */
 'use client';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';

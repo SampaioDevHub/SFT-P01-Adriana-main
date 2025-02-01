@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import PageContainer from '@/components/layout/page-container';
 import SelectSales from './_components/SelectSales';
 import CustomerSales from './_components/AddCustomer';

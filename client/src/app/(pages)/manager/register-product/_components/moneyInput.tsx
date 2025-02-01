@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { ChangeEvent } from 'react';
 import { Input, InputProps } from '@/components/ui/input';
 

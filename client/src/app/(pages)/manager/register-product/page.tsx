@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import PageContainer from "@/components/layout/page-container";
-import ProductForm from "./_components/productForm";
-import ProductTable from "./_components/productTable";
+import ProductForm from "./_components/ProductForm";
+import ProductTable from "./_components/ProductTable";
 
 export default function RegisterProduct() {
   return (

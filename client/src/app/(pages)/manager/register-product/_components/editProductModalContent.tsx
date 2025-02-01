@@ -2,13 +2,6 @@
 'use client';
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -100,7 +93,6 @@ export function EditProductModalContent({
     handleSubmit,
     register,
     watch,
-    setValue,
     control,
     reset,
     formState: { isSubmitting, errors }

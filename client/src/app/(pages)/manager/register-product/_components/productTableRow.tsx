@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { GetProductsBody } from '@/api/get-products';
 import { Button } from '@/components/ui/button';
 import { TableRow, TableCell } from '@/components/ui/table';
@@ -5,7 +6,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
 import { EditProductModalContent } from './editProductModalContent';
 import { useState } from 'react';
-import DeleteProductModal from './deleteProductModal';
+import DeleteProductModal from './DeleteProductModal';
 
 export function ProductTableRow({
   id,
