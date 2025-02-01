@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Algoritimo sendo Desenvolvido'
 };
 
-export default async function DashboardLayout({
+export default async function PublicLayout({
   children
 }: {
   children: React.ReactNode;
