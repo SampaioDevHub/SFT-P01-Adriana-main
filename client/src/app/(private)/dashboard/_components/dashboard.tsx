@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 'use client';
 import PageContainer from '@/components/layout/page-container';
 import {

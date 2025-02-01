@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 'use client';
 
 import { TrendingUp } from 'lucide-react';
@@ -10,6 +11,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
+// eslint-disable-next-line import/no-unresolved
 } from '@/components/ui/card';
 import {
   ChartConfig,
