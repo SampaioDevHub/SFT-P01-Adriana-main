@@ -1,29 +1,24 @@
 /* eslint-disable import/no-unresolved */
 'use client';
-import { useEffect, useState } from 'react';
+
 import {
   DropdownMenu,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
 import { UserButton } from '@clerk/nextjs';
 
 export function UserNav() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-
-  if (!isClient) {
-    return null;
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-          <UserButton />
+        <UserButton />
       </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem>Perfil</DropdownMenuItem>
+        <DropdownMenuItem>Sair</DropdownMenuItem>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }
