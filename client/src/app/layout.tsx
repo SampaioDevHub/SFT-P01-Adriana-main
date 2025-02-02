@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable import/no-unresolved */
 
 import { Toaster } from '@/components/ui/sonner';
@@ -51,6 +52,7 @@ export default async function RootLayout({
                     </ReactQueryProvider>
               </ThemeProvider>
             </NuqsAdapter>
+            <script src="https://app.secureprivacy.ai/script/679f9c1c060b2f3e7323a7e2.js"></script>
           </body>
         </html>
     </ClerkProvider>

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable import/no-unresolved */
 import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/sidebar';
@@ -20,17 +21,17 @@ export default async function DashboardLayout({
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
   return (
-    <KBar>
-      <SidebarProvider defaultOpen={defaultOpen} >
-        <AppSidebar  />  
-        <SidebarInset>
-          <Header />
-          {/* page main content */}
-          {children}
-          {/* page main content ends */}
+      <KBar>
+        <SidebarProvider defaultOpen={defaultOpen} >
+          <AppSidebar />
+          <SidebarInset>
+            <Header />
+            {/* page main content */}
+            {children}
+            {/* page main content ends */}
 
-        </SidebarInset>
-      </SidebarProvider>
-    </KBar>
+          </SidebarInset>
+        </SidebarProvider>
+      </KBar>
   );
 }
