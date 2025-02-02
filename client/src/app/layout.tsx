@@ -34,27 +34,30 @@ export default async function RootLayout({
 }) {
   return (
     <ClerkProvider localization={ptBR}>
-        <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
-          <body className={'overflow-hidden'}>
-            <NextTopLoader showSpinner={false}  color="#e11d48" />
-            <NuqsAdapter >
-              <Toaster richColors/>
-              <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                  >
-                    
-                    <ReactQueryProvider>
-                      {children}
-                      <Analytics />
-                    </ReactQueryProvider>
-              </ThemeProvider>
-            </NuqsAdapter>
-            <script src="https://app.secureprivacy.ai/script/679f9c1c060b2f3e7323a7e2.js"></script>
-          </body>
-        </html>
+      <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
+        <head>
+          <script src="https://app.secureprivacy.ai/script/679f9c1c060b2f3e7323a7e2.js"></script>
+        </head>
+        <body className={'overflow-hidden'}>
+          <NextTopLoader showSpinner={false} color="#e11d48" />
+          <NuqsAdapter >
+            <Toaster richColors />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+
+              <ReactQueryProvider>
+                {children}
+                <Analytics />
+              </ReactQueryProvider>
+            </ThemeProvider>
+          </NuqsAdapter>
+
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
