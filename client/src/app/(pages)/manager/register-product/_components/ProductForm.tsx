@@ -26,8 +26,6 @@ import { getProductsByCategories } from '@/api/product/get-products-by-categorie
 import { MoneyInput } from './moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 
-
-
 const formSchema = yup.object({
   name: yup.string().required('Informe o nome do produto'),
   price: yup.string().required('Informe o preço do produto'),
@@ -47,9 +45,6 @@ const formSchema = yup.object({
 });
 
 type FormSchema = yup.InferType<typeof formSchema>;
-
-
-
 
 
 export default function ProductForm() {
