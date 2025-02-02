@@ -7,10 +7,6 @@ const nextConfig = {
     optimizeCss: true, // Otimiza CSS para carregamento mais rápido
     serverActions: true, // Melhora a execução de APIs
   },
-  images: {
-    domains: ['example.com'], // Substitua pelo seu domínio de imagens
-    formats: ['image/avif', 'image/webp'], // Formatos otimizados para imagens
-  },
   compiler: {
     removeConsole: process.env.NODE_ENV === "production", // Remove console.log em produção
   },
