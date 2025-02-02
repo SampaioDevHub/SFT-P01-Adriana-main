@@ -124,7 +124,7 @@ export function EditProductModalContent({
         amount: data.amount,
         size: data.category === 'Roupas' ? sizesString : '',
         category: data.category,
-        subcategory: data.subcategory
+        subCategory: data.subcategory
       });
       reset();
       setIsOpen(false);
