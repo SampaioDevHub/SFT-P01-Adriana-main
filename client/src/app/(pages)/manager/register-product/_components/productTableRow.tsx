@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved */
-import { GetProductsBody } from '@/api/get-products';
+import { GetProductsBody } from '@/api/product/get-products';
 import { Button } from '@/components/ui/button';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';

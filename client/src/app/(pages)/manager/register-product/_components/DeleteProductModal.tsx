@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { DeleteProduct } from '@/api/delete-product';
-import { getProductsById } from '@/api/get-products-by-id';
+import { DeleteProduct } from '@/api/product/delete-product';
+import { getProductsById } from '@/api/product/get-products-by-id';
 import { Button } from '@/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 

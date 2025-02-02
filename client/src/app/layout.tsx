@@ -44,6 +44,7 @@ export default async function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                   >
+                    
                     <ReactQueryProvider>
                       {children}
                       <Analytics />

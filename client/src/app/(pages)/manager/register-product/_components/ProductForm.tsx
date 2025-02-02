@@ -20,11 +20,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct } from '@/api/create-product';
-import { getProductsByCategories } from '@/api/get-products-by-categories';
+import { createProduct } from '@/api/product/create-product';
+import { getProductsByCategories } from '@/api/product/get-products-by-categories';
 
 import { MoneyInput } from './moneyInput';
 import { availableSizes } from '../constants/availableSizes';
+
+
 
 const formSchema = yup.object({
   name: yup.string().required('Informe o nome do produto'),
@@ -41,10 +43,14 @@ const formSchema = yup.object({
     return schema.notRequired();
   }),
   category: yup.string().required('Informe uma categoria'),
-  subcategory: yup.string().required('Informe uma Subcategoria')
+  subCategory: yup.string().required('Informe uma Subcategoria')
 });
 
 type FormSchema = yup.InferType<typeof formSchema>;
+
+
+
+
 
 export default function ProductForm() {
   const queryClient = useQueryClient();
@@ -89,7 +95,7 @@ export default function ProductForm() {
         amount: data.amount,
         size: isClothingCategory ? sizesString : '',
         category: data.category,
-        subcategory: data.subcategory
+        subCategory: data.subCategory
       });
       toast.success('Produto cadastrado com sucesso');
       reset();
@@ -160,9 +166,9 @@ export default function ProductForm() {
           </div>
           {category && (
             <div className='space-y-2'>
-              <Label htmlFor='subcategory'>Subcategoria</Label>
+              <Label htmlFor='subcategory'>Subategoria</Label>
               <Controller
-                name='subcategory' // Nome do campo no formulário
+                name='subCategory' // Nome do campo no formulário
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -186,9 +192,9 @@ export default function ProductForm() {
                   </Select>
                 )}
               />
-              {errors.subcategory?.message && (
+              {errors.subCategory?.message && (
                 <p className={`text-sm text-destructive`}>
-                  {errors.subcategory?.message}
+                  {errors.subCategory?.message}
                 </p>
               )}
             </div>

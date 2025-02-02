@@ -11,7 +11,7 @@ import {
 import { z } from 'zod';
 
 import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '@/api/get-products';
+import { getProducts } from '@/api/product/get-products';
 
 import { ProductTableSkeleton } from './_skeleton/productTableSkeleton';
 import { Pagination } from './pagination';
@@ -19,7 +19,7 @@ import { ProductTableFilter } from './productTableFilter';
 import { ProductTableRow } from './productTableRow';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { getProductsLength } from '@/api/get-products-length';
+import { getProductsLength } from '@/api/product/get-products-length';
 
 export default function ProductTable() {
   const searchParams = useSearchParams();
@@ -66,7 +66,7 @@ export default function ProductTable() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Categoria</TableHead>
-                <TableHead>Subcategoria</TableHead>
+                <TableHead>SubCategoria</TableHead>
                 <TableHead>Preço</TableHead>
                 <TableHead>Quantidade</TableHead>
                 <TableHead>Tamanhos</TableHead>
