@@ -4,7 +4,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function Dashboard() {
+export function Logout () {
     const { isLoaded, userId } = useAuth();
     const router = useRouter();
 
