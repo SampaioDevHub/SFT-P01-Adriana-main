@@ -48,14 +48,12 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-
               <ReactQueryProvider>
                 {children}
                 <Analytics />
               </ReactQueryProvider>
             </ThemeProvider>
           </NuqsAdapter>
-
         </body>
       </html>
     </ClerkProvider>

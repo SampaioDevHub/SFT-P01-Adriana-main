@@ -72,6 +72,7 @@
     "date-fns": "^4.1.0",
     "eslint-config-next": "15.1.0",
     "framer-motion": "^12.0.6",
+    "i": "^0.3.7",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "kbar": "0.1.0-beta.45",
