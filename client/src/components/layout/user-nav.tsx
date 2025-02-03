@@ -4,21 +4,17 @@
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
-import { UserButton } from '@clerk/nextjs';
+import { SignUpButton, UserButton } from '@clerk/nextjs';
 
 export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <UserButton />
+        <SignUpButton forceRedirectUrl="/sign-in">
+          <UserButton/>
+        </SignUpButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem>Perfil</DropdownMenuItem>
-        <DropdownMenuItem>Sair</DropdownMenuItem>
-      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

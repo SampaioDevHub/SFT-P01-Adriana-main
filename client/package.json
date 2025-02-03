@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^1.1.8",
+    "@clerk/elements": "^0.22.19",
     "@clerk/localizations": "^3.10.0",
     "@clerk/nextjs": "^6.10.2",
     "@clerk/themes": "^2.2.12",

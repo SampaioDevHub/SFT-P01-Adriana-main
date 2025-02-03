@@ -15,7 +15,6 @@ import { RecentSales } from './recent-sales';
 import { useUser } from '@clerk/nextjs';
 import { DollarSign, Package, TrendingUp } from 'lucide-react';
 import { FloatingChat } from '@/components/FloatingChat';
-import { Component } from './barchart-multiple';
 
 export default function Dasboard() {
   const { user } = useUser();
@@ -89,22 +88,14 @@ export default function Dasboard() {
             </div>
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
               <div className='col-span-4'>
-                <Component />
+                
               </div>
-              <Card className='col-span-4 md:col-span-3'>
-                <CardHeader>
-                  <CardTitle>Algoritomo Clientes</CardTitle>
-                  <CardDescription>Algoritimo String</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales />
-                </CardContent>
-              </Card>
+              
               <div className='col-span-4'>
-                <AreaGraph />
+                
               </div>
               <div className='col-span-4 md:col-span-3'>
-                <PieGraph />
+                
               </div>
             </div>
           </TabsContent>
