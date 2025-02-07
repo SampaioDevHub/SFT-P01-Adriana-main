@@ -8,9 +8,9 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { CreateProductBody } from '@/api/create-product';
-import { DeleteProduct } from '@/api/delete-product';
-import { getProductsById } from '@/api/get-products-by-id';
+import { CreateProductBody } from '@/api/products/create-product';
+import { DeleteProduct } from '@/api/products/delete-product';
+import { getProductsById } from '@/api/products/get-products-by-id';
 import { Button } from '@/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -25,7 +25,6 @@ export default function DeleteProductModal({
   open,
   setIsOpen
 }: ModalProps) {
-
   const queryClient = useQueryClient();
 
   const { data: product } = useQuery({

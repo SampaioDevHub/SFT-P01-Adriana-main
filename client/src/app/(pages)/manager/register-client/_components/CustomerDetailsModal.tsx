@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
-'use client'
+'use customer'
 
-import { Customer } from '../types/Customer'
+import { GetCustomerContent } from '@/api/customers/types/type-get-custumer'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,7 +13,7 @@ import {
 import { format } from 'date-fns'
 
 interface CustomerDetailsModalProps {
-  customer: Customer
+  customer: GetCustomerContent
 }
 
 export default function CustomerDetailsModal({ customer }: CustomerDetailsModalProps) {
@@ -26,7 +26,7 @@ export default function CustomerDetailsModal({ customer }: CustomerDetailsModalP
         <DialogHeader>
           <DialogTitle>Detalhes do Cliente</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        {/* <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h3 className="font-semibold">Informações Pessoais</h3>
@@ -87,7 +87,7 @@ export default function CustomerDetailsModal({ customer }: CustomerDetailsModalP
             <h3 className="font-semibold">Observações</h3>
             <p>{customer.observations}</p>
           </div>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   )

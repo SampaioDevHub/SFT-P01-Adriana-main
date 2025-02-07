@@ -6,46 +6,43 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Search, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getProducts } from '@/api/products/get-products';
-import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { usePathname, useSearchParams } from 'next/navigation';
 
 const formSchema = yup.object().shape({
   name: yup.string(),
-  code: yup.string(),
-  category: yup.string()
+  cpf: yup.string(),
+  phone: yup.string()
 });
 
 type FormSchema = yup.InferType<typeof formSchema>;
 
-export function ProductTableFilter() {
+export function CustomerTableFilter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
   const nameFilter = searchParams.get('name') ?? '';
-  const codeFilter = searchParams.get('code') ?? '';
-  const categoryFilter = searchParams.get('category') ?? '';
+  const cpfFilter = searchParams.get('cpf') ?? '';
+  const phoneFilter = searchParams.get('phone') ?? '';
 
   const {
     handleSubmit,
     register,
     reset,
     setValue,
-    control,
     formState: { isSubmitting }
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     defaultValues: {
-      category: categoryFilter ?? '',
-      code: codeFilter ?? '',
+      phone: phoneFilter ?? '',
+      cpf: cpfFilter ?? '',
       name: nameFilter ?? 'all'
     }
   });
@@ -59,16 +56,16 @@ export function ProductTableFilter() {
       newParams.delete('name');
     }
 
-    if (data.code) {
-      newParams.set('code', (data.code ?? '').toString());
+    if (data.cpf) {
+      newParams.set('cpf', (data.cpf ?? '').toString());
     } else {
-      newParams.delete('code');
+      newParams.delete('cpf');
     }
 
-    if (data.category) {
-      newParams.set('category', (data.category ?? '').toString());
+    if (data.phone) {
+      newParams.set('phone', (data.phone ?? '').toString());
     } else {
-      newParams.delete('category');
+      newParams.delete('phone');
     }
 
     newParams.set('page', '1');
@@ -79,12 +76,14 @@ export function ProductTableFilter() {
   function handleClearFilters() {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete('name');
-    newParams.delete('code');
-    newParams.delete('category');
+    newParams.delete('cpf');
+    newParams.delete('phone');
     newParams.set('page', '1');
     router.push(`${pathname}?${newParams.toString()}`);
 
-    reset(), setValue('category', '');
+    setValue('name', '')
+    setValue('cpf', '')
+    setValue('phone', '')
   }
 
   return (
@@ -93,29 +92,16 @@ export function ProductTableFilter() {
       className='flex w-full items-center gap-2'
     >
       <span className='text-sm'>Filtros:</span>
-      <Input {...register('name')} placeholder='Nome do produto' />
+      <Input {...register('name')} placeholder='Nome do cliente' />
       <Input
-        {...register('code')}
-        placeholder='Código do Produto'
-        disabled
+        {...register('cpf')}
+        placeholder='CPF do cliente'
         className='overflow-hidden text-ellipsis whitespace-nowrap'
       />
-      <Controller
-        control={control}
-        name='category'
-        render={({ field }) => (
-          <Select disabled onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className='max-w-[11rem]'>
-              <SelectValue placeholder='Categorias' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>Todos</SelectItem>
-              <SelectItem value='Roupas'>Roupas</SelectItem>
-              <SelectItem value='Acessórios'>Acessórios</SelectItem>
-              <SelectItem value='Perfumaria'>Perfumaria</SelectItem>
-            </SelectContent>
-          </Select>
-        )}
+      <Input
+        {...register('phone')}
+        placeholder='Telefone do cliente'
+        className='overflow-hidden text-ellipsis whitespace-nowrap'
       />
       <Button
         disabled={isSubmitting}

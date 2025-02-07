@@ -1,42 +1,44 @@
-import { GetProductsBody } from '@/api/products/get-products';
 import { Button } from '@/components/ui/button';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
-import { EditProductModalContent } from './editProductModalContent';
+import { EditCustomerModalContent } from './editCustomerModalContent';
 import { useState } from 'react';
-import DeleteProductModal from './deleteProductModal';
+import { DeleteCustomerModal } from './deleteCustomerModal';
+import { GetCustomerContent } from '@/api/customers/types/type-get-custumer';
+import { DialogClose } from '@radix-ui/react-dialog';
 
-export function ProductTableRow({
+export function CustomerTableRow({
   id,
   name,
-  amount,
-  category,
-  subCategory,
-  price,
-  size
-}: GetProductsBody) {
+  cpf,
+  email,
+  phone,
+  city,
+  state
+}: GetCustomerContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   return (
     <TableRow key={id}>
       <TableCell>{name}</TableCell>
-      <TableCell>{category}</TableCell>
-      <TableCell>{subCategory}</TableCell>
-      <TableCell>R$ {price.toFixed(2)}</TableCell>
-      <TableCell>{amount}</TableCell>
-      <TableCell>{size}</TableCell>
+      <TableCell>{cpf}</TableCell>
+      <TableCell>{email}</TableCell>
+      <TableCell>{phone}</TableCell>
+      <TableCell>{city}</TableCell>
+      <TableCell>{state}</TableCell>
       <TableCell className='w-[10rem]'>
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogClose className='d-none'></DialogClose>
           <DialogTrigger asChild>
             <Button variant='outline' size='sm' className='mr-2'>
               Editar
             </Button>
           </DialogTrigger>
-          <EditProductModalContent
+          <EditCustomerModalContent
             setIsOpen={setIsEditModalOpen}
             open={isEditModalOpen}
-            productId={id}
+            customerId={id}
           />
         </Dialog>
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
@@ -45,10 +47,10 @@ export function ProductTableRow({
               Excluir
             </Button>
           </DialogTrigger>
-          <DeleteProductModal
+          <DeleteCustomerModal
             setIsOpen={setIsDeleteModalOpen}
             open={isDeleteModalOpen}
-            productId={id}
+            customerId={id}
           />
         </Dialog>
       </TableCell>
