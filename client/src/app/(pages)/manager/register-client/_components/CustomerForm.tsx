@@ -131,7 +131,7 @@ export default function CustomerForm() {
     })
     
     // Redirect to customer list page
-    router.push('/dashboard/client')
+    router.push('/manager/register-client')
   }
 
   const handleInputChange = (path: string, value: string) => {
