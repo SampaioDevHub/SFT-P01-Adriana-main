@@ -18,12 +18,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+<<<<<<< HEAD
 import { getProductsByCategories } from '@/api/product/get-products-by-categories';
 import { getProductsById } from '@/api/product/get-products-by-id';
 import { updatedProduct } from '@/api/product/updated-product';
+=======
+import { getProductsByCategories } from '@/api/products/get-products-by-categories';
+import { getProductsById } from '@/api/products/get-products-by-id';
+import { updatedProduct } from '@/api/products/updated-product';
+>>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
-import { MoneyInput } from './moneyInput';
+import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({
@@ -226,7 +232,7 @@ export function EditProductModalContent({
             )}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='edit-quantity'>Quantidade</Label>
+            <Label>Quantidade</Label>
             <Input {...register('amount')} type='number' required />
             {errors.amount?.message && (
               <p className={`text-sm text-destructive`}>
@@ -262,7 +268,7 @@ export function EditProductModalContent({
               className='disabled:cursor-not-allowed disabled:opacity-70'
               type='submit'
             >
-              Atualizar Produto
+              Salvar alterações
             </Button>
           </DialogFooter>
         </form>

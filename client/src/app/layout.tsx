@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable import/no-unresolved */
 
+import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -11,7 +12,6 @@ import {
 } from '@clerk/nextjs'
 import { ptBR } from '@clerk/localizations'
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import './globals.css';
 import ReactQueryProvider from '@/components/providers/react-query-provider';
 import { Analytics } from '@vercel/analytics/next';
 

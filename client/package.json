@@ -73,8 +73,12 @@
     "cmdk": "^1.0.4",
     "date-fns": "^4.1.0",
     "eslint-config-next": "15.1.0",
+<<<<<<< HEAD
     "framer-motion": "^12.0.11",
     "i": "^0.3.7",
+=======
+    "framer-motion": "^12.0.6",
+>>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "kbar": "0.1.0-beta.45",
@@ -94,9 +98,15 @@
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^7.54.2",
     "react-number-format": "^5.4.3",
+    "react-phone-number-input": "^3.4.11",
     "react-query": "^3.39.3",
     "react-responsive": "^10.0.0",
+<<<<<<< HEAD
     "recharts": "^2.15.1",
+=======
+    "react-text-mask": "^5.5.0",
+    "recharts": "^2.15.0",
+>>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
     "sharp": "^0.33.5",
     "sonner": "^1.7.4",
     "sort-by": "^1.2.0",
@@ -114,6 +124,7 @@
   "devDependencies": {
     "@faker-js/faker": "^9.4.0",
     "@types/react-google-recaptcha": "^2.1.9",
+    "@types/react-text-mask": "^5.4.14",
     "@types/sort-by": "^1.2.3",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",

@@ -20,10 +20,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+<<<<<<< HEAD
 import { createProduct } from '@/api/product/create-product';
 import { getProductsByCategories } from '@/api/product/get-products-by-categories';
+=======
+import { createProduct } from '@/api/products/create-product';
+import { getProductsByCategories } from '@/api/products/get-products-by-categories';
+>>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 
-import { MoneyInput } from './moneyInput';
+import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({
@@ -77,12 +82,11 @@ export default function ProductForm() {
     mutationFn: createProduct,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['productsLength'] });
     }
   });
 
   async function handleCreateProduct(data: FormSchema) {
-    console.log(data)
+    console.log(data);
     try {
       await createProductFn({
         name: data.name,
@@ -102,7 +106,7 @@ export default function ProductForm() {
 
   const category = watch('category');
   const isClothingCategory = category === 'Roupas';
- 
+
   // Observa o valor do campo "size"
   const selectedSize = watch('size');
 

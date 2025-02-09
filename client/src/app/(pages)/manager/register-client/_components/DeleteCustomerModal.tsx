@@ -1,57 +1,70 @@
 /* eslint-disable import/no-unresolved */
-'use client'
+/* eslint-disable react/no-unescaped-entities */
+'use client';
 
-import { useState } from 'react'
-import { Customer } from '../types/Customer'
-import { Button } from "@/components/ui/button"
 import {
-  Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { useToast } from '@/hooks/use-toast'
+  DialogFooter
+} from '@/components/ui/dialog';
+import { DeleteCustomer } from '@/api/customers/delete-customer';
+import { getCustomerById } from '@/api/customers/get-customer-by-id';
+import { Button } from '@/components/ui/button';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-interface DeleteCustomerModalProps {
-  customer: Customer
-  onDelete: (id: number) => void
+interface ModalProps {
+  customerId: string ;
+  open: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-export default function DeleteCustomerModal({ customer, onDelete }: DeleteCustomerModalProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const { toast } = useToast()
+export function DeleteCustomerModal({
+  customerId,
+  open,
+  setIsOpen
+}: ModalProps) {
+  const queryClient = useQueryClient();
 
-  const handleDelete = () => {
-    onDelete(customer.id)
-    setIsOpen(false)
-    toast({
-      title: "Cliente excluído",
-      description: `${customer.name} foi removido com sucesso.`,
-      variant: "destructive",
-    })
+  const { data: customer } = useQuery({
+    queryKey: ['customer'],
+    queryFn: () => getCustomerById({ customerId }),
+    enabled: open
+  });
+
+  const { mutateAsync: deleteCustomerFn, isPending } = useMutation({
+    mutationFn: () => DeleteCustomer({ customerId }),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+    }
+  });
+
+  async function handleDeleteCustomer() {
+    deleteCustomerFn();
+    setIsOpen(false);
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="destructive" size="sm">Excluir</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Confirmar exclusão</DialogTitle>
-          <DialogDescription>
-            Tem certeza que deseja excluir o cliente {customer.name}? Esta ação não pode ser desfeita.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-          <Button variant="destructive" onClick={handleDelete}>Excluir</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Excluir Produto</DialogTitle>
+      </DialogHeader>
+      <p className='py-4'>
+        Tem certeza que deseja excluir o produto "{customer?.name}"?
+      </p>
+      <DialogFooter>
+        <Button variant='outline' onClick={() => setIsOpen(false)}>
+          Cancelar
+        </Button>
+        <Button
+          disabled={isPending}
+          className='disabled:cursor-not-allowed disabled:opacity-70'
+          variant='destructive'
+          onClick={handleDeleteCustomer}
+        >
+          Excluir
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
 }
-
