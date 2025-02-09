@@ -13,11 +13,6 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-<<<<<<< HEAD
-=======
-import { getProducts } from '@/api/products/get-products';
-import { useQuery } from '@tanstack/react-query';
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 import { useRouter } from 'next/navigation';
 import { usePathname, useSearchParams } from 'next/navigation';
 

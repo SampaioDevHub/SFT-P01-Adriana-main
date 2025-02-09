@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* eslint-disable import/no-unresolved */
 "use client";
-=======
-'use client';
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 
 import {
   Table,
@@ -15,11 +11,7 @@ import {
 import { z } from 'zod';
 
 import { useQuery } from '@tanstack/react-query';
-<<<<<<< HEAD
 import { getProducts } from '@/api/product/get-products';
-=======
-import { getProducts } from '@/api/products/get-products';
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 
 import { ProductTableSkeleton } from './_skeleton/productTableSkeleton';
 import { Pagination } from './pagination';
@@ -27,11 +19,7 @@ import { ProductTableFilter } from './productTableFilter';
 import { ProductTableRow } from './productTableRow';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-<<<<<<< HEAD
 import { getProductsLength } from '@/api/product/get-products-length';
-=======
-import { getProductsLength } from '@/api/products/get-products-length';
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 
 export default function ProductTable() {
   const searchParams = useSearchParams();
@@ -78,7 +66,6 @@ export default function ProductTable() {
       <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>
         <ProductTableFilter />
       </div>
-<<<<<<< HEAD
         <div className='max-h-[40vh] overflow-auto border rounded-md'>
           <Table>
             <TableHeader>
@@ -102,36 +89,6 @@ export default function ProductTable() {
           </Table>
         </div>
         <Pagination onPageChange={handlePaginate} pageIndex={pageIndex ?? 0} totalCount={productsLength ? productsLength?.length : 0} perPage={8} />
-=======
-      <div className='max-h-[40vh] overflow-auto rounded-md border'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Subcategoria</TableHead>
-              <TableHead>Preço</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead>Tamanhos</TableHead>
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className='w-full'>
-            {isLoadingProducts && <ProductTableSkeleton />}
-            {products &&
-              products?.map((product) => {
-                return <ProductTableRow key={product.id} {...product} />;
-              })}
-          </TableBody>
-        </Table>
-      </div>
-      <Pagination
-        onPageChange={handlePaginate}
-        pageIndex={pageIndex ?? 0}
-        totalCount={productsLength ? productsLength?.length : 0}
-        perPage={8}
-      />
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
     </div>
   );
 }

@@ -156,16 +156,11 @@ importers:
         specifier: 15.1.0
         version: 15.1.0(eslint@8.48.0)(typescript@5.7.2)
       framer-motion:
-<<<<<<< HEAD
         specifier: ^12.0.11
         version: 12.0.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       i:
         specifier: ^0.3.7
         version: 0.3.7
-=======
-        specifier: ^12.0.6
-        version: 12.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
       jspdf:
         specifier: ^2.5.2
         version: 2.5.2
@@ -232,9 +227,6 @@ importers:
       react-responsive:
         specifier: ^10.0.0
         version: 10.0.0(react@19.0.0)
-      react-text-mask:
-        specifier: ^5.5.0
-        version: 5.5.0(react@19.0.0)
       recharts:
         specifier: ^2.15.1
         version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2368,13 +2360,8 @@ packages:
       react-dom:
         optional: true
 
-<<<<<<< HEAD
   framer-motion@12.0.11:
     resolution: {integrity: sha512-1F+YNXr3bSHxt5sCzeCVL56sc4MngbOhdU5ptv02vaepdFYcQd0fZtuAHvFJgMbn5V7SOsaX/3hVqr21ZaCKhA==}
-=======
-  framer-motion@12.0.6:
-    resolution: {integrity: sha512-LmrXbXF6Vv5WCNmb+O/zn891VPZrH7XbsZgRLBROw6kFiP+iTK49gxTv2Ur3F0Tbw6+sy9BVtSqnWfMUpH+6nA==}
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -3398,11 +3385,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  react-text-mask@5.5.0:
-    resolution: {integrity: sha512-SLJlJQxa0uonMXsnXRpv5abIepGmHz77ylQcra0GNd7Jtk4Wj2Mtp85uGQHv1avba2uI8ZvRpIEQPpJKsqRGYw==}
-    peerDependencies:
-      react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
 
   react-transition-group@4.4.5:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
@@ -5814,7 +5796,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.4.1
+      tslib: 2.8.1
 
   dunder-proto@1.0.1:
     dependencies:
@@ -6259,11 +6241,7 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
-<<<<<<< HEAD
   framer-motion@12.0.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
-=======
-  framer-motion@12.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
     dependencies:
       motion-dom: 12.0.0
       motion-utils: 12.0.0
@@ -6728,7 +6706,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.8.1
 
   lru-cache@10.4.3: {}
 
@@ -6871,7 +6849,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.4.1
+      tslib: 2.8.1
 
   node-releases@2.0.19: {}
 
@@ -7215,11 +7193,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.1
 
-  react-text-mask@5.5.0(react@19.0.0):
-    dependencies:
-      prop-types: 15.8.1
-      react: 19.0.0
-
   react-transition-group@4.4.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.7
@@ -7461,7 +7434,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.4.1
+      tslib: 2.8.1
 
   snakecase-keys@8.0.1:
     dependencies:

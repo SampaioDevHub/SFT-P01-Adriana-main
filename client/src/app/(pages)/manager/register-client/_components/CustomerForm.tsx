@@ -22,99 +22,6 @@ import { formSchema, FormSchema } from '../types/customerYupType';
 export default function CustomerForm() {
   const queryClient = useQueryClient();
 
-<<<<<<< HEAD
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const newCustomer = { ...formData, id: Date.now() }
-    
-    // Get existing customers from localStorage
-    const existingCustomers = JSON.parse(localStorage.getItem('customers') || '[]')
-    
-    // Add new customer
-    const updatedCustomers = [...existingCustomers, newCustomer]
-    
-    // Save to localStorage
-    localStorage.setItem('customers', JSON.stringify(updatedCustomers))
-    
-    toast({
-      title: "Cliente cadastrado",
-      description: `${newCustomer.name} foi adicionado com sucesso.`,
-    })
-    
-    // Reset form
-    setFormData({
-      name: '',
-      phone: '',
-      residentialAddress: {
-        street: '',
-        sector: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        reference: ''
-      },
-      cpf: '',
-      identityDocument: {
-        number: '',
-        issuer: ''
-      },
-      birthDate: '',
-      maritalStatus: '',
-      clientStatus: '',
-      professional: {
-        company: '',
-        phone: '',
-        duration: '',
-        address: '',
-        sector: '',
-        city: '',
-        state: '',
-        section: '',
-        role: ''
-      },
-      bank: {
-        name: '',
-        branch: ''
-      },
-      parents: {
-        father: '',
-        mother: ''
-      },
-      commercialInfo: '',
-      personalReferences: [
-        { name: '', phone: '', address: '' },
-        { name: '', phone: '', address: '' }
-      ],
-      observations: ''
-    })
-    
-    // Redirect to customer list page
-    router.push('/manager/register-client')
-  }
-
-  const handleInputChange = (path: string, value: string) => {
-    const pathArray = path.split('.')
-    setFormData(prev => {
-      const newData = { ...prev }
-      let current: any = newData
-      for (let i = 0; i < pathArray.length - 1; i++) {
-        current = current[pathArray[i]]
-      }
-      current[pathArray[pathArray.length - 1]] = value
-      return newData
-    })
-  }
-
-  const handleReferenceChange = (index: number, field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      personalReferences: prev.personalReferences.map((ref, i) => 
-        i === index ? { ...ref, [field]: value } : ref
-      )
-    }))
-  }
-
-=======
   const {
     handleSubmit,
     register,
@@ -216,7 +123,6 @@ export default function CustomerForm() {
     }
   }
 
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
   return (
     <Card>
       <CardHeader>

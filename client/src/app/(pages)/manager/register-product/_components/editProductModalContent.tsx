@@ -18,15 +18,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-<<<<<<< HEAD
 import { getProductsByCategories } from '@/api/product/get-products-by-categories';
 import { getProductsById } from '@/api/product/get-products-by-id';
 import { updatedProduct } from '@/api/product/updated-product';
-=======
-import { getProductsByCategories } from '@/api/products/get-products-by-categories';
-import { getProductsById } from '@/api/products/get-products-by-id';
-import { updatedProduct } from '@/api/products/updated-product';
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import PhoneInputCompoenent from "react-phone-number-input";
 import "react-phone-number-input/style.css"; // Importa o estilo da biblioteca
 import { Input } from "../ui/input";

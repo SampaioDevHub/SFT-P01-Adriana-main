@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 /* eslint-disable import/no-unresolved */
 import { GetProductsBody } from '@/api/product/get-products';
-=======
-import { GetProductsBody } from '@/api/products/get-products';
->>>>>>> 4c2894b1a0f819cde3fccbe830981175496985c0
 import { Button } from '@/components/ui/button';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
