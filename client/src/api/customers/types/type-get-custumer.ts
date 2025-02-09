@@ -13,7 +13,7 @@ export interface GetCustomerContent {
   businessCity?: string;
   businessState?: string;
   businessPosition?: string;
-  dataBirth?: string;
+  dateBirth?: string;
   addressData: {
     zipCode?: string;
     address?: string;

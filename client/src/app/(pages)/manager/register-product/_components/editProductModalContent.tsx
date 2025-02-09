@@ -30,7 +30,7 @@ import { getProductsById } from '@/api/products/get-products-by-id';
 import { updatedProduct } from '@/api/products/updated-product';
 
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
-import { MoneyInput } from '../../../../../components/moneyInput';
+import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({

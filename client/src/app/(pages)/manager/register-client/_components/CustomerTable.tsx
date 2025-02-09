@@ -1,4 +1,4 @@
-'use customer';
+'use client';
 
 import {
   Table,
@@ -53,14 +53,12 @@ export default function CustomerTable() {
     router.push(`${pathname}?${newParams.toString()}`);
   }
 
-  console.log(customers)
-
   return (
     <div className='space-y-4'>
       <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>
         <CustomerTableFilter />
       </div>
-      <div className='max-h-[40vh] overflow-auto rounded-md border'>
+      <div className='max-h-[60vh] overflow-auto rounded-md border'>
         <Table>
           <TableHeader>
             <TableRow>

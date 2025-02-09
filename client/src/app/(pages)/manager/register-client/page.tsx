@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import CustomerTable from "./_components/customerTable";
 import PageContainer from "@/components/layout/page-container";
-import CustomerForm from "./_components/CustomerForm";
+import CustomerForm from "./_components/customerForm";
 import { useState } from "react";
 
 export default function CustomersPage() {

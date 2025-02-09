@@ -1,27 +1,9 @@
-export type customerAddressData = {
-  zipCode: string;
-  address: string;
-  number: string;
-  referencePoint: string;
-  complement: string;
-  city: string;
-  state: string;
-};
-
-export interface CustomerReferenceList {
-  name: string;
-  phone: string;
-  addressData: customerAddressData;
-  observation: string;
-}
-
 export interface CreateCustomerContent {
   name: string;
   cpf: string;
   maritalStatus?: string;
   email?: string;
   phone?: string;
-  dataBirth?: string;
   enterprise?: string;
   businessPhone?: string;
   lengthService?: string;
@@ -30,12 +12,20 @@ export interface CreateCustomerContent {
   businessCity?: string;
   businessState?: string;
   businessPosition?: string;
-  bank?: string,
-  agency?: string,
-  father?: string,
-  mother?: string,
-  addressData?: customerAddressData;
-  referenceEntityList?: CustomerReferenceList[];
+  dateBirth?: string;
+  addressData: {
+    zipCode?: string;
+    address?: string;
+    number?: string;
+    complement?: string;
+    referencePoint?: string;
+    city?: string;
+    state?: string;
+  };
+  bank?: string;
+  agency?: string;
+  father?: string;
+  mother?: string;
 }
 
 export interface CreateCustomerBody {

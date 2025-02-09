@@ -23,7 +23,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createProduct } from '@/api/products/create-product';
 import { getProductsByCategories } from '@/api/products/get-products-by-categories';
 
-import { MoneyInput } from '../../../../../components/moneyInput';
+import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({
@@ -76,7 +76,6 @@ export default function ProductForm() {
     mutationFn: createProduct,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['productsLength'] });
     }
   });
 

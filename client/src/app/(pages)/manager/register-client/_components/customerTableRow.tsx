@@ -14,19 +14,25 @@ export function CustomerTableRow({
   cpf,
   email,
   phone,
-  city,
-  state
+  addressData
 }: GetCustomerContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const formatPhoneNumber = (phone: string | undefined) => {
+    if(!phone) return
+    const onlyDigits = phone.replace(/\D/g, ''); // Remove tudo que não é número
+  
+    return onlyDigits.replace(/^(\d{2})(\d{2})(\d{5})(\d{4})$/, '+$1 ($2) $3-$4');
+  };
   return (
     <TableRow key={id}>
       <TableCell>{name}</TableCell>
       <TableCell>{cpf}</TableCell>
       <TableCell>{email}</TableCell>
-      <TableCell>{phone}</TableCell>
-      <TableCell>{city}</TableCell>
-      <TableCell>{state}</TableCell>
+      <TableCell>{formatPhoneNumber(phone)}</TableCell>
+      <TableCell>{addressData.city}</TableCell>
+      <TableCell>{addressData.state}</TableCell>
       <TableCell className='w-[10rem]'>
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogClose className='d-none'></DialogClose>

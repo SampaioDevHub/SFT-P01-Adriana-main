@@ -1,14 +1,7 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 import { Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -105,7 +98,7 @@ export function CustomerTableFilter() {
       />
       <Button
         disabled={isSubmitting}
-        className='text-nowrap disabled:cursor-not-allowed disabled:opacity-70'
+        className='text-nowrap whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-70'
         variant='secondary'
         type='submit'
       >
@@ -117,7 +110,7 @@ export function CustomerTableFilter() {
         variant='outline'
         type='button'
         disabled={isSubmitting}
-        className='text-nowrap disabled:cursor-not-allowed disabled:opacity-70'
+        className='text-nowrap whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-70'
       >
         <X className='mr-2 h-[1rem] w-[1rem]' />
         Remover filtros

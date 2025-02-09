@@ -14,9 +14,9 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { PenLine, Trash, X } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { format, parseISO } from 'date-fns';
+import { X } from 'lucide-react';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as yup from 'yup';
 
@@ -28,47 +28,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCustomerById } from '@/api/customers/get-customer-by-id';
 import { updatedCustomer } from '@/api/customers/updated-customer';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
+import { CpfInput } from '@/components/Inputs/cpfInput';
+import { PhoneInput } from '@/components/Inputs/phoneInput';
+import { CepInput } from '@/components/Inputs/cepInput';
 
 import { CustomerStatus } from '../constants/CustomerStatus';
+import { FormSchema, formSchema } from '../types/customerYupType';
 import { EditCustomerContentSkeleton } from './_skeleton/editCustomerContentSkeleton';
-
-const formSchema = yup.object({
-  name: yup.string().required('Informe o nome do cliente'),
-  phone: yup.string(),
-  address: yup.string(),
-  number: yup.string(),
-  complement: yup.string(),
-  city: yup.string(),
-  state: yup.string(),
-  cep: yup.string(),
-  referencePoint: yup.string(),
-  cpf: yup.string().required('Informe o CPF do cliente'),
-  dataBirth: yup.string(),
-  maritalStatus: yup.string(),
-  enterprise: yup.string(),
-  businessPhone: yup.string(),
-  lengthService: yup.string(),
-  businessAddress: yup.string(),
-  businessCity: yup.string(),
-  businessState: yup.string(),
-  businessPosition: yup.string(),
-  bank: yup.string(),
-  agency: yup.string(),
-  father: yup.string(),
-  mother: yup.string(),
-  referenceName: yup.string(),
-  referencePhone: yup.string(),
-  referenceCep: yup.string(),
-  referenceAddress: yup.string(),
-  referenceSector: yup.string(),
-  referenceNumber: yup.string(),
-  referenceComplement: yup.string(),
-  referenceCity: yup.string(),
-  referenceState: yup.string()
-});
-
-type FormSchema = yup.InferType<typeof formSchema>;
+import { useEffect } from 'react';
 
 interface ModalProps {
   customerId: string;
@@ -83,39 +50,6 @@ export function EditCustomerModalContent({
 }: ModalProps) {
   const queryClient = useQueryClient();
 
-  const [isEditReference, setIsEditReference] = useState('');
-
-  const referenceEntity = [
-    {
-      id: 's',
-      name: 'string',
-      phone: 'string',
-      addressData: {
-        zipCode: 'string',
-        address: 'string',
-        number: 'string',
-        complement: 'string',
-        referencePoint: 'string',
-        city: 'string',
-        state: 'string'
-      }
-    },
-    {
-      id: 'sd',
-      name: 'string',
-      phone: 'string',
-      addressData: {
-        zipCode: 'string',
-        address: 'string',
-        number: 'string',
-        complement: 'string',
-        referencePoint: 'string',
-        city: 'string',
-        state: 'string'
-      }
-    }
-  ];
-
   const { data: customer, isLoading: isLoadingGetCustomer } = useQuery({
     queryKey: ['customer', customerId],
     queryFn: () => getCustomerById({ customerId }),
@@ -124,42 +58,91 @@ export function EditCustomerModalContent({
     gcTime: 0
   });
 
+  const dataFormatada =
+    customer?.dateBirth &&
+    format(parseISO(customer.dateBirth.split(' ')[0]), 'yyyy-MM-dd');
+
   const {
     handleSubmit,
     register,
     reset,
+    setValue,
+    watch,
+    control,
     formState: { isSubmitting, errors }
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
-    defaultValues: async () => {
-      const customer = await getCustomerById({ customerId });
-      return {
-        name: customer?.name ?? '',
-        phone: customer?.phone ?? '',
-        zipCode: customer?.addressData.zipCode ?? '',
-        address: customer?.addressData.address ?? '',
-        number: customer?.addressData.number ?? '',
-        complement: customer?.addressData.complement ?? '',
-        referencesPont: customer?.addressData.referencePoint ?? '',
-        city: customer?.addressData.city ?? '',
-        state: customer?.addressData.state ?? '',
-        cpf: customer?.cpf ?? '',
-        dataBirth: customer?.dataBirth ?? '',
-        maritalStatus: customer?.maritalStatus ?? '',
-        enterprise: customer?.enterprise ?? '',
-        businessPhone: customer?.businessPhone ?? '',
-        lengthService: customer?.lengthService ?? '',
-        businessAddress: customer?.businessAddress ?? '',
-        businessCity: customer?.businessCity ?? '',
-        businessState: customer?.businessState ?? '',
-        businessPosition: customer?.businessPosition ?? '',
-        bank: customer?.bank ?? '',
-        agency: customer?.agency ?? '',
-        father: customer?.father ?? '',
-        mother: customer?.mother ?? ''
-      };
+    values: {
+      name: customer?.name ?? '',
+      phone: customer?.phone ?? '',
+      email: customer?.email ?? '',
+      cep: customer?.addressData.zipCode ?? '',
+      address: customer?.addressData.address ?? '',
+      number: customer?.addressData.number ?? '',
+      complement: customer?.addressData.complement ?? '',
+      referencePoint: customer?.addressData.referencePoint ?? '',
+      city: customer?.addressData.city ?? '',
+      state: customer?.addressData.state ?? '',
+      cpf: customer?.cpf ?? '',
+      dateBirth: dataFormatada,
+      maritalStatus: customer?.maritalStatus ?? '',
+      enterprise: customer?.enterprise ?? '',
+      businessPhone: customer?.businessPhone ?? '',
+      lengthService: customer?.lengthService ?? '',
+      businessAddress: customer?.businessAddress ?? '',
+      businessCity: customer?.businessCity ?? '',
+      businessState: customer?.businessState ?? '',
+      businessPosition: customer?.businessPosition ?? '',
+      bank: customer?.bank ?? '',
+      agency: customer?.agency ?? '',
+      father: customer?.father ?? '',
+      mother: customer?.mother ?? ''
     }
   });
+
+  const cep = watch('cep')?.replace(/\D/g, '');
+  
+    // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
+    useEffect(() => {
+      if (cep && cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.erro) {
+              setValue(
+                'address',
+                `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
+              );
+              setValue('complement', `${data.logradouro} ${data.complemento}`);
+              setValue('referencePoint', data.bairro);
+              setValue('city', data.localidade);
+              setValue('state', data.estado);
+            }
+          })
+          .catch((error) => toast.error('Erro ao buscara o CEP'));
+      }
+    }, [cep, setValue]);
+  
+    const businessCep = watch('businessCep')?.replace(/\D/g, '');
+  
+    // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
+    useEffect(() => {
+      if (businessCep && businessCep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${businessCep}/json/`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.erro) {
+              setValue(
+                'businessAddress',
+                `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
+              );
+              setValue('businessCity', data.localidade);
+              setValue('businessState', data.estado);
+            }
+          })
+          .catch((error) => toast.error('Erro ao buscara o CEP'));
+      }
+    }, [businessCep, setValue]);
 
   const { mutateAsync: updatedCustomerFn } = useMutation({
     mutationFn: updatedCustomer,
@@ -174,6 +157,7 @@ export function EditCustomerModalContent({
         id: customer?.id ?? '',
         name: data.name,
         phone: data.phone,
+        email: data.email,
         addressData: {
           zipCode: data.cep,
           address: data.address,
@@ -184,7 +168,7 @@ export function EditCustomerModalContent({
           state: data.state
         },
         cpf: data.cpf,
-        dataBirth: data.dataBirth,
+        dateBirth: data.dateBirth,
         maritalStatus: data.maritalStatus,
         enterprise: data.enterprise,
         businessPhone: data.businessPhone,
@@ -196,7 +180,7 @@ export function EditCustomerModalContent({
         bank: data.bank,
         agency: data.agency,
         father: data.father,
-        mother: data.mother,
+        mother: data.mother
       });
       reset();
       setIsOpen(false);
@@ -221,14 +205,13 @@ export function EditCustomerModalContent({
       {customer && (
         <form onSubmit={handleSubmit(handleUpdatedCustomer)}>
           <Tabs defaultValue='personalInformation' className='w-full'>
-            <TabsList className='grid grid-cols-4'>
+            <TabsList className='grid grid-cols-3'>
               <TabsTrigger value='personalInformation'>Pessoais</TabsTrigger>
               <TabsTrigger value='homeAddress'>Endereço</TabsTrigger>
               <TabsTrigger value='documents'>Documentos</TabsTrigger>
               <TabsTrigger value='professionals'>Profissionais</TabsTrigger>
               <TabsTrigger value='banking'>Bancárias</TabsTrigger>
               <TabsTrigger value='affiliation'>Filiação</TabsTrigger>
-              <TabsTrigger value='references'>Referências</TabsTrigger>
             </TabsList>
             <TabsContent value='personalInformation'>
               <Card>
@@ -240,26 +223,40 @@ export function EditCustomerModalContent({
                 </CardHeader>
                 <CardContent className='space-y-2'>
                   <div className='space-y-2'>
-                    <Label htmlFor='name'>Nome</Label>
-                    <Input
-                      id='name'
-                      placeholder='Nome do cliente'
-                      {...register('name')}
-                      required
-                    />
+                    <Label className='gap-1' htmlFor='name'>
+                      Nome
+                      <span className='text-muted-foreground'>
+                        (Obrigatório)
+                      </span>
+                    </Label>
+                    <Input id='name' {...register('name')} required />
                     {errors.name?.message && (
-                      <p className={`text-sm text-destructive`}>
+                      <p className='text-sm text-destructive'>
                         {errors.name?.message}
                       </p>
                     )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='phone'>Telefone</Label>
-                    <Input
-                      id='phone'
-                      placeholder='Telefone do cliente'
-                      {...register('phone')}
+                    <Controller
+                      name='phone'
+                      control={control}
+                      render={({ field }) => <PhoneInput {...field} />}
                     />
+                    {errors.phone?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.phone?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='email'>E-mail</Label>
+                    <Input id='email' {...register('email')} />
+                    {errors.email?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.email?.message}
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -275,60 +272,74 @@ export function EditCustomerModalContent({
                 </CardHeader>
                 <CardContent className='max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden'>
                   <div className='space-y-2'>
-                    <Label htmlFor='address'>Endereço</Label>
-                    <Input
-                      id='address'
-                      placeholder='Endereço do cliente'
-                      {...register('address')}
+                    <Label htmlFor='cep'>CEP</Label>
+                    <Controller
+                      name='cep'
+                      control={control}
+                      render={({ field }) => <CepInput {...field} />}
                     />
+                    {errors.cep?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.cep?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='address'>Endereço</Label>
+                    <Input id='address' {...register('address')} />
+                    {errors.address?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.address?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='city'>Cidade</Label>
-                    <Input
-                      id='city'
-                      placeholder='Cidade do cliente'
-                      {...register('city')}
-                    />
+                    <Input id='city' {...register('city')} />
+                    {errors.city?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.city?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='state'>Estado</Label>
-                    <Input
-                      id='state'
-                      placeholder='Estado do cliente'
-                      {...register('state')}
-                    />
-                  </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='cep'>CEP</Label>
-                    <Input
-                      id='cep'
-                      placeholder='CEP do cliente'
-                      {...register('cep')}
-                    />
+                    <Input id='state' {...register('state')} />
+                    {errors.state?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.state?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='referencePoint'>Ponto de referência</Label>
                     <Input
                       id='referencePoint'
-                      placeholder='Setor(Bairro) do cliente'
                       {...register('referencePoint')}
                     />
+                    {errors.referencePoint?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.referencePoint?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='number'>Numero da casa</Label>
-                    <Input
-                      id='number'
-                      placeholder='Numero da casa do cliente'
-                      {...register('number')}
-                    />
+                    <Input id='number' {...register('number')} />
+                    {errors.number?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.number?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='complement'>Complemento</Label>
-                    <Input
-                      id='complement'
-                      placeholder='Complemento do endereço do cliente'
-                      {...register('complement')}
-                    />
+                    <Input id='complement' {...register('complement')} />
+                    {errors.complement?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.complement?.message}
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -344,15 +355,16 @@ export function EditCustomerModalContent({
                 </CardHeader>
                 <CardContent className='space-y-2'>
                   <div className='space-y-2'>
-                    <Label htmlFor='cpf'>CPF</Label>
-                    <Input
-                      id='cpf'
-                      placeholder='CPF do cliente'
-                      {...register('cpf')}
-                      required
+                    <Label className='gap-1' htmlFor='name'>
+                      CPF <span className='text-muted-foreground'>(Obrigatório)</span>
+                    </Label>
+                    <Controller
+                      name='cpf'
+                      control={control}
+                      render={({ field }) => <CpfInput {...field} />}
                     />
                     {errors.cpf?.message && (
-                      <p className={`text-sm text-destructive`}>
+                      <p className='text-sm text-destructive'>
                         {errors.cpf?.message}
                       </p>
                     )}
@@ -361,12 +373,17 @@ export function EditCustomerModalContent({
                     <Label htmlFor='dataBirth'>Data de nascimento</Label>
                     <Input
                       id='dataBirth'
-                      placeholder='Data de nascimento do cliente'
-                      {...register('dataBirth')}
+                      type='date'
+                      {...register('dateBirth')}
                     />
+                    {errors.dateBirth?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.dateBirth?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='flex flex-col space-y-2'>
-                    <Label htmlFor='maritalStatus'>Categoria</Label>
+                    <Label htmlFor='maritalStatus'>Estado civil</Label>
                     <select
                       defaultValue='all'
                       className='flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
@@ -385,6 +402,11 @@ export function EditCustomerModalContent({
                         </option>
                       ))}
                     </select>
+                    {errors.maritalStatus?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.maritalStatus?.message}
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -401,59 +423,85 @@ export function EditCustomerModalContent({
                 <CardContent className='max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden'>
                   <div className='space-y-2'>
                     <Label htmlFor='enterprise'>Empresa</Label>
-                    <Input
-                      id='enterprise'
-                      placeholder='Nome da empresa'
-                      {...register('enterprise')}
-                    />
+                    <Input id='enterprise' {...register('enterprise')} />
+                    {errors.enterprise?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.enterprise?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='businessPhone'>Telefone comercial</Label>
-                    <Input
-                      id='businessPhone'
-                      placeholder='Telefone da empresa'
-                      {...register('businessPhone')}
-                    />
+                    <Input id='businessPhone' {...register('businessPhone')} />
+                    {errors.businessPhone?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.businessPhone?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='lengthService'>Tempo de serviço</Label>
-                    <Input
-                      id='lengthService'
-                      placeholder='Quanto tempo ficou na empresa'
-                      {...register('lengthService')}
+                    <Input id='lengthService' {...register('lengthService')} />
+                    {errors.lengthService?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.lengthService?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='businessCep'>CEP</Label>
+                    <Controller
+                      name='businessCep'
+                      control={control}
+                      render={({ field }) => <CepInput {...field} />}
                     />
+                    {errors.businessCep?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.businessCep?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='businessAddress'>Endereço comercial</Label>
                     <Input
                       id='businessAddress'
-                      placeholder='Endereço da empresa'
                       {...register('businessAddress')}
                     />
+                    {errors.businessAddress?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.businessAddress?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='businessCity'>Cidade</Label>
-                    <Input
-                      id='businessCity'
-                      placeholder='Cidade da empresa'
-                      {...register('businessCity')}
-                    />
+                    <Input id='businessCity' {...register('businessCity')} />
+                    {errors.businessCity?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.businessCity?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='businessState'>Estado</Label>
-                    <Input
-                      id='businessState'
-                      placeholder='Estado da empresa'
-                      {...register('businessState')}
-                    />
+                    <Input id='businessState' {...register('businessState')} />
+                    {errors.businessState?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.businessState?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='businessPosition'>Cargo</Label>
                     <Input
                       id='businessPosition'
-                      placeholder='Com o que o cliente trabalha'
                       {...register('businessPosition')}
                     />
+                    {errors.businessPosition?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.businessPosition?.message}
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -470,19 +518,21 @@ export function EditCustomerModalContent({
                 <CardContent className='space-y-2'>
                   <div className='space-y-2'>
                     <Label htmlFor='bank'>Banco</Label>
-                    <Input
-                      id='bank'
-                      placeholder='Banco do cliente'
-                      {...register('bank')}
-                    />
+                    <Input id='bank' {...register('bank')} />
+                    {errors.bank?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.bank?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='agency'>Agência</Label>
-                    <Input
-                      id='agency'
-                      placeholder='Agência do cliente'
-                      {...register('agency')}
-                    />
+                    <Input id='agency' {...register('agency')} />
+                    {errors.agency?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.agency?.message}
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -499,93 +549,22 @@ export function EditCustomerModalContent({
                 <CardContent className='space-y-2'>
                   <div className='space-y-2'>
                     <Label htmlFor='father'>Pai</Label>
-                    <Input
-                      id='father'
-                      placeholder='Pai do cliente'
-                      {...register('father')}
-                    />
+                    <Input id='father' {...register('father')} />
+                    {errors.father?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.father?.message}
+                      </p>
+                    )}
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='mother'>Mãe</Label>
-                    <Input
-                      id='mother'
-                      placeholder='Mãe do cliente'
-                      {...register('mother')}
-                    />
+                    <Input id='mother' {...register('mother')} />
+                    {errors.mother?.message && (
+                      <p className='text-sm text-destructive'>
+                        {errors.mother?.message}
+                      </p>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value='references'>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Referências Pessoais</CardTitle>
-                  <CardDescription>
-                    Edite ou adicione referências pessoais do seu cliente.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className='space-y-2'>
-                  {customer.referenceEntityList?.map((reference) => {
-                    return (
-                      <div key={reference.id} className='space-y-2'>
-                        {isEditReference !== reference.id && (
-                          <div className='flex gap-2'>
-                            <div className='flex w-full items-center gap-4 rounded-md bg-background px-3 py-2'>
-                              <div>
-                                <p className='text-lg'>{reference.name}</p>
-                                <span className='text-sm text-muted-foreground'>
-                                  {reference.phone}
-                                </span>
-                              </div>
-                              <Separator orientation='vertical' />
-                              <div>
-                                <p className='text-lg'>
-                                  {reference.addressData.city}
-                                </p>
-                                <span className='text-sm text-muted-foreground'>
-                                  {reference.addressData.state}
-                                </span>
-                              </div>
-                            </div>
-                            <div className='flex items-center gap-2'>
-                              <Button
-                                onClick={() => setIsEditReference(reference.id)}
-                                variant='link'
-                                className='h-8 w-8 p-0'
-                              >
-                                <PenLine className='h-5 w-5 text-foreground' />
-                              </Button>
-                              <Button variant='link' className='h-8 w-8 p-0'>
-                                <Trash className='h-5 w-5 text-destructive' />
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                        {isEditReference === reference.id &&
-                          <div className='space-y-2'>
-                            <div className='space-y-2'>
-                              <Label htmlFor='father'>Pai</Label>
-                              <Input
-                                id='father'
-                                placeholder='Pai do cliente'
-                                {...register('father')}
-                              />
-                            </div>
-                            <div className='space-y-2'>
-                              <Label htmlFor='mother'>Mãe</Label>
-                              <Input
-                                id='mother'
-                                placeholder='Mãe do cliente'
-                                {...register('mother')}
-                              />
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    );
-                  })}
-                  <Button variant='outline'>Adicionar nova Referência</Button>
                 </CardContent>
               </Card>
             </TabsContent>
