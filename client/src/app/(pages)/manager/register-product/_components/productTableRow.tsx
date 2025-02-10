@@ -1,11 +1,12 @@
-import { GetProductsBody } from '@/api/products/get-products';
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { GetProductContent } from '@/api/products/types/type-get-product';
 
-import { EditProductModalContent } from './editProductModalContent';
-import { useState } from 'react';
 import DeleteProductModal from './deleteProductModal';
+import { EditProductModalContent } from './editProductModalContent';
 
 export function ProductTableRow({
   id,
@@ -14,8 +15,9 @@ export function ProductTableRow({
   category,
   subCategory,
   price,
+  priceWithDiscount,
   size
-}: GetProductsBody) {
+}: GetProductContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   return (
@@ -23,7 +25,18 @@ export function ProductTableRow({
       <TableCell>{name}</TableCell>
       <TableCell>{category}</TableCell>
       <TableCell>{subCategory}</TableCell>
-      <TableCell>R$ {price.toFixed(2)}</TableCell>
+      <TableCell>
+        {priceWithDiscount ? (
+          <div className='space-x-1'>
+            <span style={{textDecoration: "line-through"}} className='text-xs text-muted-foreground'>
+              R$ {price}
+            </span>
+            <span>R$ {priceWithDiscount.toString().replace(".", ",")}</span>
+          </div>
+        ) : (
+          <p>R$ {price}</p>
+        )}
+      </TableCell>
       <TableCell>{amount}</TableCell>
       <TableCell>{size}</TableCell>
       <TableCell className='w-[10rem]'>

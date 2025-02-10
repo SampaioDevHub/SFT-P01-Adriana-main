@@ -2,13 +2,6 @@
 'use client';
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -17,7 +10,6 @@ import {
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
@@ -29,29 +21,10 @@ import { getProductsByCategories } from '@/api/products/get-products-by-categori
 import { getProductsById } from '@/api/products/get-products-by-id';
 import { updatedProduct } from '@/api/products/updated-product';
 
-import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
-
-const formSchema = yup.object({
-  name: yup.string().required('Informe o nome do produto'),
-  price: yup.string().required('Informe o preço do produto'),
-  amount: yup
-    .number()
-    .integer()
-    .typeError('Informe a quantidade do produto')
-    .required('Informe a quantidade do produto'),
-  size: yup.string().when('category', ([category], schema) => {
-    if (category === 'Roupas') {
-      return schema.required('Selecione um tamanho');
-    }
-    return schema.notRequired();
-  }),
-  category: yup.string().required('Informe uma categoria'),
-  subcategory: yup.string().required('Informe uma Subcategoria')
-});
-
-type FormSchema = yup.InferType<typeof formSchema>;
+import { formSchema, FormSchema } from '../types/productYupType';
+import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 
 interface ModalProps {
   productId: string;
@@ -106,7 +79,9 @@ export function EditProductModalContent({
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     values: {
+      code: product?.code,
       name: product?.name ?? '',
+      discountPercentage: JSON.stringify(product?.discountPercentage) ?? '',
       price: JSON.stringify(product?.price) ?? '',
       amount: product?.amount ?? 0,
       size: product?.size ?? '',
@@ -126,12 +101,16 @@ export function EditProductModalContent({
     try {
       await updatedProductFn({
         id: productId,
+        code: data.code,
         name: data.name,
-        price: Number(data.price.replace(/[^\d.-]/g, '')),
+        discountPercentage: Number(
+          data.discountPercentage?.replace(/[^\d.-]/g, '')
+        ),
+        price: data.price.replace(/[^\d.-]/g, ''),
         amount: data.amount,
         size: data.category === 'Roupas' ? sizesString : '',
         category: data.category,
-        subcategory: data.subcategory
+        subCategory: data.subcategory
       });
       reset();
       setIsOpen(false);
@@ -144,7 +123,7 @@ export function EditProductModalContent({
   const category = watch('category');
 
   return (
-    <DialogContent>
+    <DialogContent className='max-h-[60vh] space-y-2 overflow-y-auto overflow-x-hidden'>
       <DialogHeader>
         <DialogTitle>Editar Produto</DialogTitle>
       </DialogHeader>
@@ -155,10 +134,32 @@ export function EditProductModalContent({
           className='space-y-4'
         >
           <div className='space-y-2'>
-            <Input {...register('name')} required />
+            <Label htmlFor='code'>Código do Produto</Label>
+            <Input id='code' {...register('code')} />
+            {errors.code?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.code?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='name'>Nome do Produto</Label>
+            <Input id='name' {...register('name')} required />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='name'>Desconto(%)</Label>
+            <Input
+              id='discountPercentage'
+              {...register('discountPercentage')}
+            />
+            {errors.discountPercentage?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.discountPercentage?.message}
               </p>
             )}
           </div>
@@ -220,7 +221,10 @@ export function EditProductModalContent({
             )}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='edit-price'>Preço</Label>
+            <Label className='gap-1' htmlFor='price'>
+              Preço{' '}
+              <span className='text-muted-foreground'>(Sem desconto)</span>
+            </Label>
             <Controller
               name='price' // Nome do campo no formulário
               control={control}

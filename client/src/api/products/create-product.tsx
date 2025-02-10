@@ -1,29 +1,25 @@
 /* eslint-disable import/no-unresolved */
 import { api } from "@/lib/axios";
-
-export interface CreateProductBody {
-    name: string;
-    price: number;
-    amount: number;
-    size: string;
-    category: string;
-    subcategory: string;
-}
+import { CreateProductBody } from "./types/type-create-product";
 
 export async function createProduct({
+    code,
     name,
+    discountPercentage,
     price,
     amount,
     size,
     category,
-    subcategory,
+    subCategory,
 }: CreateProductBody) {
     await api.post('/products/create', {
+        code,
         name,
+        discountPercentage,
         price,
         amount,
         size,
         category,
-        subcategory,
+        subCategory,
     })
 }

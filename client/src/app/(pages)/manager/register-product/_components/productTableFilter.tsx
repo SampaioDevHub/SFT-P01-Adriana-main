@@ -6,16 +6,14 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Search, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getProducts } from '@/api/products/get-products';
-import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { usePathname, useSearchParams } from 'next/navigation';
 
 const formSchema = yup.object().shape({
   name: yup.string(),
@@ -46,7 +44,7 @@ export function ProductTableFilter() {
     defaultValues: {
       category: categoryFilter ?? '',
       code: codeFilter ?? '',
-      name: nameFilter ?? 'all'
+      name: nameFilter ?? ''
     }
   });
 
@@ -66,7 +64,7 @@ export function ProductTableFilter() {
     }
 
     if (data.category) {
-      newParams.set('category', (data.category ?? '').toString());
+      newParams.set('category', (data.category !== 'all' ? data.category : '').toString());
     } else {
       newParams.delete('category');
     }
@@ -97,14 +95,13 @@ export function ProductTableFilter() {
       <Input
         {...register('code')}
         placeholder='Código do Produto'
-        disabled
         className='overflow-hidden text-ellipsis whitespace-nowrap'
       />
       <Controller
         control={control}
         name='category'
         render={({ field }) => (
-          <Select disabled onValueChange={field.onChange} value={field.value}>
+          <Select onValueChange={field.onChange} value={field.value}>
             <SelectTrigger className='max-w-[11rem]'>
               <SelectValue placeholder='Categorias' />
             </SelectTrigger>
@@ -119,7 +116,7 @@ export function ProductTableFilter() {
       />
       <Button
         disabled={isSubmitting}
-        className='text-nowrap disabled:cursor-not-allowed disabled:opacity-70'
+        className='text-nowrap whitespace-nowrap  disabled:cursor-not-allowed disabled:opacity-70'
         variant='secondary'
         type='submit'
       >
@@ -131,7 +128,7 @@ export function ProductTableFilter() {
         variant='outline'
         type='button'
         disabled={isSubmitting}
-        className='text-nowrap disabled:cursor-not-allowed disabled:opacity-70'
+        className='text-nowrap whitespace-nowrap  disabled:cursor-not-allowed disabled:opacity-70'
       >
         <X className='mr-2 h-[1rem] w-[1rem]' />
         Remover filtros

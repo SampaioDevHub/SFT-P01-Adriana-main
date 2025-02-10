@@ -81,7 +81,7 @@ export default function ProductTable() {
           <TableBody className='w-full'>
             {isLoadingProducts && <ProductTableSkeleton />}
             {products &&
-              products?.map((product) => {
+              products.content?.map((product) => {
                 return <ProductTableRow key={product.id} {...product} />;
               })}
           </TableBody>
@@ -90,8 +90,8 @@ export default function ProductTable() {
       <Pagination
         onPageChange={handlePaginate}
         pageIndex={pageIndex ?? 0}
-        totalCount={productsLength ? productsLength?.length : 0}
-        perPage={8}
+        totalCount={products?.totalElements ?? 8}
+        perPage={products?.pageable.pageSize ?? 8}
       />
     </div>
   );

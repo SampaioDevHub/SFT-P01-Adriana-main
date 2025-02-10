@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
-'use client';
+'use client'
 
 import {
   Select,
@@ -12,7 +12,6 @@ import {
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
@@ -25,26 +24,7 @@ import { getProductsByCategories } from '@/api/products/get-products-by-categori
 
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
-
-const formSchema = yup.object({
-  name: yup.string().required('Informe o nome do produto'),
-  price: yup.string().required('Informe o preço do produto'),
-  amount: yup
-    .number()
-    .integer()
-    .typeError('Informe a quantidade do produto')
-    .required('Informe a quantidade do produto'),
-  size: yup.string().when('category', ([category], schema) => {
-    if (category === 'Roupas') {
-      return schema.required('Selecione um tamanho');
-    }
-    return schema.notRequired();
-  }),
-  category: yup.string().required('Informe uma categoria'),
-  subcategory: yup.string().required('Informe uma Subcategoria')
-});
-
-type FormSchema = yup.InferType<typeof formSchema>;
+import { formSchema, FormSchema } from '../types/productYupType';
 
 export default function ProductForm() {
   const queryClient = useQueryClient();
@@ -80,21 +60,24 @@ export default function ProductForm() {
   });
 
   async function handleCreateProduct(data: FormSchema) {
-    console.log(data);
     try {
       await createProductFn({
+        code: data.code,
         name: data.name,
-        price: Number(data.price.replace(/[^\d.-]/g, '')),
+        discountPercentage: Number(
+          data.discountPercentage?.replace(/[^\d.-]/g, '')
+        ),
+        price: data.price,
         amount: data.amount,
-        size: isClothingCategory ? sizesString : '',
+        size: sizesString,
         category: data.category,
-        subcategory: data.subcategory
+        subCategory: data.subcategory
       });
       toast.success('Produto cadastrado com sucesso');
       reset();
       setSizesArray([]);
     } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+      toast.error(`Infelizmente ocorreu um erro, ${error}`);
     }
   }
 
@@ -123,11 +106,38 @@ export default function ProductForm() {
           className='space-y-4'
         >
           <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
+              Código do Produto
+              <span className='text-muted-foreground'>(Opcional)</span>
+            </Label>
+            <Input id='code' {...register('code')} />
+            {errors.code?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.code?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
             <Label htmlFor='name'>Nome do Produto</Label>
-            <Input {...register('name')} required />
+            <Input id='name' {...register('name')} required />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
+              Desconto(%)
+              <span className='text-muted-foreground'>(Opcional)</span>
+            </Label>
+            <Input
+              id='discountPercentage'
+              {...register('discountPercentage')}
+            />
+            {errors.discountPercentage?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.discountPercentage?.message}
               </p>
             )}
           </div>
@@ -193,7 +203,10 @@ export default function ProductForm() {
             </div>
           )}
           <div className='space-y-2'>
-            <Label htmlFor='price'>Preço</Label>
+            <Label className='gap-1' htmlFor='price'>
+              Preço
+              <span className='text-muted-foreground'>(Sem desconto)</span>
+            </Label>
             <Controller
               name='price' // Nome do campo no formulário
               control={control}
@@ -206,8 +219,8 @@ export default function ProductForm() {
             )}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='quantity'>Quantidade</Label>
-            <Input {...register('amount')} type='number' required />
+            <Label htmlFor='amount'>Quantidade</Label>
+            <Input id='amount' {...register('amount')} type='number' required />
             {errors.amount?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.amount?.message}

@@ -43,7 +43,7 @@ export interface GetCustomerContent {
   }[];
 }
 
-export interface GetCustomerBody {
+export interface GetCustomersBody {
   content: GetCustomerContent[];
   pageable: {
     pageNumber: number;
