@@ -7,17 +7,16 @@ import type { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
-import {
-  ClerkProvider,
-} from '@clerk/nextjs'
-import { ptBR } from '@clerk/localizations'
+import { ClerkProvider, ClerkLoading } from '@clerk/nextjs';
+import { ptBR } from '@clerk/localizations';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import ReactQueryProvider from '@/components/providers/react-query-provider';
 import { Analytics } from '@vercel/analytics/next';
+import { LoadingSpinner } from '@/components/loading';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
-  description: "Projeto em Desenvolvimento SampaioForce"
+  description: 'Projeto em Desenvolvimento SampaioForce'
 };
 
 const lato = Lato({
@@ -27,7 +26,6 @@ const lato = Lato({
 });
 
 export default async function RootLayout({
-
   children
 }: {
   children: React.ReactNode;
