@@ -23,7 +23,7 @@ import { getProductsById } from '@/api/product/get-products-by-id';
 import { updatedProduct } from '@/api/product/updated-product';
 
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
-import { MoneyInput } from './moneyInput';
+import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 
 const formSchema = yup.object({
@@ -226,7 +226,7 @@ export function EditProductModalContent({
             )}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='edit-quantity'>Quantidade</Label>
+            <Label>Quantidade</Label>
             <Input {...register('amount')} type='number' required />
             {errors.amount?.message && (
               <p className={`text-sm text-destructive`}>
@@ -262,7 +262,7 @@ export function EditProductModalContent({
               className='disabled:cursor-not-allowed disabled:opacity-70'
               type='submit'
             >
-              Atualizar Produto
+              Salvar alterações
             </Button>
           </DialogFooter>
         </form>

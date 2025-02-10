@@ -29,9 +29,9 @@ export function ProductTableFilter() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const nameFilter = searchParams.get("name") ?? ''
-  const codeFilter = searchParams.get("code") ?? ''
-  const categoryFilter = searchParams.get("category") ?? ''
+  const nameFilter = searchParams.get('name') ?? '';
+  const codeFilter = searchParams.get('code') ?? '';
+  const categoryFilter = searchParams.get('category') ?? '';
 
   const {
     handleSubmit,
@@ -45,7 +45,7 @@ export function ProductTableFilter() {
     defaultValues: {
       category: categoryFilter ?? '',
       code: codeFilter ?? '',
-      name: nameFilter ?? 'all',
+      name: nameFilter ?? 'all'
     }
   });
 
@@ -53,38 +53,37 @@ export function ProductTableFilter() {
     const newParams = new URLSearchParams(searchParams);
 
     if (data.name) {
-      newParams.set("name", (data.name ?? '').toString());
-    }else {
-      newParams.delete("name");
+      newParams.set('name', (data.name ?? '').toString());
+    } else {
+      newParams.delete('name');
     }
 
     if (data.code) {
-      newParams.set("code", (data.code ?? '').toString());
-    }else {
-      newParams.delete("code");
+      newParams.set('code', (data.code ?? '').toString());
+    } else {
+      newParams.delete('code');
     }
 
     if (data.category) {
-      newParams.set("category", (data.category ?? '').toString());
-    }else {
-      newParams.delete("category");
+      newParams.set('category', (data.category ?? '').toString());
+    } else {
+      newParams.delete('category');
     }
 
-    newParams.set("page", "1");
+    newParams.set('page', '1');
 
-    router.push(`${pathname}?${newParams.toString()}`)
+    router.push(`${pathname}?${newParams.toString()}`);
   }
 
   function handleClearFilters() {
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete("name");
-    newParams.delete("code");
-    newParams.delete("category");
-    newParams.set("page", "1");
-    router.push(`${pathname}?${newParams.toString()}`)
+    newParams.delete('name');
+    newParams.delete('code');
+    newParams.delete('category');
+    newParams.set('page', '1');
+    router.push(`${pathname}?${newParams.toString()}`);
 
-    reset(),
-    setValue('category', '')
+    reset(), setValue('category', '');
   }
 
   return (
@@ -93,7 +92,7 @@ export function ProductTableFilter() {
       className='flex w-full items-center gap-2'
     >
       <span className='text-sm'>Filtros:</span>
-      <Input {...register('name')} placeholder='Nome do produto'/>
+      <Input {...register('name')} placeholder='Nome do produto' />
       <Input
         {...register('code')}
         placeholder='Código do Produto'
@@ -131,7 +130,7 @@ export function ProductTableFilter() {
         variant='outline'
         type='button'
         disabled={isSubmitting}
-        className='disabled:cursor-not-allowed disabled:opacity-70 text-nowrap'
+        className='text-nowrap disabled:cursor-not-allowed disabled:opacity-70'
       >
         <X className='mr-2 h-[1rem] w-[1rem]' />
         Remover filtros

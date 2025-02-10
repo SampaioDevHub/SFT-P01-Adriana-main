@@ -24,7 +24,6 @@ export default function DeleteProductModal({
   open,
   setIsOpen
 }: ModalProps) {
-
   const queryClient = useQueryClient();
 
   const { data: product } = useQuery({

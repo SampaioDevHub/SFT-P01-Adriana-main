@@ -26,33 +26,39 @@ export default function ProductTable() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const page = searchParams.get("page") ?? "1"; 
-  const nameFilter = searchParams.get("name") ?? ''
-  const codeFilter = searchParams.get("code") ?? ''
-  const categoryFilter = searchParams.get("category") ?? ''
+  const page = searchParams.get('page') ?? '1';
+  const nameFilter = searchParams.get('name') ?? '';
+  const codeFilter = searchParams.get('code') ?? '';
+  const categoryFilter = searchParams.get('category') ?? '';
 
   const pageIndex = z.coerce
     .number()
-    .transform((page) => page - 1) 
+    .transform((page) => page - 1)
     .parse(page);
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ["products", pageIndex, nameFilter, codeFilter, categoryFilter], 
-    queryFn: () => getProducts({ pageIndex, nameFilter, codeFilter, categoryFilter: categoryFilter === "all" ? null : categoryFilter }),
-    staleTime: Infinity,
+    queryKey: ['products', pageIndex, nameFilter, codeFilter, categoryFilter],
+    queryFn: () =>
+      getProducts({
+        pageIndex,
+        nameFilter,
+        codeFilter,
+        categoryFilter: categoryFilter === 'all' ? null : categoryFilter
+      }),
+    staleTime: Infinity
   });
 
   function handlePaginate(pageIndex: number) {
     const newParams = new URLSearchParams(searchParams);
-    newParams.set("page", (pageIndex + 1).toString());
+    newParams.set('page', (pageIndex + 1).toString());
 
     router.push(`${pathname}?${newParams.toString()}`);
   }
 
   const { data: productsLength } = useQuery({
-    queryKey: ["productsLength"], 
+    queryKey: ['productsLength'],
     queryFn: getProductsLength,
-    staleTime: Infinity,
+    staleTime: Infinity
   });
 
   return (

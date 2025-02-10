@@ -24,7 +24,7 @@ export function ProductTableRow({
       <TableCell>{name}</TableCell>
       <TableCell>{category}</TableCell>
       <TableCell>{subCategory}</TableCell>
-      <TableCell>R$ {(price).toFixed(2)}</TableCell>
+      <TableCell>R$ {price.toFixed(2)}</TableCell>
       <TableCell>{amount}</TableCell>
       <TableCell>{size}</TableCell>
       <TableCell className='w-[10rem]'>
