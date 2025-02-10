@@ -90,10 +90,10 @@ export default function CustomerForm() {
     try {
       await createCustomerFn({
         name: data.name,
-        phone: data.phone,
+        phone: data.phone === undefined ? '' : data.phone,
         email: data.email,
         addressData: {
-          zipCode: data.cep,
+          zipCode: data.cep === undefined ? '' : data.cep,
           address: data.address,
           number: data.number,
           complement: data.complement,
@@ -103,9 +103,9 @@ export default function CustomerForm() {
         },
         cpf: data.cpf,
         dateBirth: data.dateBirth,
-        maritalStatus: data.maritalStatus,
+        maritalStatus: data.maritalStatus === 'all' ? '' : data.maritalStatus,
         enterprise: data.enterprise,
-        businessPhone: data.businessPhone,
+        businessPhone: data.businessPhone === undefined ? '' : data.businessPhone,
         lengthService: data.lengthService,
         businessAddress: data.businessAddress,
         businessCity: data.businessCity,

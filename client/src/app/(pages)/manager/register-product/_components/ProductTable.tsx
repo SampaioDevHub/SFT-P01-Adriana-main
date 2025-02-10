@@ -18,7 +18,6 @@ import { ProductTableFilter } from './productTableFilter';
 import { ProductTableRow } from './productTableRow';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { getProductsLength } from '@/api/products/get-products-length';
 
 export default function ProductTable() {
   const searchParams = useSearchParams();
@@ -53,12 +52,6 @@ export default function ProductTable() {
 
     router.push(`${pathname}?${newParams.toString()}`);
   }
-
-  const { data: productsLength } = useQuery({
-    queryKey: ['productsLength'],
-    queryFn: getProductsLength,
-    staleTime: Infinity
-  });
 
   return (
     <div className='space-y-4'>
