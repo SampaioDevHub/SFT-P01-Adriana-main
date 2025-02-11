@@ -8,12 +8,13 @@ export interface GetCustomerContent {
   enterprise?: string;
   businessPhone?: string;
   lengthService?: string;
+  businessZipCode?: string;
   businessAddress?: string;
   businessSector?: string;
   businessCity?: string;
   businessState?: string;
   businessPosition?: string;
-  dateBirth?: string;
+  dateBirth?: string | null;
   addressData: {
     zipCode?: string;
     address?: string;

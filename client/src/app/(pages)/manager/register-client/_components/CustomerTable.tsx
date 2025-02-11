@@ -53,8 +53,6 @@ export default function CustomerTable() {
     router.push(`${pathname}?${newParams.toString()}`);
   }
 
-  console.log(customers?.content)
-
   return (
     <div className='space-y-4'>
       <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>

@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { CreateProductBody } from '@/api/products/create-product';
 import { DeleteProduct } from '@/api/products/delete-product';
 import { getProductsById } from '@/api/products/get-products-by-id';
 import { Button } from '@/components/ui/button';

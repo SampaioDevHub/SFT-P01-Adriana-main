@@ -35,12 +35,12 @@ export default function CustomerForm() {
     resolver: yupResolver(formSchema)
   });
 
-  const cep = watch('cep')?.replace(/\D/g, '');
+  const zipCode = watch('zipCode')?.replace(/\D/g, '');
 
   // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
-    if (cep && cep.length === 8) {
-      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    if (zipCode && zipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${zipCode}/json/`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.erro) {
@@ -56,14 +56,14 @@ export default function CustomerForm() {
         })
         .catch((error) => toast.error('Erro ao buscara o CEP'));
     }
-  }, [cep, setValue]);
+  }, [zipCode, setValue]);
 
-  const businessCep = watch('businessCep')?.replace(/\D/g, '');
+  const businessZipCode = watch('businessZipCode')?.replace(/\D/g, '');
 
   // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
-    if (businessCep && businessCep.length === 8) {
-      fetch(`https://viacep.com.br/ws/${businessCep}/json/`)
+    if (businessZipCode && businessZipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${businessZipCode}/json/`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.erro) {
@@ -77,7 +77,7 @@ export default function CustomerForm() {
         })
         .catch((error) => toast.error('Erro ao buscara o CEP'));
     }
-  }, [businessCep, setValue]);
+  }, [businessZipCode, setValue]);
 
   const { mutateAsync: createCustomerFn } = useMutation({
     mutationFn: createCustomer,
@@ -93,7 +93,7 @@ export default function CustomerForm() {
         phone: data.phone === undefined ? '' : data.phone,
         email: data.email,
         addressData: {
-          zipCode: data.cep === undefined ? '' : data.cep,
+          zipCode: data.zipCode === undefined ? '' : data.zipCode,
           address: data.address,
           number: data.number,
           complement: data.complement,
@@ -107,6 +107,7 @@ export default function CustomerForm() {
         enterprise: data.enterprise,
         businessPhone: data.businessPhone === undefined ? '' : data.businessPhone,
         lengthService: data.lengthService,
+        businessZipCode: data.businessZipCode,
         businessAddress: data.businessAddress,
         businessCity: data.businessCity,
         businessState: data.businessState,
@@ -186,13 +187,13 @@ export default function CustomerForm() {
               <div className='space-y-2'>
                 <Label htmlFor='cep'>CEP</Label>
                 <Controller
-                  name='cep'
+                  name='zipCode'
                   control={control}
                   render={({ field }) => <CepInput {...field} />}
                 />
-                {errors.cep?.message && (
+                {errors.zipCode?.message && (
                   <p className='text-sm text-destructive'>
-                    {errors.cep?.message}
+                    {errors.zipCode?.message}
                   </p>
                 )}
               </div>
@@ -346,13 +347,13 @@ export default function CustomerForm() {
               <div className='space-y-2'>
                 <Label htmlFor='businessCep'>CEP</Label>
                 <Controller
-                  name='businessCep'
+                  name='businessZipCode'
                   control={control}
                   render={({ field }) => <CepInput {...field} />}
                 />
-                {errors.businessCep?.message && (
+                {errors.businessZipCode?.message && (
                   <p className='text-sm text-destructive'>
-                    {errors.businessCep?.message}
+                    {errors.businessZipCode?.message}
                   </p>
                 )}
               </div>

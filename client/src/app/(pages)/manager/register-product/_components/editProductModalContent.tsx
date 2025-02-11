@@ -98,6 +98,7 @@ export function EditProductModalContent({
   });
 
   async function handleUpdatedProduct(data: FormSchema) {
+    console.log(data);
     try {
       await updatedProductFn({
         id: productId,

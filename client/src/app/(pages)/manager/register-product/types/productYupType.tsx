@@ -17,7 +17,7 @@ export const formSchema = yup.object({
     .required('Informe a quantidade do produto'),
   size: yup
     .string()
-    .max(20, 'Você só pode inserir até 20 caracteres')
+    .max(60, 'Você só pode inserir até 60 caracteres')
     .when('category', ([category], schema) => {
       if (category === 'Roupas') {
         return schema.required('Selecione um tamanho');
