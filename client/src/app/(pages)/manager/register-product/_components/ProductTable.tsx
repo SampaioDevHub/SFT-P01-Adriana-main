@@ -19,7 +19,7 @@ import { ProductTableRow } from './productTableRow';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
-export default function ProductTable() {
+export function ProductTable() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

@@ -26,7 +26,7 @@ import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 import { formSchema, FormSchema } from '../types/productYupType';
 
-export default function ProductForm() {
+export function ProductForm() {
   const queryClient = useQueryClient();
 
   const [sizesArray, setSizesArray] = useState<string[]>([]); // Estado para armazenar os tamanhos

@@ -19,7 +19,7 @@ interface ModalProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export default function DeleteProductModal({
+export function DeleteProductModal({
   productId,
   open,
   setIsOpen

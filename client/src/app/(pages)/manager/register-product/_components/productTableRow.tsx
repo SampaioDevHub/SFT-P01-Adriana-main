@@ -5,7 +5,7 @@ import { TableRow, TableCell } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { GetProductContent } from '@/api/products/types/type-get-product';
 
-import DeleteProductModal from './DeleteProductModal';
+import { DeleteProductModal } from './DeleteProductModal';
 import { EditProductModalContent } from './editProductModalContent';
 
 export function ProductTableRow({
@@ -28,10 +28,13 @@ export function ProductTableRow({
       <TableCell>
         {priceWithDiscount ? (
           <div className='space-x-1'>
-            <span style={{textDecoration: "line-through"}} className='text-xs text-muted-foreground'>
+            <span
+              style={{ textDecoration: 'line-through' }}
+              className='text-xs text-muted-foreground'
+            >
               R$ {price}
             </span>
-            <span>R$ {priceWithDiscount.toString().replace(".", ",")}</span>
+            <span>R$ {priceWithDiscount.toString().replace('.', ',')}</span>
           </div>
         ) : (
           <p>R$ {price}</p>
