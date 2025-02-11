@@ -27,7 +27,6 @@ export default function CustomerForm() {
     register,
     reset,
     setValue,
-
     watch,
     control,
     formState: { isSubmitting, errors }

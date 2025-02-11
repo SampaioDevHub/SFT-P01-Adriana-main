@@ -232,6 +232,7 @@ export function EditCustomerModalContent({
         enterprise: data.enterprise,
         businessPhone: data.businessPhone,
         lengthService: data.lengthService,
+        businessZipCode: data.businessZipCode,
         businessAddress: data.businessAddress,
         businessCity: data.businessCity,
         businessState: data.businessState,
@@ -387,7 +388,7 @@ export function EditCustomerModalContent({
                     Edite o endereço residencial do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden'>
+                <CardContent className='max-h-[50vh] space-y-2 overflow-y-auto overflow-x-hidden'>
                   <div className='space-y-2'>
                     <Label htmlFor='cep'>CEP</Label>
                     <Controller

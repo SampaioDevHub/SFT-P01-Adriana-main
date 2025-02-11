@@ -5,7 +5,7 @@ import { TableRow, TableCell } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { GetProductContent } from '@/api/products/types/type-get-product';
 
-import DeleteProductModal from './deleteProductModal';
+import DeleteProductModal from './DeleteProductModal';
 import { EditProductModalContent } from './editProductModalContent';
 
 export function ProductTableRow({

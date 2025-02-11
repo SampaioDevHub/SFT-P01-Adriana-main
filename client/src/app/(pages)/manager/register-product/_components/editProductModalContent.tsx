@@ -124,15 +124,16 @@ export function EditProductModalContent({
   const category = watch('category');
 
   return (
-    <DialogContent className='max-h-[60vh] space-y-2 overflow-y-auto overflow-x-hidden'>
+    <DialogContent>
       <DialogHeader>
         <DialogTitle>Editar Produto</DialogTitle>
       </DialogHeader>
       {isLoadingGetProduct && <EditProductContentSkeleton />}
       {product && (
         <form
+        id='myForm'
           onSubmit={handleSubmit(handleUpdatedProduct)}
-          className='space-y-4'
+          className='max-h-[50vh] pr-2 space-y-4 overflow-y-auto overflow-x-hidden'
         >
           <div className='space-y-2'>
             <Label htmlFor='code'>Código do Produto</Label>
@@ -268,17 +269,18 @@ export function EditProductModalContent({
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button
-              disabled={isSubmitting}
-              className='disabled:cursor-not-allowed disabled:opacity-70'
-              type='submit'
-            >
-              Salvar alterações
-            </Button>
-          </DialogFooter>
         </form>
       )}
+      <DialogFooter>
+        <Button
+        form='myForm'
+          disabled={isSubmitting}
+          className='disabled:cursor-not-allowed disabled:opacity-70'
+          type='submit'
+        >
+          Salvar alterações
+        </Button>
+      </DialogFooter>
     </DialogContent>
   );
 }

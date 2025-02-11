@@ -4,7 +4,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
 import { EditCustomerModalContent } from './editCustomerModalContent';
 import { useState } from 'react';
-import { DeleteCustomerModal } from './deleteCustomerModal';
+import { DeleteCustomerModal } from './DeleteCustomerModal';
 import { GetCustomerContent } from '@/api/customers/types/type-get-custumer';
 import { DialogClose } from '@radix-ui/react-dialog';
 
