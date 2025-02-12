@@ -210,7 +210,7 @@ export function EditCustomerModalContent({
         error: 'affiliation'
       });
     }
-  }, [errorFields]);
+  }, [errorFields, errors]);
 
   async function handleUpdatedCustomer(data: FormSchema) {
     try {

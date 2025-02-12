@@ -2,7 +2,6 @@
 'use client';
 
 import { AxiosError } from 'axios';
-import { AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -17,7 +16,6 @@ import { createCustomer } from '@/api/customers/create-customer';
 import { PhoneInput } from '@/components/Inputs/phoneInput';
 import { CpfInput } from '@/components/Inputs/cpfInput';
 import { CepInput } from '@/components/Inputs/cepInput';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertError } from '@/components/alert/alert-error';
 
 import { CustomerStatus } from '../constants/CustomerStatus';
@@ -90,20 +88,6 @@ export default function CustomerForm() {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
     }
   });
-
-  function MyComponent() {
-    return (
-      <Alert variant='destructive'>
-        {' '}
-        {/* Variante 'destructive' para erro */}
-        <AlertCircle className='h-4 w-4' /> {/* Ícone de erro */}
-        <AlertTitle>Erro!</AlertTitle>
-        <AlertDescription>
-          Ocorreu um problema ao processar sua solicitação.
-        </AlertDescription>
-      </Alert>
-    );
-  }
 
   async function handleCreateCustomer(data: FormSchema) {
     try {
