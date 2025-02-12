@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
-'use client'
+'use client';
 
 import {
   Select,
@@ -21,15 +21,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createProduct } from '@/api/products/create-product';
 import { getProductsByCategories } from '@/api/products/get-products-by-categories';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 import { formSchema, FormSchema } from '../types/productYupType';
+import { AxiosError } from 'axios';
 
 export function ProductForm() {
-  const queryClient = useQueryClient();
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sizesArray, setSizesArray] = useState<string[]>([]); // Estado para armazenar os tamanhos
+
+  const queryClient = useQueryClient();
 
   const {
     handleSubmit,
@@ -73,11 +76,22 @@ export function ProductForm() {
         category: data.category,
         subCategory: data.subcategory
       });
-      toast.success('Produto cadastrado com sucesso');
       reset();
       setSizesArray([]);
-    } catch (error) {
-      toast.error(`Infelizmente ocorreu um erro, ${error}`);
+      setErrorMessage(null);
+      toast.success('Produto cadastrado com sucesso');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -258,6 +272,12 @@ export function ProductForm() {
                 Tamanhos selecionados: {sizesArray.join(', ')}
               </div>
             </div>
+          )}
+          {errorMessage && (
+            <AlertError
+              title='Ops parece que temos um erro!'
+              errorMessage={errorMessage}
+            />
           )}
           <Button
             disabled={isSubmitting}
