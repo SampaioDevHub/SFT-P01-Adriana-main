@@ -1,7 +1,9 @@
 /* eslint-disable import/no-unresolved */
 'use client';
 
-import { useEffect } from 'react';
+import { AxiosError } from 'axios';
+import { AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -15,11 +17,15 @@ import { createCustomer } from '@/api/customers/create-customer';
 import { PhoneInput } from '@/components/Inputs/phoneInput';
 import { CpfInput } from '@/components/Inputs/cpfInput';
 import { CepInput } from '@/components/Inputs/cepInput';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { CustomerStatus } from '../constants/CustomerStatus';
 import { formSchema, FormSchema } from '../types/customerYupType';
 
 export default function CustomerForm() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const queryClient = useQueryClient();
 
   const {
@@ -85,6 +91,20 @@ export default function CustomerForm() {
     }
   });
 
+  function MyComponent() {
+    return (
+      <Alert variant='destructive'>
+        {' '}
+        {/* Variante 'destructive' para erro */}
+        <AlertCircle className='h-4 w-4' /> {/* Ícone de erro */}
+        <AlertTitle>Erro!</AlertTitle>
+        <AlertDescription>
+          Ocorreu um problema ao processar sua solicitação.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   async function handleCreateCustomer(data: FormSchema) {
     try {
       await createCustomerFn({
@@ -104,7 +124,8 @@ export default function CustomerForm() {
         dateBirth: data.dateBirth,
         maritalStatus: data.maritalStatus === 'all' ? '' : data.maritalStatus,
         enterprise: data.enterprise,
-        businessPhone: data.businessPhone === undefined ? '' : data.businessPhone,
+        businessPhone:
+          data.businessPhone === undefined ? '' : data.businessPhone,
         lengthService: data.lengthService,
         businessZipCode: data.businessZipCode,
         businessAddress: data.businessAddress,
@@ -117,9 +138,22 @@ export default function CustomerForm() {
         mother: data.mother
       });
       reset();
+
+      setValue('cpf', '');
+      setErrorMessage(null);
       toast.success('Cliente cadastrado com sucesso');
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -139,7 +173,8 @@ export default function CustomerForm() {
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='space-y-2'>
                 <Label className='gap-1' htmlFor='name'>
-                  Nome <span className='text-muted-foreground'>(Obrigatório)</span>
+                  Nome{' '}
+                  <span className='text-muted-foreground'>(Obrigatório)</span>
                 </Label>
                 <Input id='name' {...register('name')} required />
                 {errors.name?.message && (
@@ -258,7 +293,8 @@ export default function CustomerForm() {
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='space-y-2'>
                 <Label className='gap-1' htmlFor='name'>
-                  CPF <span className='text-muted-foreground'>(Obrigatório)</span>
+                  CPF{' '}
+                  <span className='text-muted-foreground'>(Obrigatório)</span>
                 </Label>
                 <Controller
                   name='cpf'
@@ -445,6 +481,12 @@ export default function CustomerForm() {
               </div>
             </div>
           </div>
+          {errorMessage && (
+            <AlertError
+              title='Ops parece que temos um erro!'
+              errorMessage={errorMessage}
+            />
+          )}
           <Button
             disabled={isSubmitting}
             className='disabled:cursor-not-allowed disabled:opacity-70'

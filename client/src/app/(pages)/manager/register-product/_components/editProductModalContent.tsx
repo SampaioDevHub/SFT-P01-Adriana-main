@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
+import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -20,6 +21,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProductsByCategories } from '@/api/products/get-products-by-categories';
 import { getProductsById } from '@/api/products/get-products-by-id';
 import { updatedProduct } from '@/api/products/updated-product';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
@@ -37,9 +39,10 @@ export function EditProductModalContent({
   setIsOpen,
   open
 }: ModalProps) {
-  const queryClient = useQueryClient();
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sizesArray, setSizesArray] = useState<string[]>([]);
+
+  const queryClient = useQueryClient();
 
   const toggleSize = (size: string) => {
     if (sizesArray?.includes(size)) {
@@ -98,7 +101,6 @@ export function EditProductModalContent({
   });
 
   async function handleUpdatedProduct(data: FormSchema) {
-    console.log(data);
     try {
       await updatedProductFn({
         id: productId,
@@ -115,9 +117,20 @@ export function EditProductModalContent({
       });
       reset();
       setIsOpen(false);
+      setErrorMessage(null);
       toast.success('Produto atualizado com sucesso');
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -131,9 +144,9 @@ export function EditProductModalContent({
       {isLoadingGetProduct && <EditProductContentSkeleton />}
       {product && (
         <form
-        id='myForm'
+          id='myForm'
           onSubmit={handleSubmit(handleUpdatedProduct)}
-          className='max-h-[50vh] pr-2 space-y-4 overflow-y-auto overflow-x-hidden'
+          className='max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden pr-2'
         >
           <div className='space-y-2'>
             <Label htmlFor='code'>Código do Produto</Label>
@@ -271,9 +284,15 @@ export function EditProductModalContent({
           )}
         </form>
       )}
+      {errorMessage && (
+        <AlertError
+          title='Ops parece que temos um erro!'
+          errorMessage={errorMessage}
+        />
+      )}
       <DialogFooter>
         <Button
-        form='myForm'
+          form='myForm'
           disabled={isSubmitting}
           className='disabled:cursor-not-allowed disabled:opacity-70'
           type='submit'

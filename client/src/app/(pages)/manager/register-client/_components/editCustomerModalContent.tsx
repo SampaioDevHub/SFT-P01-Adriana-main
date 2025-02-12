@@ -14,12 +14,12 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
+import { AxiosError } from 'axios';
 import { format, parseISO } from 'date-fns';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CpfInput } from '@/components/Inputs/cpfInput';
 import { PhoneInput } from '@/components/Inputs/phoneInput';
 import { CepInput } from '@/components/Inputs/cepInput';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { CustomerStatus } from '../constants/CustomerStatus';
 import { FormSchema, formSchema } from '../types/customerYupType';
@@ -48,6 +49,7 @@ export function EditCustomerModalContent({
   setIsOpen,
   open
 }: ModalProps) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState({
     key: 'personalInformation',
     error: ''
@@ -208,7 +210,7 @@ export function EditCustomerModalContent({
         error: 'affiliation'
       });
     }
-  }, [errorFields.length]);
+  }, [errorFields]);
 
   async function handleUpdatedCustomer(data: FormSchema) {
     try {
@@ -244,9 +246,20 @@ export function EditCustomerModalContent({
       });
       reset();
       setIsOpen(false);
+      setErrorMessage(null);
       toast.success('Cliente atualizado com sucesso');
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -255,7 +268,7 @@ export function EditCustomerModalContent({
       title='noButtonClose'
       className='m-0 w-full border-0 bg-transparent p-0 pt-6'
     >
-      <DialogTitle className='flex items-center justify-between'>
+      <DialogTitle className='flex items-center justify-between text-muted dark:text-foreground'>
         Edite os dados do cliente
         <DialogClose>
           <X className='h-5 w-5 text-muted-foreground' />
@@ -690,6 +703,12 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
           </Tabs>
+          {errorMessage && (
+            <AlertError
+              title='Ops parece que temos um erro!'
+              errorMessage={errorMessage}
+            />
+          )}
           <DialogFooter className='mt-2'>
             <Button
               disabled={isSubmitting}
