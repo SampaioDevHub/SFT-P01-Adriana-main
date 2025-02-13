@@ -13,7 +13,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Caixa',
     url: '',
-    icon: 'billing',
+    icon: 'dollarSign',
     isActive: false,
     items: [
       {
@@ -27,116 +27,30 @@ export const navItems: NavItem[] = [
       {
         title: 'Tipos Despesas',
         url: '/cashier/types-expenses'
-      },
-      {
-        title: 'Relatorio Financeiro',
-        url: '/cashier/financial-report'
       }
     ]
   },
   {
     title: 'Gerenciar',
     url: '',
-    icon: 'billing',
+    icon: 'folderCog',
     isActive: false,
     items: [
       {
         title: 'Cadastrar Produtos',
         url: '/manager/register-product',
-        icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false
       },
       {
         title: 'Cadastrar Clientes',
         url: '/manager/register-client',
-        icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false
       },
       {
         title: 'Cadastro de vendas',
         url: '/manager/register-sale',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Relatorio de Produtos',
-        url: '/manager/product-report',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      }
-    ]
-  },
-  {
-    title: 'Configuração',
-    url: '',
-    icon: 'billing',
-    isActive: false,
-    items: [
-      {
-        title: 'Cadastrar Produtos',
-        url: '/manager/register-product',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Cadastrar Clientes',
-        url: '/manager/register-client',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Cadastro de vendas',
-        url: '/manager/register-sale',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Relatorio de Produtos',
-        url: '/manager/product-report',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      }
-    ]
-  },
-  {
-    title: 'Suporte',
-    url: '',
-    icon: 'billing',
-    isActive: false,
-    items: [
-      {
-        title: 'Cadastrar Produtos',
-        url: '/manager/register-product',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Cadastrar Clientes',
-        url: '/manager/register-client',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Cadastro de vendas',
-        url: '/manager/register-sale',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Relatorio de Produtos',
-        url: '/manager/product-report',
-        icon: 'product',
         shortcut: ['p', 'p'],
         isActive: false
       }
@@ -145,34 +59,18 @@ export const navItems: NavItem[] = [
   {
     title: 'Relatórios',
     url: '',
-    icon: 'billing',
+    icon: 'clipboardList',
     isActive: false,
     items: [
       {
-        title: 'Cadastrar Produtos',
-        url: '/manager/register-product',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Cadastrar Clientes',
-        url: '/manager/register-client',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
-        title: 'Cadastro de vendas',
-        url: '/manager/register-sale',
-        icon: 'product',
-        shortcut: ['p', 'p'],
-        isActive: false
-      },
-      {
         title: 'Relatorio de Produtos',
         url: '/manager/product-report',
-        icon: 'product',
+        shortcut: ['p', 'p'],
+        isActive: false
+      },
+      {
+        title: 'Relatorio Financeiro',
+        url: '/cashier/financial-report',
         shortcut: ['p', 'p'],
         isActive: false
       }

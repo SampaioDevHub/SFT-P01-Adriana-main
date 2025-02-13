@@ -18,7 +18,7 @@ import { CpfInput } from '@/components/Inputs/cpfInput';
 import { CepInput } from '@/components/Inputs/cepInput';
 import { AlertError } from '@/components/alert/alert-error';
 
-import { CustomerStatus } from '../constants/CustomerStatus';
+import { CustomerStatus } from '../constants/customerStatus';
 import { formSchema, FormSchema } from '../types/customerYupType';
 
 export function CustomerForm() {

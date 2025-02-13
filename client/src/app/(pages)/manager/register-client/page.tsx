@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import PageContainer from '@/components/layout/page-container';
 
-import { CustomerForm } from './_components/CustomerForm';
+import { CustomerForm } from './_components/customerForm';
 
 export default function CustomersPage() {
   const [showForm, setShowForm] = useState(false);

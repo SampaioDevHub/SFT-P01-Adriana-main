@@ -1,79 +1,57 @@
 /* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable import/no-unresolved */
 
-import './globals.css';
-import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+
+import { Toaster } from '@/components/ui/sonner';
 import { ClerkProvider, ClerkLoading } from '@clerk/nextjs';
 import { ptBR } from '@clerk/localizations';
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import ReactQueryProvider from '@/components/providers/react-query-provider';
 import { Analytics } from '@vercel/analytics/next';
 import { LoadingSpinner } from '@/components/loading';
+import ReactQueryProvider from '@/components/providers/react-query-provider';
+
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
-  description: 'Projeto em Desenvolvimento SampaioForce'
+  description: 'Projeto em Desenvolvimento SampaioForce',
 };
 
 const lato = Lato({
   subsets: ['latin'],
   weight: ['400', '700', '900'],
-  display: 'swap'
+  display: 'swap',
 });
 
 export default async function RootLayout({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-<<<<<<< HEAD
     <ClerkProvider localization={ptBR}>
-      <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
-        <head>
-          <script src="https://app.secureprivacy.ai/script/679f9c1c060b2f3e7323a7e2.js"></script>
-        </head>
-        <body className={'overflow-hidden'}>
-          <NextTopLoader showSpinner={false} color="#e11d48" />
-          <NuqsAdapter >
-            <Toaster richColors />
-=======
-    <ClerkProvider
-      localization={ptBR}
-      appearance={{
-        elements: {
-          loadingScreen: {
-            delay: 700 // Tempo em milissegundos
-          }
-        }
-      }}
-    >
       <html
-        lang='Pt-BR'
+        lang="Pt-BR"
         className={`${lato.className}`}
         suppressHydrationWarning
       >
         <body className={'overflow-hidden'}>
           <NuqsAdapter>
-            <Toaster richColors/>
->>>>>>> 7d121b8c863480ca1f46417340761f37442c2ec8
+            <Toaster richColors />
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
-<<<<<<< HEAD
-=======
               <NextTopLoader showSpinner={false} />
               <ClerkLoading>
                 <LoadingSpinner />
               </ClerkLoading>
->>>>>>> 7d121b8c863480ca1f46417340761f37442c2ec8
               <ReactQueryProvider>
                 {children}
                 <Analytics />
