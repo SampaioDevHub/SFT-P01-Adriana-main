@@ -4,14 +4,10 @@ import PageContainer from '@/components/layout/page-container';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { AreaGraph } from './area-graph';
-import { PieGraph } from './pie-graph';
-import { RecentSales } from './recent-sales';
 import { useUser } from '@clerk/nextjs';
 import { DollarSign, Package, TrendingUp } from 'lucide-react';
 import { FloatingChat } from '@/components/FloatingChat';
