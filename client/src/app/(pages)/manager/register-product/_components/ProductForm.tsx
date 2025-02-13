@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -26,7 +27,6 @@ import { AlertError } from '@/components/alert/alert-error';
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
 import { formSchema, FormSchema } from '../types/productYupType';
-import { AxiosError } from 'axios';
 
 export function ProductForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -275,7 +275,7 @@ export function ProductForm() {
           )}
           {errorMessage && (
             <AlertError
-              title='Ops parece que temos um erro!'
+              title='Ops, parece que temos um erro!'
               errorMessage={errorMessage}
             />
           )}
@@ -284,7 +284,7 @@ export function ProductForm() {
             className='disabled:cursor-not-allowed disabled:opacity-70'
             type='submit'
           >
-            Adicionar Produto
+            {isSubmitting ? 'Cadastrando...' : 'Cadastrar Produto'}
           </Button>
         </form>
       </CardContent>

@@ -286,7 +286,7 @@ export function EditProductModalContent({
       )}
       {errorMessage && (
         <AlertError
-          title='Ops parece que temos um erro!'
+          title='Ops, parece que temos um erro!'
           errorMessage={errorMessage}
         />
       )}
@@ -297,7 +297,7 @@ export function EditProductModalContent({
           className='disabled:cursor-not-allowed disabled:opacity-70'
           type='submit'
         >
-          Salvar alterações
+          {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
         </Button>
       </DialogFooter>
     </DialogContent>

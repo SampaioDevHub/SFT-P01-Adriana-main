@@ -94,7 +94,7 @@ export default function CustomerForm() {
       await createCustomerFn({
         name: data.name,
         phone: data.phone === undefined ? '' : data.phone,
-        email: data.email,
+        email: data.email === '' ? null : data.email,
         addressData: {
           zipCode: data.zipCode === undefined ? '' : data.zipCode,
           address: data.address,
@@ -467,7 +467,7 @@ export default function CustomerForm() {
           </div>
           {errorMessage && (
             <AlertError
-              title='Ops parece que temos um erro!'
+              title='Ops, parece que temos um erro!'
               errorMessage={errorMessage}
             />
           )}

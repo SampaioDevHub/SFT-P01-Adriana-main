@@ -8,7 +8,7 @@ export const formSchema = yup.object({
     .required('Informe o nome do produto'),
   discountPercentage: yup
     .string()
-    .max(20, 'Você só pode inserir até 20 caracteres'),
+    .max(2, 'Você só pode inserir até 2 caracteres'),
   price: yup.string().required('Informe o preço do produto'),
   amount: yup
     .number()

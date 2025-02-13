@@ -82,7 +82,7 @@ export function EditCustomerModalContent({
     values: {
       name: customer?.name ?? '',
       phone: customer?.phone ?? '',
-      email: customer?.email ?? '',
+      email: customer?.email ?? null,
       zipCode: customer?.addressData.zipCode ?? '',
       address: customer?.addressData.address ?? '',
       number: customer?.addressData.number ?? '',
@@ -705,7 +705,7 @@ export function EditCustomerModalContent({
           </Tabs>
           {errorMessage && (
             <AlertError
-              title='Ops parece que temos um erro!'
+              title='Ops, parece que temos um erro!'
               errorMessage={errorMessage}
             />
           )}

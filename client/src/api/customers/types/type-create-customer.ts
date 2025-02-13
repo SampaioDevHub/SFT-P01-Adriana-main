@@ -2,7 +2,7 @@ export interface CreateCustomerContent {
   name: string;
   cpf: string;
   maritalStatus?: string;
-  email?: string;
+  email?: string | null;
   phone?: string;
   enterprise?: string;
   businessPhone?: string;

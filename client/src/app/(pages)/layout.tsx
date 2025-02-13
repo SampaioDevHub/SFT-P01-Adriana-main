@@ -5,6 +5,7 @@ import Header from '@/components/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: 'Painel Principal',
@@ -22,6 +23,7 @@ export default async function DashboardLayout({
   return (
     <KBar>
       <SidebarProvider defaultOpen={defaultOpen} >
+        <NextTopLoader showSpinner={false} />
         <AppSidebar  />  
         <SidebarInset>
           <Header />
