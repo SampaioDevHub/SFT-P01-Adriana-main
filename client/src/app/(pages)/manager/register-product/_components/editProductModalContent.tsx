@@ -7,10 +7,10 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
+import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
@@ -18,33 +18,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProductsByCategories } from '@/api/product/get-products-by-categories';
-import { getProductsById } from '@/api/product/get-products-by-id';
-import { updatedProduct } from '@/api/product/updated-product';
+import { getProductsByCategories } from '@/api/products/get-products-by-categories';
+import { getProductsById } from '@/api/products/get-products-by-id';
+import { updatedProduct } from '@/api/products/updated-product';
+import { AlertError } from '@/components/alert/alert-error';
 
-import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
-
-const formSchema = yup.object({
-  name: yup.string().required('Informe o nome do produto'),
-  price: yup.string().required('Informe o preço do produto'),
-  amount: yup
-    .number()
-    .integer()
-    .typeError('Informe a quantidade do produto')
-    .required('Informe a quantidade do produto'),
-  size: yup.string().when('category', ([category], schema) => {
-    if (category === 'Roupas') {
-      return schema.required('Selecione um tamanho');
-    }
-    return schema.notRequired();
-  }),
-  category: yup.string().required('Informe uma categoria'),
-  subcategory: yup.string().required('Informe uma Subcategoria')
-});
-
-type FormSchema = yup.InferType<typeof formSchema>;
+import { formSchema, FormSchema } from '../types/productYupType';
+import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 
 interface ModalProps {
   productId: string;
@@ -57,9 +39,10 @@ export function EditProductModalContent({
   setIsOpen,
   open
 }: ModalProps) {
-  const queryClient = useQueryClient();
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sizesArray, setSizesArray] = useState<string[]>([]);
+
+  const queryClient = useQueryClient();
 
   const toggleSize = (size: string) => {
     if (sizesArray?.includes(size)) {
@@ -99,12 +82,14 @@ export function EditProductModalContent({
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     values: {
+      code: product?.code,
       name: product?.name ?? '',
+      discountPercentage: JSON.stringify(product?.discountPercentage) ?? '',
       price: JSON.stringify(product?.price) ?? '',
       amount: product?.amount ?? 0,
       size: product?.size ?? '',
       category: product?.category ?? 'Roupas',
-      subcategory: product?.subCategory ?? ''
+      subCategory: product?.subCategory ?? ''
     }
   });
 
@@ -119,18 +104,33 @@ export function EditProductModalContent({
     try {
       await updatedProductFn({
         id: productId,
+        code: data.code,
         name: data.name,
-        price: Number(data.price.replace(/[^\d.-]/g, '')),
+        discountPercentage: Number(
+          data.discountPercentage?.replace(/[^\d.-]/g, '')
+        ),
+        price: data.price.replace(/[^\d.-]/g, ''),
         amount: data.amount,
         size: data.category === 'Roupas' ? sizesString : '',
         category: data.category,
-        subCategory: data.subcategory
+        subCategory: data.subCategory
       });
       reset();
       setIsOpen(false);
+      setErrorMessage(null);
       toast.success('Produto atualizado com sucesso');
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -144,14 +144,37 @@ export function EditProductModalContent({
       {isLoadingGetProduct && <EditProductContentSkeleton />}
       {product && (
         <form
+          id='myForm'
           onSubmit={handleSubmit(handleUpdatedProduct)}
-          className='space-y-4'
+          className='max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden pr-2'
         >
           <div className='space-y-2'>
-            <Input {...register('name')} required />
+            <Label htmlFor='code'>Código do Produto</Label>
+            <Input id='code' {...register('code')} />
+            {errors.code?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.code?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='name'>Nome do Produto</Label>
+            <Input id='name' {...register('name')} required />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='name'>Desconto(%)</Label>
+            <Input
+              id='discountPercentage'
+              {...register('discountPercentage')}
+            />
+            {errors.discountPercentage?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.discountPercentage?.message}
               </p>
             )}
           </div>
@@ -186,7 +209,7 @@ export function EditProductModalContent({
             <select
               defaultValue=''
               className='flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
-              {...register('subcategory')}
+              {...register('subCategory')}
             >
               <option value='' disabled hidden>
                 Selecione uma categoria
@@ -206,14 +229,17 @@ export function EditProductModalContent({
                 return null;
               })}
             </select>
-            {errors.subcategory?.message && (
+            {errors.subCategory?.message && (
               <p className={`text-sm text-destructive`}>
-                {errors.subcategory?.message}
+                {errors.subCategory?.message}
               </p>
             )}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='edit-price'>Preço</Label>
+            <Label className='gap-1' htmlFor='price'>
+              Preço{' '}
+              <span className='text-muted-foreground'>(Sem desconto)</span>
+            </Label>
             <Controller
               name='price' // Nome do campo no formulário
               control={control}
@@ -256,17 +282,24 @@ export function EditProductModalContent({
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button
-              disabled={isSubmitting}
-              className='disabled:cursor-not-allowed disabled:opacity-70'
-              type='submit'
-            >
-              Salvar alterações
-            </Button>
-          </DialogFooter>
         </form>
       )}
+      {errorMessage && (
+        <AlertError
+          title='Ops, parece que temos um erro!'
+          errorMessage={errorMessage}
+        />
+      )}
+      <DialogFooter>
+        <Button
+          form='myForm'
+          disabled={isSubmitting}
+          className='disabled:cursor-not-allowed disabled:opacity-70'
+          type='submit'
+        >
+          {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
+        </Button>
+      </DialogFooter>
     </DialogContent>
   );
 }

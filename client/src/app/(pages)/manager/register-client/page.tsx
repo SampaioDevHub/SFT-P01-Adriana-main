@@ -1,8 +1,11 @@
-'use client'
+'use client';
 /* eslint-disable import/no-unresolved */
-import PageContainer from '@/components/layout/page-container'
-import CustomerForm from './_components/CustomerForm'
 import { useState } from 'react';
+
+import PageContainer from '@/components/layout/page-container';
+
+import { CustomerForm } from './_components/CustomerForm';
+
 export default function CustomersPage() {
   const [showForm, setShowForm] = useState(false);
 
@@ -12,7 +15,7 @@ export default function CustomersPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Cadastrar Novo Cliente</h1>
         </div>
-       <CustomerForm/>
+        <CustomerForm />
       </div>
     </PageContainer>
   );

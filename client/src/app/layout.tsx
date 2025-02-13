@@ -31,6 +31,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+<<<<<<< HEAD
     <ClerkProvider localization={ptBR}>
       <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
         <head>
@@ -40,12 +41,39 @@ export default async function RootLayout({
           <NextTopLoader showSpinner={false} color="#e11d48" />
           <NuqsAdapter >
             <Toaster richColors />
+=======
+    <ClerkProvider
+      localization={ptBR}
+      appearance={{
+        elements: {
+          loadingScreen: {
+            delay: 700 // Tempo em milissegundos
+          }
+        }
+      }}
+    >
+      <html
+        lang='Pt-BR'
+        className={`${lato.className}`}
+        suppressHydrationWarning
+      >
+        <body className={'overflow-hidden'}>
+          <NuqsAdapter>
+            <Toaster richColors/>
+>>>>>>> 7d121b8c863480ca1f46417340761f37442c2ec8
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
+<<<<<<< HEAD
+=======
+              <NextTopLoader showSpinner={false} />
+              <ClerkLoading>
+                <LoadingSpinner />
+              </ClerkLoading>
+>>>>>>> 7d121b8c863480ca1f46417340761f37442c2ec8
               <ReactQueryProvider>
                 {children}
                 <Analytics />

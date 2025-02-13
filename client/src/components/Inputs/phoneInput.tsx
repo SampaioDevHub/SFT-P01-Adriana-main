@@ -1,5 +1,4 @@
-/* eslint-disable import/no-unresolved */
-import PhoneInputCompoenent from "react-phone-number-input";
+import PhoneInputComponent from "react-phone-number-input";
 import "react-phone-number-input/style.css"; // Importa o estilo da biblioteca
 import { Input } from "../ui/input";
 
@@ -15,7 +14,7 @@ export function PhoneInput({ value = "", onChange }: PhoneInputProps) {
   };
 
   return (
-    <PhoneInputCompoenent
+    <PhoneInputComponent
       defaultCountry="BR"
       inputComponent={Input}
       value={value}

@@ -1,7 +1,8 @@
 /* eslint-disable import/no-unresolved */
 'use client';
 
-import { useEffect } from 'react';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -15,11 +16,14 @@ import { createCustomer } from '@/api/customers/create-customer';
 import { PhoneInput } from '@/components/Inputs/phoneInput';
 import { CpfInput } from '@/components/Inputs/cpfInput';
 import { CepInput } from '@/components/Inputs/cepInput';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { CustomerStatus } from '../constants/CustomerStatus';
 import { formSchema, FormSchema } from '../types/customerYupType';
 
-export default function CustomerForm() {
+export function CustomerForm() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const queryClient = useQueryClient();
 
   const {
@@ -27,7 +31,6 @@ export default function CustomerForm() {
     register,
     reset,
     setValue,
-
     watch,
     control,
     formState: { isSubmitting, errors }
@@ -35,12 +38,12 @@ export default function CustomerForm() {
     resolver: yupResolver(formSchema)
   });
 
-  const cep = watch('cep')?.replace(/\D/g, '');
+  const zipCode = watch('zipCode')?.replace(/\D/g, '');
 
   // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
-    if (cep && cep.length === 8) {
-      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    if (zipCode && zipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${zipCode}/json/`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.erro) {
@@ -56,14 +59,14 @@ export default function CustomerForm() {
         })
         .catch((error) => toast.error('Erro ao buscara o CEP'));
     }
-  }, [cep, setValue]);
+  }, [zipCode, setValue]);
 
-  const businessCep = watch('businessCep')?.replace(/\D/g, '');
+  const businessZipCode = watch('businessZipCode')?.replace(/\D/g, '');
 
   // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
-    if (businessCep && businessCep.length === 8) {
-      fetch(`https://viacep.com.br/ws/${businessCep}/json/`)
+    if (businessZipCode && businessZipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${businessZipCode}/json/`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.erro) {
@@ -77,7 +80,7 @@ export default function CustomerForm() {
         })
         .catch((error) => toast.error('Erro ao buscara o CEP'));
     }
-  }, [businessCep, setValue]);
+  }, [businessZipCode, setValue]);
 
   const { mutateAsync: createCustomerFn } = useMutation({
     mutationFn: createCustomer,
@@ -90,10 +93,10 @@ export default function CustomerForm() {
     try {
       await createCustomerFn({
         name: data.name,
-        phone: data.phone,
-        email: data.email,
+        phone: data.phone === undefined ? '' : data.phone,
+        email: data.email === '' ? null : data.email,
         addressData: {
-          zipCode: data.cep,
+          zipCode: data.zipCode === undefined ? '' : data.zipCode,
           address: data.address,
           number: data.number,
           complement: data.complement,
@@ -103,10 +106,12 @@ export default function CustomerForm() {
         },
         cpf: data.cpf,
         dateBirth: data.dateBirth,
-        maritalStatus: data.maritalStatus,
+        maritalStatus: data.maritalStatus === 'all' ? '' : data.maritalStatus,
         enterprise: data.enterprise,
-        businessPhone: data.businessPhone,
+        businessPhone:
+          data.businessPhone === undefined ? '' : data.businessPhone,
         lengthService: data.lengthService,
+        businessZipCode: data.businessZipCode,
         businessAddress: data.businessAddress,
         businessCity: data.businessCity,
         businessState: data.businessState,
@@ -117,9 +122,22 @@ export default function CustomerForm() {
         mother: data.mother
       });
       reset();
+
+      setValue('cpf', '');
+      setErrorMessage(null);
       toast.success('Cliente cadastrado com sucesso');
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -139,7 +157,8 @@ export default function CustomerForm() {
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='space-y-2'>
                 <Label className='gap-1' htmlFor='name'>
-                  Nome <span className='text-muted-foreground'>(Obrigatório)</span>
+                  Nome{' '}
+                  <span className='text-muted-foreground'>(Obrigatório)</span>
                 </Label>
                 <Input id='name' {...register('name')} required />
                 {errors.name?.message && (
@@ -186,13 +205,13 @@ export default function CustomerForm() {
               <div className='space-y-2'>
                 <Label htmlFor='cep'>CEP</Label>
                 <Controller
-                  name='cep'
+                  name='zipCode'
                   control={control}
                   render={({ field }) => <CepInput {...field} />}
                 />
-                {errors.cep?.message && (
+                {errors.zipCode?.message && (
                   <p className='text-sm text-destructive'>
-                    {errors.cep?.message}
+                    {errors.zipCode?.message}
                   </p>
                 )}
               </div>
@@ -258,7 +277,8 @@ export default function CustomerForm() {
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div className='space-y-2'>
                 <Label className='gap-1' htmlFor='name'>
-                  CPF <span className='text-muted-foreground'>(Obrigatório)</span>
+                  CPF{' '}
+                  <span className='text-muted-foreground'>(Obrigatório)</span>
                 </Label>
                 <Controller
                   name='cpf'
@@ -346,13 +366,13 @@ export default function CustomerForm() {
               <div className='space-y-2'>
                 <Label htmlFor='businessCep'>CEP</Label>
                 <Controller
-                  name='businessCep'
+                  name='businessZipCode'
                   control={control}
                   render={({ field }) => <CepInput {...field} />}
                 />
-                {errors.businessCep?.message && (
+                {errors.businessZipCode?.message && (
                   <p className='text-sm text-destructive'>
-                    {errors.businessCep?.message}
+                    {errors.businessZipCode?.message}
                   </p>
                 )}
               </div>
@@ -445,6 +465,12 @@ export default function CustomerForm() {
               </div>
             </div>
           </div>
+          {errorMessage && (
+            <AlertError
+              title='Ops, parece que temos um erro!'
+              errorMessage={errorMessage}
+            />
+          )}
           <Button
             disabled={isSubmitting}
             className='disabled:cursor-not-allowed disabled:opacity-70'

@@ -9,10 +9,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
@@ -20,37 +20,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct } from '@/api/product/create-product';
-import { getProductsByCategories } from '@/api/product/get-products-by-categories';
+import { createProduct } from '@/api/products/create-product';
+import { getProductsByCategories } from '@/api/products/get-products-by-categories';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
 import { availableSizes } from '../constants/availableSizes';
+import { formSchema, FormSchema } from '../types/productYupType';
 
-const formSchema = yup.object({
-  name: yup.string().required('Informe o nome do produto'),
-  price: yup.string().required('Informe o preço do produto'),
-  amount: yup
-    .number()
-    .integer()
-    .typeError('Informe a quantidade do produto')
-    .required('Informe a quantidade do produto'),
-  size: yup.string().when('category', ([category], schema) => {
-    if (category === 'Roupas') {
-      return schema.required('Selecione um tamanho');
-    }
-    return schema.notRequired();
-  }),
-  category: yup.string().required('Informe uma categoria'),
-  subCategory: yup.string().required('Informe uma Subcategoria')
-});
-
-type FormSchema = yup.InferType<typeof formSchema>;
-
-
-export default function ProductForm() {
-  const queryClient = useQueryClient();
-
+export function ProductForm() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sizesArray, setSizesArray] = useState<string[]>([]); // Estado para armazenar os tamanhos
+
+  const queryClient = useQueryClient();
 
   const {
     handleSubmit,
@@ -81,21 +63,35 @@ export default function ProductForm() {
   });
 
   async function handleCreateProduct(data: FormSchema) {
-    console.log(data);
     try {
       await createProductFn({
+        code: data.code,
         name: data.name,
-        price: Number(data.price.replace(/[^\d.-]/g, '')),
+        discountPercentage: Number(
+          data.discountPercentage?.replace(/[^\d.-]/g, '')
+        ),
+        price: data.price,
         amount: data.amount,
-        size: isClothingCategory ? sizesString : '',
+        size: sizesString,
         category: data.category,
         subCategory: data.subCategory
       });
-      toast.success('Produto cadastrado com sucesso');
       reset();
       setSizesArray([]);
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+      setErrorMessage(null);
+      toast.success('Produto cadastrado com sucesso');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -124,11 +120,38 @@ export default function ProductForm() {
           className='space-y-4'
         >
           <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
+              Código do Produto
+              <span className='text-muted-foreground'>(Opcional)</span>
+            </Label>
+            <Input id='code' {...register('code')} />
+            {errors.code?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.code?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
             <Label htmlFor='name'>Nome do Produto</Label>
-            <Input {...register('name')} required />
+            <Input id='name' {...register('name')} required />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
+              </p>
+            )}
+          </div>
+          <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
+              Desconto(%)
+              <span className='text-muted-foreground'>(Opcional)</span>
+            </Label>
+            <Input
+              id='discountPercentage'
+              {...register('discountPercentage')}
+            />
+            {errors.discountPercentage?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.discountPercentage?.message}
               </p>
             )}
           </div>
@@ -194,7 +217,10 @@ export default function ProductForm() {
             </div>
           )}
           <div className='space-y-2'>
-            <Label htmlFor='price'>Preço</Label>
+            <Label className='gap-1' htmlFor='price'>
+              Preço
+              <span className='text-muted-foreground'>(Sem desconto)</span>
+            </Label>
             <Controller
               name='price' // Nome do campo no formulário
               control={control}
@@ -207,8 +233,8 @@ export default function ProductForm() {
             )}
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='quantity'>Quantidade</Label>
-            <Input {...register('amount')} type='number' required />
+            <Label htmlFor='amount'>Quantidade</Label>
+            <Input id='amount' {...register('amount')} type='number' required />
             {errors.amount?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.amount?.message}
@@ -247,12 +273,18 @@ export default function ProductForm() {
               </div>
             </div>
           )}
+          {errorMessage && (
+            <AlertError
+              title='Ops, parece que temos um erro!'
+              errorMessage={errorMessage}
+            />
+          )}
           <Button
             disabled={isSubmitting}
             className='disabled:cursor-not-allowed disabled:opacity-70'
             type='submit'
           >
-            Adicionar Produto
+            {isSubmitting ? 'Cadastrando...' : 'Cadastrar Produto'}
           </Button>
         </form>
       </CardContent>
