@@ -14,11 +14,12 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
+import { AxiosError } from 'axios';
 import { format, parseISO } from 'date-fns';
 import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/components/ui/button';
@@ -31,11 +32,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CpfInput } from '@/components/Inputs/cpfInput';
 import { PhoneInput } from '@/components/Inputs/phoneInput';
 import { CepInput } from '@/components/Inputs/cepInput';
+import { AlertError } from '@/components/alert/alert-error';
 
 import { CustomerStatus } from '../constants/CustomerStatus';
 import { FormSchema, formSchema } from '../types/customerYupType';
 import { EditCustomerContentSkeleton } from './_skeleton/editCustomerContentSkeleton';
-import { useEffect } from 'react';
 
 interface ModalProps {
   customerId: string;
@@ -48,6 +49,12 @@ export function EditCustomerModalContent({
   setIsOpen,
   open
 }: ModalProps) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState({
+    key: 'personalInformation',
+    error: ''
+  });
+
   const queryClient = useQueryClient();
 
   const { data: customer, isLoading: isLoadingGetCustomer } = useQuery({
@@ -76,7 +83,7 @@ export function EditCustomerModalContent({
       name: customer?.name ?? '',
       phone: customer?.phone ?? '',
       email: customer?.email ?? '',
-      cep: customer?.addressData.zipCode ?? '',
+      zipCode: customer?.addressData.zipCode ?? '',
       address: customer?.addressData.address ?? '',
       number: customer?.addressData.number ?? '',
       complement: customer?.addressData.complement ?? '',
@@ -89,6 +96,7 @@ export function EditCustomerModalContent({
       enterprise: customer?.enterprise ?? '',
       businessPhone: customer?.businessPhone ?? '',
       lengthService: customer?.lengthService ?? '',
+      businessZipCode: customer?.businessZipCode ?? '',
       businessAddress: customer?.businessAddress ?? '',
       businessCity: customer?.businessCity ?? '',
       businessState: customer?.businessState ?? '',
@@ -100,49 +108,49 @@ export function EditCustomerModalContent({
     }
   });
 
-  const cep = watch('cep')?.replace(/\D/g, '');
-  
-    // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
-    useEffect(() => {
-      if (cep && cep.length === 8) {
-        fetch(`https://viacep.com.br/ws/${cep}/json/`)
-          .then((res) => res.json())
-          .then((data) => {
-            if (!data.erro) {
-              setValue(
-                'address',
-                `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
-              );
-              setValue('complement', `${data.logradouro} ${data.complemento}`);
-              setValue('referencePoint', data.bairro);
-              setValue('city', data.localidade);
-              setValue('state', data.estado);
-            }
-          })
-          .catch((error) => toast.error('Erro ao buscara o CEP'));
-      }
-    }, [cep, setValue]);
-  
-    const businessCep = watch('businessCep')?.replace(/\D/g, '');
-  
-    // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
-    useEffect(() => {
-      if (businessCep && businessCep.length === 8) {
-        fetch(`https://viacep.com.br/ws/${businessCep}/json/`)
-          .then((res) => res.json())
-          .then((data) => {
-            if (!data.erro) {
-              setValue(
-                'businessAddress',
-                `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
-              );
-              setValue('businessCity', data.localidade);
-              setValue('businessState', data.estado);
-            }
-          })
-          .catch((error) => toast.error('Erro ao buscara o CEP'));
-      }
-    }, [businessCep, setValue]);
+  const zipCode = watch('zipCode')?.replace(/\D/g, '');
+
+  // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
+  useEffect(() => {
+    if (zipCode && zipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${zipCode}/json/`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.erro) {
+            setValue(
+              'address',
+              `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
+            );
+            setValue('complement', `${data.logradouro} ${data.complemento}`);
+            setValue('referencePoint', data.bairro);
+            setValue('city', data.localidade);
+            setValue('state', data.estado);
+          }
+        })
+        .catch((error) => toast.error('Erro ao buscara o CEP'));
+    }
+  }, [zipCode, setValue]);
+
+  const businessZipCode = watch('businessZipCode')?.replace(/\D/g, '');
+
+  // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
+  useEffect(() => {
+    if (businessZipCode && businessZipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${businessZipCode}/json/`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.erro) {
+            setValue(
+              'businessAddress',
+              `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
+            );
+            setValue('businessCity', data.localidade);
+            setValue('businessState', data.estado);
+          }
+        })
+        .catch((error) => toast.error('Erro ao buscara o CEP'));
+    }
+  }, [businessZipCode, setValue]);
 
   const { mutateAsync: updatedCustomerFn } = useMutation({
     mutationFn: updatedCustomer,
@@ -150,6 +158,59 @@ export function EditCustomerModalContent({
       queryClient.invalidateQueries({ queryKey: ['customers'] });
     }
   });
+
+  const errorFields = Object.keys(errors);
+
+  useEffect(() => {
+    if (errors.name || errors.phone || errors.email) {
+      setActiveTab({
+        key: 'personalInformation',
+        error: 'personalInformation'
+      });
+    } else if (
+      errors.zipCode ||
+      errors.address ||
+      errors.city ||
+      errors.state ||
+      errors.referencePoint ||
+      errors.number ||
+      errors.complement
+    ) {
+      setActiveTab({
+        key: 'homeAddress',
+        error: 'homeAddress'
+      });
+    } else if (errors.cpf || errors.dateBirth || errors.maritalStatus) {
+      setActiveTab({
+        key: 'documents',
+        error: 'documents'
+      });
+    } else if (
+      errors.enterprise ||
+      errors.businessPhone ||
+      errors.lengthService ||
+      errors.businessZipCode ||
+      errors.businessAddress ||
+      errors.businessCity ||
+      errors.businessState ||
+      errors.businessPosition
+    ) {
+      setActiveTab({
+        key: 'professionals',
+        error: 'professionals'
+      });
+    } else if (errors.bank || errors.agency) {
+      setActiveTab({
+        key: 'banking',
+        error: 'banking'
+      });
+    } else if (errors.father || errors.mother) {
+      setActiveTab({
+        key: 'affiliation',
+        error: 'affiliation'
+      });
+    }
+  }, [errorFields, errors]);
 
   async function handleUpdatedCustomer(data: FormSchema) {
     try {
@@ -159,7 +220,7 @@ export function EditCustomerModalContent({
         phone: data.phone,
         email: data.email,
         addressData: {
-          zipCode: data.cep,
+          zipCode: data.zipCode,
           address: data.address,
           number: data.number,
           complement: data.complement,
@@ -173,6 +234,7 @@ export function EditCustomerModalContent({
         enterprise: data.enterprise,
         businessPhone: data.businessPhone,
         lengthService: data.lengthService,
+        businessZipCode: data.businessZipCode,
         businessAddress: data.businessAddress,
         businessCity: data.businessCity,
         businessState: data.businessState,
@@ -184,9 +246,20 @@ export function EditCustomerModalContent({
       });
       reset();
       setIsOpen(false);
+      setErrorMessage(null);
       toast.success('Cliente atualizado com sucesso');
-    } catch (error) {
-      toast.error('Infelizmente ocorreu um erro');
+    } catch (error: unknown) {
+      const err = error as AxiosError;
+
+      if (err.response?.data) {
+        const errorData = err.response.data as { errors?: string[] };
+        const errorMessage =
+          errorData.errors?.[0] || 'Erro desconhecido do servidor';
+
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage(err.message || 'Erro inesperado');
+      }
     }
   }
 
@@ -195,7 +268,7 @@ export function EditCustomerModalContent({
       title='noButtonClose'
       className='m-0 w-full border-0 bg-transparent p-0 pt-6'
     >
-      <DialogTitle className='flex items-center justify-between'>
+      <DialogTitle className='flex items-center justify-between text-muted dark:text-foreground'>
         Edite os dados do cliente
         <DialogClose>
           <X className='h-5 w-5 text-muted-foreground' />
@@ -204,14 +277,72 @@ export function EditCustomerModalContent({
       {isLoadingGetCustomer && <EditCustomerContentSkeleton />}
       {customer && (
         <form onSubmit={handleSubmit(handleUpdatedCustomer)}>
-          <Tabs defaultValue='personalInformation' className='w-full'>
+          <Tabs
+            value={activeTab.key}
+            onValueChange={(value) => {
+              setActiveTab({ key: value, error: '' });
+            }}
+            className='w-full'
+          >
             <TabsList className='grid grid-cols-3'>
-              <TabsTrigger value='personalInformation'>Pessoais</TabsTrigger>
-              <TabsTrigger value='homeAddress'>Endereço</TabsTrigger>
-              <TabsTrigger value='documents'>Documentos</TabsTrigger>
-              <TabsTrigger value='professionals'>Profissionais</TabsTrigger>
-              <TabsTrigger value='banking'>Bancárias</TabsTrigger>
-              <TabsTrigger value='affiliation'>Filiação</TabsTrigger>
+              <TabsTrigger value='personalInformation'>
+                <span
+                  className={
+                    activeTab.error === 'personalInformation'
+                      ? 'text-destructive'
+                      : ''
+                  }
+                >
+                  Pessoal
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value='homeAddress'>
+                <span
+                  className={
+                    activeTab.error === 'homeAddress' ? 'text-destructive' : ''
+                  }
+                >
+                  Endereço
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value='documents'>
+                <span
+                  className={
+                    activeTab.error === 'documents' ? 'text-destructive' : ''
+                  }
+                >
+                  Documentos
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value='professionals'>
+                <span
+                  className={
+                    activeTab.error === 'professionals'
+                      ? 'text-destructive'
+                      : ''
+                  }
+                >
+                  Profissionais
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value='banking'>
+                <span
+                  className={
+                    activeTab.error === 'banking' ? 'text-destructive' : ''
+                  }
+                >
+                  Bancários
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value='affiliation'>
+                <span
+                  className={
+                    activeTab.error === 'affiliation' ? 'text-destructive' : ''
+                  }
+                >
+                  Afiliação
+                </span>
+              </TabsTrigger>
             </TabsList>
             <TabsContent value='personalInformation'>
               <Card>
@@ -270,17 +401,17 @@ export function EditCustomerModalContent({
                     Edite o endereço residencial do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden'>
+                <CardContent className='max-h-[50vh] space-y-2 overflow-y-auto overflow-x-hidden'>
                   <div className='space-y-2'>
                     <Label htmlFor='cep'>CEP</Label>
                     <Controller
-                      name='cep'
+                      name='zipCode'
                       control={control}
                       render={({ field }) => <CepInput {...field} />}
                     />
-                    {errors.cep?.message && (
+                    {errors.zipCode?.message && (
                       <p className='text-sm text-destructive'>
-                        {errors.cep?.message}
+                        {errors.zipCode?.message}
                       </p>
                     )}
                   </div>
@@ -356,7 +487,10 @@ export function EditCustomerModalContent({
                 <CardContent className='space-y-2'>
                   <div className='space-y-2'>
                     <Label className='gap-1' htmlFor='name'>
-                      CPF <span className='text-muted-foreground'>(Obrigatório)</span>
+                      CPF{' '}
+                      <span className='text-muted-foreground'>
+                        (Obrigatório)
+                      </span>
                     </Label>
                     <Controller
                       name='cpf'
@@ -451,13 +585,13 @@ export function EditCustomerModalContent({
                   <div className='space-y-2'>
                     <Label htmlFor='businessCep'>CEP</Label>
                     <Controller
-                      name='businessCep'
+                      name='businessZipCode'
                       control={control}
                       render={({ field }) => <CepInput {...field} />}
                     />
-                    {errors.businessCep?.message && (
+                    {errors.businessZipCode?.message && (
                       <p className='text-sm text-destructive'>
-                        {errors.businessCep?.message}
+                        {errors.businessZipCode?.message}
                       </p>
                     )}
                   </div>
@@ -569,6 +703,12 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
           </Tabs>
+          {errorMessage && (
+            <AlertError
+              title='Ops parece que temos um erro!'
+              errorMessage={errorMessage}
+            />
+          )}
           <DialogFooter className='mt-2'>
             <Button
               disabled={isSubmitting}

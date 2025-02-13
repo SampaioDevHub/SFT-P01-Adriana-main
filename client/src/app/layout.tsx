@@ -31,21 +31,34 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={ptBR}>
-      <html lang='Pt-BR' className={`${lato.className}`} suppressHydrationWarning>
-        <head>
-          <script src="https://app.secureprivacy.ai/script/679f9c1c060b2f3e7323a7e2.js"></script>
-        </head>
+    <ClerkProvider
+      localization={ptBR}
+      appearance={{
+        elements: {
+          loadingScreen: {
+            delay: 700 // Tempo em milissegundos
+          }
+        }
+      }}
+    >
+      <html
+        lang='Pt-BR'
+        className={`${lato.className}`}
+        suppressHydrationWarning
+      >
         <body className={'overflow-hidden'}>
-          <NextTopLoader showSpinner={false} color="#e11d48" />
-          <NuqsAdapter >
-            <Toaster richColors />
+          <NuqsAdapter>
+            <Toaster richColors/>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
+              <NextTopLoader showSpinner={false} />
+              <ClerkLoading>
+                <LoadingSpinner />
+              </ClerkLoading>
               <ReactQueryProvider>
                 {children}
                 <Analytics />

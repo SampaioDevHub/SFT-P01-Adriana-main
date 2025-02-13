@@ -1,29 +1,23 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-unresolved */
 import { api } from "@/lib/axios";
-
-export interface UpdatedProductBody {
-    id: string
-    name: string;
-    price: number;
-    amount: number;
-    size: string;
-    category: string;
-    subCategory: string;
-}
+import { GetProductContent } from "./types/type-get-product";
 
 export async function updatedProduct({
     id,
+    code,
     name,
+    discountPercentage,
     price,
     amount,
     size,
     category,
     subCategory,
-}: UpdatedProductBody) {
-    console.log(subCategory, price)
+}: GetProductContent) {
     await api.put(`/products/update/${id}`, {
+        code,
         name,
+        discountPercentage,
         price,
         amount,
         size,

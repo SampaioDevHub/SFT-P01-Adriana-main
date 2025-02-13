@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { DeleteProduct } from '@/api/product/delete-product';
-import { getProductsById } from '@/api/product/get-products-by-id';
+import { DeleteProduct } from '@/api/products/delete-product';
+import { getProductsById } from '@/api/products/get-products-by-id';
 import { Button } from '@/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -19,7 +19,7 @@ interface ModalProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export default function DeleteProductModal({
+export function DeleteProductModal({
   productId,
   open,
   setIsOpen

@@ -1,13 +1,16 @@
 /* eslint-disable import/no-unresolved */
-import { api } from "@/lib/axios";
-import { GetProductsBody } from "./get-products";
+import { api } from '@/lib/axios';
+
+import { GetProductContent } from './types/type-get-product';
 
 interface GetProductsByIdProps {
-    productId: string
+  productId: string;
 }
 
-export async function getProductsById({productId}: GetProductsByIdProps) {
-    const response = await api.get<GetProductsBody>(`/products/find/${productId}`);
+export async function getProductsById({ productId }: GetProductsByIdProps) {
+  const response = await api.get<GetProductContent>(
+    `/products/find/${productId}`
+  );
 
-    return response.data
+  return response.data;
 }

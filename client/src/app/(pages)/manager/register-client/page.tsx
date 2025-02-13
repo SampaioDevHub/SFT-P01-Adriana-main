@@ -1,8 +1,12 @@
 'use client'
 /* eslint-disable import/no-unresolved */
-import PageContainer from '@/components/layout/page-container'
-import CustomerForm from './_components/CustomerForm'
-import { useState } from 'react';
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import CustomerTable from "./_components/CustomerTable";
+import PageContainer from "@/components/layout/page-container";
+import CustomerForm from "./_components/CustomerForm";
+import { useState } from "react";
+
 export default function CustomersPage() {
   const [showForm, setShowForm] = useState(false);
 

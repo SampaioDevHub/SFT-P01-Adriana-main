@@ -12,7 +12,7 @@ export const formSchema = yup.object({
   complement: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   city: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   state: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
-  cep: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+  zipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   referencePoint: yup
     .string()
     .max(20, 'Você só pode inserir até 20 caracteres'),
@@ -20,12 +20,12 @@ export const formSchema = yup.object({
     .string()
     .max(14, 'Você só pode inserir até 14 caracteres')
     .required('Informe o CPF do cliente'),
-  dateBirth: yup.string(),
+  dateBirth: yup.string().nullable(),
   maritalStatus: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   enterprise: yup.string().max(50, 'Você só pode inserir até 50 caracteres'),
   businessPhone: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
   lengthService: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
-  businessCep: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+  businessZipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   businessAddress: yup
     .string()
     .max(60, 'Você só pode inserir até 60 caracteres'),
