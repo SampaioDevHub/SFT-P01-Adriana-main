@@ -2,7 +2,7 @@ export interface GetProductContent {
   id: string;
   code?: string;
   name: string;
-  discountPercentage?: number;
+  discountPercentage?: number | null;
   priceWithDiscount?: string;
   price: string;
   amount: number;

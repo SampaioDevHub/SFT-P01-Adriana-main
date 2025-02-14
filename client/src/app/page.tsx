@@ -15,7 +15,7 @@ export default function Page () {
         if (!userId) {
             router.push('/sign-in');
         } else {
-            router.push('/dashboard');
+            router.push('/dashboards/finance-dashboard');
         }
     }, [isLoaded, userId, router]);
 

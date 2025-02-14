@@ -15,29 +15,31 @@ export function ProductTableRow({
   category,
   subCategory,
   price,
+  discountPercentage,
   priceWithDiscount,
   size,
 }: GetProductContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   return (
     <TableRow key={id}>
       <TableCell>{name}</TableCell>
       <TableCell>{category}</TableCell>
       <TableCell>{subCategory}</TableCell>
       <TableCell>
-        {priceWithDiscount ? (
+        {discountPercentage && priceWithDiscount ? (
           <div className="space-x-1">
             <span
               style={{ textDecoration: 'line-through' }}
               className="text-xs text-muted-foreground"
             >
-              R$ {price}
+              R$ {price.toString().replace('.', ',')}
             </span>
             <span>R$ {priceWithDiscount.toString().replace('.', ',')}</span>
           </div>
         ) : (
-          <p>R$ {price}</p>
+          <p>R$ {price.toString().replace('.', ',')}</p>
         )}
       </TableCell>
       <TableCell>{amount}</TableCell>

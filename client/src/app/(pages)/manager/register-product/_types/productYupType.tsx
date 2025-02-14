@@ -7,8 +7,12 @@ export const formSchema = yup.object({
     .max(60, 'Você só pode inserir até 60 caracteres')
     .required('Informe o nome do produto'),
   discountPercentage: yup
-    .string()
-    .max(2, 'Você só pode inserir até 2 caracteres'),
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === '' ? undefined : value
+    ) // Permite campo vazio
+    .nullable()
+    .max(99, 'O número deve ter no máximo 2 dígitos'),
   price: yup.string().required('Informe o preço do produto'),
   amount: yup
     .number()
@@ -31,7 +35,7 @@ export const formSchema = yup.object({
   subCategory: yup
     .string()
     .max(20, 'Você só pode inserir até 20 caracteres')
-    .required('Informe uma Subcategoria')
+    .required('Informe uma Subcategoria'),
 });
 
 export type FormSchema = yup.InferType<typeof formSchema>;

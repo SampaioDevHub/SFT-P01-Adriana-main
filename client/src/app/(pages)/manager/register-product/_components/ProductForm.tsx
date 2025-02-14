@@ -9,6 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/_components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/_components/ui/card';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -18,18 +24,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 import { Label } from '@/_components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/_components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createProduct } from '@/_api/products/create-product';
 import { getProductsByCategories } from '@/_api/products/get-products-by-categories';
 import { AlertError } from '@/_components/alert/alert-error';
-
 import { MoneyInput } from '@/_components/Inputs/moneyInput';
+
 import { availableSizes } from '../_constants/availableSizes';
 import { formSchema, FormSchema } from '../_types/productYupType';
 
@@ -72,9 +72,7 @@ export function ProductForm() {
       await createProductFn({
         code: data.code,
         name: data.name,
-        discountPercentage: Number(
-          data.discountPercentage?.replace(/[^\d.-]/g, '')
-        ),
+        discountPercentage: data.discountPercentage,
         price: data.price,
         amount: data.amount,
         size: sizesString,
@@ -151,6 +149,7 @@ export function ProductForm() {
               <span className="text-muted-foreground">(Opcional)</span>
             </Label>
             <Input
+              type="number"
               id="discountPercentage"
               {...register('discountPercentage')}
             />

@@ -14,6 +14,12 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/_components/ui/dialog';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/_components/ui/tabs';
 import { AxiosError } from 'axios';
 import { format, parseISO } from 'date-fns';
 import { X } from 'lucide-react';
@@ -28,12 +34,6 @@ import { Label } from '@/_components/ui/label';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCustomerById } from '@/_api/customers/get-customer-by-id';
 import { updatedCustomer } from '@/_api/customers/updated-customer';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from '@/_components/ui/tabs';
 import { CpfInput } from '@/_components/Inputs/cpfInput';
 import { PhoneInput } from '@/_components/Inputs/phoneInput';
 import { CepInput } from '@/_components/Inputs/cepInput';
@@ -96,7 +96,7 @@ export function EditCustomerModalContent({
       city: customer?.addressData.city ?? '',
       state: customer?.addressData.state ?? '',
       cpf: customer?.cpf ?? '',
-      dateBirth: dataFormatada,
+      dateBirth: dataFormatada ?? '',
       maritalStatus: customer?.maritalStatus ?? '',
       enterprise: customer?.enterprise ?? '',
       businessPhone: customer?.businessPhone ?? '',
@@ -220,12 +220,12 @@ export function EditCustomerModalContent({
   async function handleUpdatedCustomer(data: FormSchema) {
     try {
       await updatedCustomerFn({
-        id: customer?.id ?? '',
+        id: customer!.id,
         name: data.name,
-        phone: data.phone,
-        email: data.email,
+        phone: data.phone === undefined ? '' : data.phone,
+        email: data.email === '' ? null : data.email,
         addressData: {
-          zipCode: data.zipCode,
+          zipCode: data.zipCode === undefined ? '' : data.zipCode,
           address: data.address,
           number: data.number,
           complement: data.complement,
@@ -235,9 +235,10 @@ export function EditCustomerModalContent({
         },
         cpf: data.cpf,
         dateBirth: data.dateBirth,
-        maritalStatus: data.maritalStatus,
+        maritalStatus: data.maritalStatus === 'all' ? '' : data.maritalStatus,
         enterprise: data.enterprise,
-        businessPhone: data.businessPhone,
+        businessPhone:
+          data.businessPhone === undefined ? '' : data.businessPhone,
         lengthService: data.lengthService,
         businessZipCode: data.businessZipCode,
         businessAddress: data.businessAddress,

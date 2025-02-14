@@ -22,8 +22,8 @@ import { getProductsByCategories } from '@/_api/products/get-products-by-categor
 import { getProductsById } from '@/_api/products/get-products-by-id';
 import { updatedProduct } from '@/_api/products/updated-product';
 import { AlertError } from '@/_components/alert/alert-error';
-
 import { MoneyInput } from '@/_components/Inputs/moneyInput';
+
 import { availableSizes } from '../_constants/availableSizes';
 import { formSchema, FormSchema } from '../_types/productYupType';
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
@@ -84,7 +84,7 @@ export function EditProductModalContent({
     values: {
       code: product?.code,
       name: product?.name ?? '',
-      discountPercentage: JSON.stringify(product?.discountPercentage) ?? '',
+      discountPercentage: product?.discountPercentage,
       price: JSON.stringify(product?.price) ?? '',
       amount: product?.amount ?? 0,
       size: product?.size ?? '',
@@ -106,9 +106,7 @@ export function EditProductModalContent({
         id: productId,
         code: data.code,
         name: data.name,
-        discountPercentage: Number(
-          data.discountPercentage?.replace(/[^\d.-]/g, '')
-        ),
+        discountPercentage: data.discountPercentage,
         price: data.price.replace(/[^\d.-]/g, ''),
         amount: data.amount,
         size: data.category === 'Roupas' ? sizesString : '',
