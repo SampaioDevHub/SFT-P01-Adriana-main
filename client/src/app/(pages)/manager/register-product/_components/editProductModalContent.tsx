@@ -5,27 +5,27 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
-} from '@/components/ui/dialog';
+  DialogFooter,
+} from '@/_components/ui/dialog';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/_components/ui/button';
+import { Input } from '@/_components/ui/input';
+import { Label } from '@/_components/ui/label';
+import { Checkbox } from '@/_components/ui/checkbox';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProductsByCategories } from '@/api/products/get-products-by-categories';
-import { getProductsById } from '@/api/products/get-products-by-id';
-import { updatedProduct } from '@/api/products/updated-product';
-import { AlertError } from '@/components/alert/alert-error';
+import { getProductsByCategories } from '@/_api/products/get-products-by-categories';
+import { getProductsById } from '@/_api/products/get-products-by-id';
+import { updatedProduct } from '@/_api/products/updated-product';
+import { AlertError } from '@/_components/alert/alert-error';
 
-import { MoneyInput } from '../../../../../components/Inputs/moneyInput';
-import { availableSizes } from '../constants/availableSizes';
-import { formSchema, FormSchema } from '../types/productYupType';
+import { MoneyInput } from '@/_components/Inputs/moneyInput';
+import { availableSizes } from '../_constants/availableSizes';
+import { formSchema, FormSchema } from '../_types/productYupType';
 import { EditProductContentSkeleton } from './_skeleton/editProductContentSkeleton';
 
 interface ModalProps {
@@ -37,7 +37,7 @@ interface ModalProps {
 export function EditProductModalContent({
   productId,
   setIsOpen,
-  open
+  open,
 }: ModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sizesArray, setSizesArray] = useState<string[]>([]);
@@ -54,7 +54,7 @@ export function EditProductModalContent({
 
   const { data: categoriesArray } = useQuery({
     queryKey: ['categories'],
-    queryFn: getProductsByCategories
+    queryFn: getProductsByCategories,
   });
 
   const { data: product, isLoading: isLoadingGetProduct } = useQuery({
@@ -62,7 +62,7 @@ export function EditProductModalContent({
     queryFn: () => getProductsById({ productId }),
     enabled: open,
     staleTime: 0, // Sempre buscar novos dados
-    gcTime: 0 // Remove do cache imediatamente
+    gcTime: 0, // Remove do cache imediatamente
   });
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export function EditProductModalContent({
     watch,
     control,
     reset,
-    formState: { isSubmitting, errors }
+    formState: { isSubmitting, errors },
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     values: {
@@ -89,15 +89,15 @@ export function EditProductModalContent({
       amount: product?.amount ?? 0,
       size: product?.size ?? '',
       category: product?.category ?? 'Roupas',
-      subCategory: product?.subCategory ?? ''
-    }
+      subCategory: product?.subCategory ?? '',
+    },
   });
 
   const { mutateAsync: updatedProductFn } = useMutation({
     mutationFn: updatedProduct,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-    }
+    },
   });
 
   async function handleUpdatedProduct(data: FormSchema) {
@@ -113,7 +113,7 @@ export function EditProductModalContent({
         amount: data.amount,
         size: data.category === 'Roupas' ? sizesString : '',
         category: data.category,
-        subCategory: data.subCategory
+        subCategory: data.subCategory,
       });
       reset();
       setIsOpen(false);
@@ -144,32 +144,32 @@ export function EditProductModalContent({
       {isLoadingGetProduct && <EditProductContentSkeleton />}
       {product && (
         <form
-          id='myForm'
+          id="myForm"
           onSubmit={handleSubmit(handleUpdatedProduct)}
-          className='max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden pr-2'
+          className="max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden pr-2"
         >
-          <div className='space-y-2'>
-            <Label htmlFor='code'>Código do Produto</Label>
-            <Input id='code' {...register('code')} />
+          <div className="space-y-2">
+            <Label htmlFor="code">Código do Produto</Label>
+            <Input id="code" {...register('code')} />
             {errors.code?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.code?.message}
               </p>
             )}
           </div>
-          <div className='space-y-2'>
-            <Label htmlFor='name'>Nome do Produto</Label>
-            <Input id='name' {...register('name')} required />
+          <div className="space-y-2">
+            <Label htmlFor="name">Nome do Produto</Label>
+            <Input id="name" {...register('name')} required />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
               </p>
             )}
           </div>
-          <div className='space-y-2'>
-            <Label htmlFor='name'>Desconto(%)</Label>
+          <div className="space-y-2">
+            <Label htmlFor="name">Desconto(%)</Label>
             <Input
-              id='discountPercentage'
+              id="discountPercentage"
               {...register('discountPercentage')}
             />
             {errors.discountPercentage?.message && (
@@ -178,19 +178,19 @@ export function EditProductModalContent({
               </p>
             )}
           </div>
-          <div className='flex flex-col space-y-2'>
-            <Label htmlFor='edit-category'>Categoria</Label>
+          <div className="flex flex-col space-y-2">
+            <Label htmlFor="edit-category">Categoria</Label>
             <select
-              defaultValue=''
-              className='flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
+              defaultValue=""
+              className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register('category')}
             >
-              <option value='' disabled hidden>
+              <option value="" disabled hidden>
                 Selecione uma categoria
               </option>
               {categoriesArray?.map((cat, index) => (
                 <option
-                  className='w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none'
+                  className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
                   key={index}
                   value={cat.category}
                 >
@@ -204,21 +204,21 @@ export function EditProductModalContent({
               </p>
             )}
           </div>
-          <div className='space-y-2'>
-            <Label htmlFor='edit-subcategory'>Subcategoria</Label>
+          <div className="space-y-2">
+            <Label htmlFor="edit-subcategory">Subcategoria</Label>
             <select
-              defaultValue=''
-              className='flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
+              defaultValue=""
+              className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register('subCategory')}
             >
-              <option value='' disabled hidden>
+              <option value="" disabled hidden>
                 Selecione uma categoria
               </option>
               {categoriesArray?.map((categories) => {
                 if (categories.category === category) {
                   return categories.subCategories.map((subcat, index) => (
                     <option
-                      className='w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none'
+                      className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
                       key={index}
                       value={subcat}
                     >
@@ -235,13 +235,13 @@ export function EditProductModalContent({
               </p>
             )}
           </div>
-          <div className='space-y-2'>
-            <Label className='gap-1' htmlFor='price'>
+          <div className="space-y-2">
+            <Label className="gap-1" htmlFor="price">
               Preço{' '}
-              <span className='text-muted-foreground'>(Sem desconto)</span>
+              <span className="text-muted-foreground">(Sem desconto)</span>
             </Label>
             <Controller
-              name='price' // Nome do campo no formulário
+              name="price" // Nome do campo no formulário
               control={control}
               render={({ field }) => <MoneyInput {...field} />}
             />
@@ -251,9 +251,9 @@ export function EditProductModalContent({
               </p>
             )}
           </div>
-          <div className='space-y-2'>
+          <div className="space-y-2">
             <Label>Quantidade</Label>
-            <Input {...register('amount')} type='number' required />
+            <Input {...register('amount')} type="number" required />
             {errors.amount?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.amount?.message}
@@ -261,11 +261,11 @@ export function EditProductModalContent({
             )}
           </div>
           {category === 'Roupas' && (
-            <div className='space-y-2'>
+            <div className="space-y-2">
               <Label>Tamanhos Disponíveis</Label>
-              <div className='flex flex-wrap gap-2'>
+              <div className="flex flex-wrap gap-2">
                 {availableSizes.map((size) => (
-                  <div key={size} className='flex items-center space-x-2'>
+                  <div key={size} className="flex items-center space-x-2">
                     <Checkbox
                       id={`edit-size-${size}`}
                       checked={sizesArray.includes(size)}
@@ -273,7 +273,7 @@ export function EditProductModalContent({
                     />
                     <label
                       htmlFor={`edit-size-${size}`}
-                      className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       {size}
                     </label>
@@ -286,16 +286,16 @@ export function EditProductModalContent({
       )}
       {errorMessage && (
         <AlertError
-          title='Ops, parece que temos um erro!'
+          title="Ops, parece que temos um erro!"
           errorMessage={errorMessage}
         />
       )}
       <DialogFooter>
         <Button
-          form='myForm'
+          form="myForm"
           disabled={isSubmitting}
-          className='disabled:cursor-not-allowed disabled:opacity-70'
-          type='submit'
+          className="disabled:cursor-not-allowed disabled:opacity-70"
+          type="submit"
         >
           {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
         </Button>

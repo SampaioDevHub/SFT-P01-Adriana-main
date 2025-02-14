@@ -6,11 +6,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { DeleteProduct } from '@/api/products/delete-product';
-import { getProductsById } from '@/api/products/get-products-by-id';
-import { Button } from '@/components/ui/button';
+  DialogFooter,
+} from '@/_components/ui/dialog';
+import { DeleteProduct } from '@/_api/products/delete-product';
+import { getProductsById } from '@/_api/products/get-products-by-id';
+import { Button } from '@/_components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface ModalProps {
@@ -19,17 +19,13 @@ interface ModalProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export function DeleteProductModal({
-  productId,
-  open,
-  setIsOpen
-}: ModalProps) {
+export function DeleteProductModal({ productId, open, setIsOpen }: ModalProps) {
   const queryClient = useQueryClient();
 
   const { data: product } = useQuery({
     queryKey: ['product'],
     queryFn: () => getProductsById({ productId }),
-    enabled: open
+    enabled: open,
   });
 
   const { mutateAsync: deleteProductFn, isPending } = useMutation({
@@ -37,7 +33,7 @@ export function DeleteProductModal({
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['productsLength'] });
-    }
+    },
   });
 
   async function handleDeleteProduct() {
@@ -50,17 +46,17 @@ export function DeleteProductModal({
       <DialogHeader>
         <DialogTitle>Excluir Produto</DialogTitle>
       </DialogHeader>
-      <p className='py-4'>
+      <p className="py-4">
         Tem certeza que deseja excluir o produto "{product?.name}"?
       </p>
       <DialogFooter>
-        <Button variant='outline' onClick={() => setIsOpen(false)}>
+        <Button variant="outline" onClick={() => setIsOpen(false)}>
           Cancelar
         </Button>
         <Button
           disabled={isPending}
-          className='disabled:cursor-not-allowed disabled:opacity-70'
-          variant='destructive'
+          className="disabled:cursor-not-allowed disabled:opacity-70"
+          variant="destructive"
           onClick={handleDeleteProduct}
         >
           Excluir

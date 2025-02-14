@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 import Image from "next/image";
 import Background from "@/assets/auth.png"
-import BackgroundDark from "@/assets/auth-dark.png"
+import BackgroundDark from "./assets/auth-dark.png"
 import React from "react";
 
 const DashboardAuthLayout = ({ children }: { children: React.ReactNode }) => {
@@ -12,13 +12,13 @@ const DashboardAuthLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="relative hidden bg-muted lg:block">
                 <Image
-                    src={Background}
+                    src={'/assets/auth.png'}
                     alt="Image"
                     fill
                     className="absolute inset-0 h-[660px] dark:hidden w-full object-cover"
                 />
                 <Image
-                    src={BackgroundDark}
+                    src={'/assets/auth-dark.png'}
                     alt="Image"
                     fill
                     className="absolute inset-0 h-[660px] hidden dark:block w-full object-cover"

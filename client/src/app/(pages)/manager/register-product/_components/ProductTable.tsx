@@ -1,17 +1,17 @@
 /* eslint-disable import/no-unresolved */
-"use client";
+'use client';
 
 import {
   Table,
   TableBody,
   TableHead,
   TableHeader,
-  TableRow
-} from '@/components/ui/table';
+  TableRow,
+} from '@/_components/ui/table';
 import { z } from 'zod';
 
 import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '@/api/products/get-products';
+import { getProducts } from '@/_api/products/get-products';
 
 import { ProductTableSkeleton } from './_skeleton/productTableSkeleton';
 import { Pagination } from './pagination';
@@ -42,9 +42,9 @@ export function ProductTable() {
         pageIndex,
         nameFilter,
         codeFilter,
-        categoryFilter: categoryFilter === 'all' ? null : categoryFilter
+        categoryFilter: categoryFilter === 'all' ? null : categoryFilter,
       }),
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   function handlePaginate(pageIndex: number) {
@@ -55,11 +55,11 @@ export function ProductTable() {
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>
+    <div className="space-y-4">
+      <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
         <ProductTableFilter />
       </div>
-      <div className='max-h-[40vh] overflow-auto rounded-md border'>
+      <div className="max-h-[40vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -72,7 +72,7 @@ export function ProductTable() {
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className='w-full'>
+          <TableBody className="w-full">
             {isLoadingProducts && <ProductTableSkeleton />}
             {products &&
               products.content?.map((product) => {

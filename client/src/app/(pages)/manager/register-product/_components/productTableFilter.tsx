@@ -4,8 +4,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+  SelectValue,
+} from '@/_components/ui/select';
 import { Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -13,13 +13,13 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/_components/ui/button';
+import { Input } from '@/_components/ui/input';
 
 const formSchema = yup.object().shape({
   name: yup.string(),
   code: yup.string(),
-  category: yup.string()
+  category: yup.string(),
 });
 
 type FormSchema = yup.InferType<typeof formSchema>;
@@ -39,14 +39,14 @@ export function ProductTableFilter() {
     reset,
     setValue,
     control,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     defaultValues: {
       category: categoryFilter ?? '',
       code: codeFilter ?? '',
-      name: nameFilter ?? ''
-    }
+      name: nameFilter ?? '',
+    },
   });
 
   function handleSubmitFilter(data: FormSchema) {
@@ -65,7 +65,10 @@ export function ProductTableFilter() {
     }
 
     if (data.category) {
-      newParams.set('category', (data.category !== 'all' ? data.category : '').toString());
+      newParams.set(
+        'category',
+        (data.category !== 'all' ? data.category : '').toString()
+      );
     } else {
       newParams.delete('category');
     }
@@ -89,49 +92,49 @@ export function ProductTableFilter() {
   return (
     <form
       onSubmit={handleSubmit(handleSubmitFilter)}
-      className='flex w-full items-center gap-2'
+      className="flex w-full items-center gap-2"
     >
-      <span className='text-sm'>Filtros:</span>
-      <Input {...register('name')} placeholder='Nome do produto' />
+      <span className="text-sm">Filtros:</span>
+      <Input {...register('name')} placeholder="Nome do produto" />
       <Input
         {...register('code')}
-        placeholder='Código do Produto'
-        className='overflow-hidden text-ellipsis whitespace-nowrap'
+        placeholder="Código do Produto"
+        className="overflow-hidden text-ellipsis whitespace-nowrap"
       />
       <Controller
         control={control}
-        name='category'
+        name="category"
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className='max-w-[11rem]'>
-              <SelectValue placeholder='Categorias' />
+            <SelectTrigger className="max-w-[11rem]">
+              <SelectValue placeholder="Categorias" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='all'>Todos</SelectItem>
-              <SelectItem value='Roupas'>Roupas</SelectItem>
-              <SelectItem value='Acessórios'>Acessórios</SelectItem>
-              <SelectItem value='Perfumaria'>Perfumaria</SelectItem>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="Roupas">Roupas</SelectItem>
+              <SelectItem value="Acessórios">Acessórios</SelectItem>
+              <SelectItem value="Perfumaria">Perfumaria</SelectItem>
             </SelectContent>
           </Select>
         )}
       />
       <Button
         disabled={isSubmitting}
-        className='text-nowrap whitespace-nowrap  disabled:cursor-not-allowed disabled:opacity-70'
-        variant='secondary'
-        type='submit'
+        className="text-nowrap whitespace-nowrap  disabled:cursor-not-allowed disabled:opacity-70"
+        variant="secondary"
+        type="submit"
       >
-        <Search className='mr-2 h-[1rem] w-[1rem]' />
+        <Search className="mr-2 h-[1rem] w-[1rem]" />
         Filtrar resultados
       </Button>
       <Button
         onClick={handleClearFilters}
-        variant='outline'
-        type='button'
+        variant="outline"
+        type="button"
         disabled={isSubmitting}
-        className='text-nowrap whitespace-nowrap  disabled:cursor-not-allowed disabled:opacity-70'
+        className="text-nowrap whitespace-nowrap  disabled:cursor-not-allowed disabled:opacity-70"
       >
-        <X className='mr-2 h-[1rem] w-[1rem]' />
+        <X className="mr-2 h-[1rem] w-[1rem]" />
         Remover filtros
       </Button>
     </form>

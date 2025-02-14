@@ -1,12 +1,12 @@
 /* eslint-disable import/no-unresolved */
-import { Button } from '@/components/ui/button';
-import { TableRow, TableCell } from '@/components/ui/table';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/_components/ui/button';
+import { TableRow, TableCell } from '@/_components/ui/table';
+import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 
 import { EditCustomerModalContent } from './editCustomerModalContent';
 import { useState } from 'react';
-import { DeleteCustomerModal } from './DeleteCustomerModal';
-import { GetCustomerContent } from '@/api/customers/types/type-get-custumer';
+import { DeleteCustomerModal } from './deleteCustomerModal';
+import { GetCustomerContent } from '@/_api/customers/_types/type-get-custumer';
 import { DialogClose } from '@radix-ui/react-dialog';
 
 export function CustomerTableRow({
@@ -15,16 +15,19 @@ export function CustomerTableRow({
   cpf,
   email,
   phone,
-  addressData
+  addressData,
 }: GetCustomerContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const formatPhoneNumber = (phone: string | undefined) => {
-    if(!phone) return
+    if (!phone) return;
     const onlyDigits = phone.replace(/\D/g, ''); // Remove tudo que não é número
-  
-    return onlyDigits.replace(/^(\d{2})(\d{2})(\d{5})(\d{4})$/, '+$1 ($2) $3-$4');
+
+    return onlyDigits.replace(
+      /^(\d{2})(\d{2})(\d{5})(\d{4})$/,
+      '+$1 ($2) $3-$4'
+    );
   };
 
   return (
@@ -35,11 +38,11 @@ export function CustomerTableRow({
       <TableCell>{formatPhoneNumber(phone)}</TableCell>
       <TableCell>{addressData.city}</TableCell>
       <TableCell>{addressData.state}</TableCell>
-      <TableCell className='w-[10rem]'>
+      <TableCell className="w-[10rem]">
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogClose className='d-none'></DialogClose>
+          <DialogClose className="d-none"></DialogClose>
           <DialogTrigger asChild>
-            <Button variant='outline' size='sm' className='mr-2'>
+            <Button variant="outline" size="sm" className="mr-2">
               Editar
             </Button>
           </DialogTrigger>
@@ -51,7 +54,7 @@ export function CustomerTableRow({
         </Dialog>
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
           <DialogTrigger asChild>
-            <Button variant='destructive' size='sm'>
+            <Button variant="destructive" size="sm">
               Excluir
             </Button>
           </DialogTrigger>

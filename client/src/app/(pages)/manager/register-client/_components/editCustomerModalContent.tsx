@@ -6,14 +6,14 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent
-} from '@/components/ui/card';
+  CardContent,
+} from '@/_components/ui/card';
 import {
   DialogContent,
   DialogClose,
   DialogTitle,
-  DialogFooter
-} from '@/components/ui/dialog';
+  DialogFooter,
+} from '@/_components/ui/dialog';
 import { AxiosError } from 'axios';
 import { format, parseISO } from 'date-fns';
 import { X } from 'lucide-react';
@@ -22,20 +22,25 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/_components/ui/button';
+import { Input } from '@/_components/ui/input';
+import { Label } from '@/_components/ui/label';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCustomerById } from '@/api/customers/get-customer-by-id';
-import { updatedCustomer } from '@/api/customers/updated-customer';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { CpfInput } from '@/components/Inputs/cpfInput';
-import { PhoneInput } from '@/components/Inputs/phoneInput';
-import { CepInput } from '@/components/Inputs/cepInput';
-import { AlertError } from '@/components/alert/alert-error';
+import { getCustomerById } from '@/_api/customers/get-customer-by-id';
+import { updatedCustomer } from '@/_api/customers/updated-customer';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/_components/ui/tabs';
+import { CpfInput } from '@/_components/Inputs/cpfInput';
+import { PhoneInput } from '@/_components/Inputs/phoneInput';
+import { CepInput } from '@/_components/Inputs/cepInput';
+import { AlertError } from '@/_components/alert/alert-error';
 
-import { CustomerStatus } from '../constants/customerStatus';
-import { FormSchema, formSchema } from '../types/customerYupType';
+import { CustomerStatus } from '../_constants/customerStatus';
+import { FormSchema, formSchema } from '../_types/customerYupType';
 import { EditCustomerContentSkeleton } from './_skeleton/editCustomerContentSkeleton';
 
 interface ModalProps {
@@ -47,12 +52,12 @@ interface ModalProps {
 export function EditCustomerModalContent({
   customerId,
   setIsOpen,
-  open
+  open,
 }: ModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState({
     key: 'personalInformation',
-    error: ''
+    error: '',
   });
 
   const queryClient = useQueryClient();
@@ -62,7 +67,7 @@ export function EditCustomerModalContent({
     queryFn: () => getCustomerById({ customerId }),
     enabled: open,
     staleTime: 0,
-    gcTime: 0
+    gcTime: 0,
   });
 
   const dataFormatada =
@@ -76,7 +81,7 @@ export function EditCustomerModalContent({
     setValue,
     watch,
     control,
-    formState: { isSubmitting, errors }
+    formState: { isSubmitting, errors },
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     values: {
@@ -104,8 +109,8 @@ export function EditCustomerModalContent({
       bank: customer?.bank ?? '',
       agency: customer?.agency ?? '',
       father: customer?.father ?? '',
-      mother: customer?.mother ?? ''
-    }
+      mother: customer?.mother ?? '',
+    },
   });
 
   const zipCode = watch('zipCode')?.replace(/\D/g, '');
@@ -156,7 +161,7 @@ export function EditCustomerModalContent({
     mutationFn: updatedCustomer,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
-    }
+    },
   });
 
   const errorFields = Object.keys(errors);
@@ -165,7 +170,7 @@ export function EditCustomerModalContent({
     if (errors.name || errors.phone || errors.email) {
       setActiveTab({
         key: 'personalInformation',
-        error: 'personalInformation'
+        error: 'personalInformation',
       });
     } else if (
       errors.zipCode ||
@@ -178,12 +183,12 @@ export function EditCustomerModalContent({
     ) {
       setActiveTab({
         key: 'homeAddress',
-        error: 'homeAddress'
+        error: 'homeAddress',
       });
     } else if (errors.cpf || errors.dateBirth || errors.maritalStatus) {
       setActiveTab({
         key: 'documents',
-        error: 'documents'
+        error: 'documents',
       });
     } else if (
       errors.enterprise ||
@@ -197,20 +202,20 @@ export function EditCustomerModalContent({
     ) {
       setActiveTab({
         key: 'professionals',
-        error: 'professionals'
+        error: 'professionals',
       });
     } else if (errors.bank || errors.agency) {
       setActiveTab({
         key: 'banking',
-        error: 'banking'
+        error: 'banking',
       });
     } else if (errors.father || errors.mother) {
       setActiveTab({
         key: 'affiliation',
-        error: 'affiliation'
+        error: 'affiliation',
       });
     }
-  }, [errorFields, errors]);
+  }, [errorFields.length, errors]);
 
   async function handleUpdatedCustomer(data: FormSchema) {
     try {
@@ -226,7 +231,7 @@ export function EditCustomerModalContent({
           complement: data.complement,
           referencePoint: data.referencePoint,
           city: data.city,
-          state: data.state
+          state: data.state,
         },
         cpf: data.cpf,
         dateBirth: data.dateBirth,
@@ -242,7 +247,7 @@ export function EditCustomerModalContent({
         bank: data.bank,
         agency: data.agency,
         father: data.father,
-        mother: data.mother
+        mother: data.mother,
       });
       reset();
       setIsOpen(false);
@@ -265,13 +270,13 @@ export function EditCustomerModalContent({
 
   return (
     <DialogContent
-      title='noButtonClose'
-      className='m-0 w-full border-0 bg-transparent p-0 pt-6'
+      title="noButtonClose"
+      className="m-0 w-full border-0 bg-transparent p-0 pt-6"
     >
-      <DialogTitle className='flex items-center justify-between text-muted dark:text-foreground'>
+      <DialogTitle className="flex items-center justify-between text-muted dark:text-foreground">
         Edite os dados do cliente
         <DialogClose>
-          <X className='h-5 w-5 text-muted-foreground' />
+          <X className="h-5 w-5 text-muted-foreground" />
         </DialogClose>
       </DialogTitle>
       {isLoadingGetCustomer && <EditCustomerContentSkeleton />}
@@ -282,10 +287,10 @@ export function EditCustomerModalContent({
             onValueChange={(value) => {
               setActiveTab({ key: value, error: '' });
             }}
-            className='w-full'
+            className="w-full"
           >
-            <TabsList className='grid grid-cols-3'>
-              <TabsTrigger value='personalInformation'>
+            <TabsList className="grid grid-cols-3">
+              <TabsTrigger value="personalInformation">
                 <span
                   className={
                     activeTab.error === 'personalInformation'
@@ -296,7 +301,7 @@ export function EditCustomerModalContent({
                   Pessoal
                 </span>
               </TabsTrigger>
-              <TabsTrigger value='homeAddress'>
+              <TabsTrigger value="homeAddress">
                 <span
                   className={
                     activeTab.error === 'homeAddress' ? 'text-destructive' : ''
@@ -305,7 +310,7 @@ export function EditCustomerModalContent({
                   Endereço
                 </span>
               </TabsTrigger>
-              <TabsTrigger value='documents'>
+              <TabsTrigger value="documents">
                 <span
                   className={
                     activeTab.error === 'documents' ? 'text-destructive' : ''
@@ -314,7 +319,7 @@ export function EditCustomerModalContent({
                   Documentos
                 </span>
               </TabsTrigger>
-              <TabsTrigger value='professionals'>
+              <TabsTrigger value="professionals">
                 <span
                   className={
                     activeTab.error === 'professionals'
@@ -325,7 +330,7 @@ export function EditCustomerModalContent({
                   Profissionais
                 </span>
               </TabsTrigger>
-              <TabsTrigger value='banking'>
+              <TabsTrigger value="banking">
                 <span
                   className={
                     activeTab.error === 'banking' ? 'text-destructive' : ''
@@ -334,7 +339,7 @@ export function EditCustomerModalContent({
                   Bancários
                 </span>
               </TabsTrigger>
-              <TabsTrigger value='affiliation'>
+              <TabsTrigger value="affiliation">
                 <span
                   className={
                     activeTab.error === 'affiliation' ? 'text-destructive' : ''
@@ -344,7 +349,7 @@ export function EditCustomerModalContent({
                 </span>
               </TabsTrigger>
             </TabsList>
-            <TabsContent value='personalInformation'>
+            <TabsContent value="personalInformation">
               <Card>
                 <CardHeader>
                   <CardTitle>Informações Pessoais</CardTitle>
@@ -352,39 +357,39 @@ export function EditCustomerModalContent({
                     Edite as informações pessoais do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='space-y-2'>
-                  <div className='space-y-2'>
-                    <Label className='gap-1' htmlFor='name'>
+                <CardContent className="space-y-2">
+                  <div className="space-y-2">
+                    <Label className="gap-1" htmlFor="name">
                       Nome
-                      <span className='text-muted-foreground'>
+                      <span className="text-muted-foreground">
                         (Obrigatório)
                       </span>
                     </Label>
-                    <Input id='name' {...register('name')} required />
+                    <Input id="name" {...register('name')} required />
                     {errors.name?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.name?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='phone'>Telefone</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Telefone</Label>
                     <Controller
-                      name='phone'
+                      name="phone"
                       control={control}
                       render={({ field }) => <PhoneInput {...field} />}
                     />
                     {errors.phone?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.phone?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='email'>E-mail</Label>
-                    <Input id='email' {...register('email')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="email">E-mail</Label>
+                    <Input id="email" {...register('email')} />
                     {errors.email?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.email?.message}
                       </p>
                     )}
@@ -393,7 +398,7 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
 
-            <TabsContent value='homeAddress'>
+            <TabsContent value="homeAddress">
               <Card>
                 <CardHeader>
                   <CardTitle>Endereço Residencial</CardTitle>
@@ -401,73 +406,73 @@ export function EditCustomerModalContent({
                     Edite o endereço residencial do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='max-h-[50vh] space-y-2 overflow-y-auto overflow-x-hidden'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='cep'>CEP</Label>
+                <CardContent className="max-h-[50vh] space-y-2 overflow-y-auto overflow-x-hidden">
+                  <div className="space-y-2">
+                    <Label htmlFor="cep">CEP</Label>
                     <Controller
-                      name='zipCode'
+                      name="zipCode"
                       control={control}
                       render={({ field }) => <CepInput {...field} />}
                     />
                     {errors.zipCode?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.zipCode?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='address'>Endereço</Label>
-                    <Input id='address' {...register('address')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Endereço</Label>
+                    <Input id="address" {...register('address')} />
                     {errors.address?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.address?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='city'>Cidade</Label>
-                    <Input id='city' {...register('city')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Cidade</Label>
+                    <Input id="city" {...register('city')} />
                     {errors.city?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.city?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='state'>Estado</Label>
-                    <Input id='state' {...register('state')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Estado</Label>
+                    <Input id="state" {...register('state')} />
                     {errors.state?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.state?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='referencePoint'>Ponto de referência</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="referencePoint">Ponto de referência</Label>
                     <Input
-                      id='referencePoint'
+                      id="referencePoint"
                       {...register('referencePoint')}
                     />
                     {errors.referencePoint?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.referencePoint?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='number'>Numero da casa</Label>
-                    <Input id='number' {...register('number')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="number">Numero da casa</Label>
+                    <Input id="number" {...register('number')} />
                     {errors.number?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.number?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='complement'>Complemento</Label>
-                    <Input id='complement' {...register('complement')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="complement">Complemento</Label>
+                    <Input id="complement" {...register('complement')} />
                     {errors.complement?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.complement?.message}
                       </p>
                     )}
@@ -476,7 +481,7 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
 
-            <TabsContent value='documents'>
+            <TabsContent value="documents">
               <Card>
                 <CardHeader>
                   <CardTitle>Documentos</CardTitle>
@@ -484,51 +489,51 @@ export function EditCustomerModalContent({
                     Edite os documentos do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='space-y-2'>
-                  <div className='space-y-2'>
-                    <Label className='gap-1' htmlFor='name'>
+                <CardContent className="space-y-2">
+                  <div className="space-y-2">
+                    <Label className="gap-1" htmlFor="name">
                       CPF{' '}
-                      <span className='text-muted-foreground'>
+                      <span className="text-muted-foreground">
                         (Obrigatório)
                       </span>
                     </Label>
                     <Controller
-                      name='cpf'
+                      name="cpf"
                       control={control}
                       render={({ field }) => <CpfInput {...field} />}
                     />
                     {errors.cpf?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.cpf?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='dataBirth'>Data de nascimento</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="dataBirth">Data de nascimento</Label>
                     <Input
-                      id='dataBirth'
-                      type='date'
+                      id="dataBirth"
+                      type="date"
                       {...register('dateBirth')}
                     />
                     {errors.dateBirth?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.dateBirth?.message}
                       </p>
                     )}
                   </div>
-                  <div className='flex flex-col space-y-2'>
-                    <Label htmlFor='maritalStatus'>Estado civil</Label>
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="maritalStatus">Estado civil</Label>
                     <select
-                      defaultValue='all'
-                      className='flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
+                      defaultValue="all"
+                      className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                       {...register('maritalStatus')}
                     >
-                      <option value='all' disabled hidden>
+                      <option value="all" disabled hidden>
                         Selecione um status
                       </option>
                       {CustomerStatus?.map((status, index) => (
                         <option
-                          className='w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none'
+                          className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
                           key={index}
                           value={status}
                         >
@@ -537,7 +542,7 @@ export function EditCustomerModalContent({
                       ))}
                     </select>
                     {errors.maritalStatus?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.maritalStatus?.message}
                       </p>
                     )}
@@ -546,7 +551,7 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
 
-            <TabsContent value='professionals'>
+            <TabsContent value="professionals">
               <Card>
                 <CardHeader>
                   <CardTitle>Informações Profissionais</CardTitle>
@@ -554,85 +559,85 @@ export function EditCustomerModalContent({
                     Edite as informações profissionais do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='enterprise'>Empresa</Label>
-                    <Input id='enterprise' {...register('enterprise')} />
+                <CardContent className="max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden">
+                  <div className="space-y-2">
+                    <Label htmlFor="enterprise">Empresa</Label>
+                    <Input id="enterprise" {...register('enterprise')} />
                     {errors.enterprise?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.enterprise?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='businessPhone'>Telefone comercial</Label>
-                    <Input id='businessPhone' {...register('businessPhone')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="businessPhone">Telefone comercial</Label>
+                    <Input id="businessPhone" {...register('businessPhone')} />
                     {errors.businessPhone?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.businessPhone?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='lengthService'>Tempo de serviço</Label>
-                    <Input id='lengthService' {...register('lengthService')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="lengthService">Tempo de serviço</Label>
+                    <Input id="lengthService" {...register('lengthService')} />
                     {errors.lengthService?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.lengthService?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='businessCep'>CEP</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="businessCep">CEP</Label>
                     <Controller
-                      name='businessZipCode'
+                      name="businessZipCode"
                       control={control}
                       render={({ field }) => <CepInput {...field} />}
                     />
                     {errors.businessZipCode?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.businessZipCode?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='businessAddress'>Endereço comercial</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="businessAddress">Endereço comercial</Label>
                     <Input
-                      id='businessAddress'
+                      id="businessAddress"
                       {...register('businessAddress')}
                     />
                     {errors.businessAddress?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.businessAddress?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='businessCity'>Cidade</Label>
-                    <Input id='businessCity' {...register('businessCity')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="businessCity">Cidade</Label>
+                    <Input id="businessCity" {...register('businessCity')} />
                     {errors.businessCity?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.businessCity?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='businessState'>Estado</Label>
-                    <Input id='businessState' {...register('businessState')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="businessState">Estado</Label>
+                    <Input id="businessState" {...register('businessState')} />
                     {errors.businessState?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.businessState?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='businessPosition'>Cargo</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="businessPosition">Cargo</Label>
                     <Input
-                      id='businessPosition'
+                      id="businessPosition"
                       {...register('businessPosition')}
                     />
                     {errors.businessPosition?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.businessPosition?.message}
                       </p>
                     )}
@@ -641,7 +646,7 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
 
-            <TabsContent value='banking'>
+            <TabsContent value="banking">
               <Card>
                 <CardHeader>
                   <CardTitle>Informações Bancarias</CardTitle>
@@ -649,21 +654,21 @@ export function EditCustomerModalContent({
                     Edite as informações bancarias do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='space-y-2'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='bank'>Banco</Label>
-                    <Input id='bank' {...register('bank')} />
+                <CardContent className="space-y-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="bank">Banco</Label>
+                    <Input id="bank" {...register('bank')} />
                     {errors.bank?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.bank?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='agency'>Agência</Label>
-                    <Input id='agency' {...register('agency')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="agency">Agência</Label>
+                    <Input id="agency" {...register('agency')} />
                     {errors.agency?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.agency?.message}
                       </p>
                     )}
@@ -672,7 +677,7 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
 
-            <TabsContent value='affiliation'>
+            <TabsContent value="affiliation">
               <Card>
                 <CardHeader>
                   <CardTitle>Afiliação</CardTitle>
@@ -680,21 +685,21 @@ export function EditCustomerModalContent({
                     Edite as informações de afiliação do seu cliente.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='space-y-2'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='father'>Pai</Label>
-                    <Input id='father' {...register('father')} />
+                <CardContent className="space-y-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="father">Pai</Label>
+                    <Input id="father" {...register('father')} />
                     {errors.father?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.father?.message}
                       </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='mother'>Mãe</Label>
-                    <Input id='mother' {...register('mother')} />
+                  <div className="space-y-2">
+                    <Label htmlFor="mother">Mãe</Label>
+                    <Input id="mother" {...register('mother')} />
                     {errors.mother?.message && (
-                      <p className='text-sm text-destructive'>
+                      <p className="text-sm text-destructive">
                         {errors.mother?.message}
                       </p>
                     )}
@@ -705,15 +710,15 @@ export function EditCustomerModalContent({
           </Tabs>
           {errorMessage && (
             <AlertError
-              title='Ops, parece que temos um erro!'
+              title="Ops, parece que temos um erro!"
               errorMessage={errorMessage}
             />
           )}
-          <DialogFooter className='mt-2'>
+          <DialogFooter className="mt-2">
             <Button
               disabled={isSubmitting}
-              className='disabled:cursor-not-allowed disabled:opacity-70'
-              type='submit'
+              className="disabled:cursor-not-allowed disabled:opacity-70"
+              type="submit"
             >
               {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
             </Button>

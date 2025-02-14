@@ -6,12 +6,12 @@ import {
   TableBody,
   TableHead,
   TableHeader,
-  TableRow
-} from '@/components/ui/table';
+  TableRow,
+} from '@/_components/ui/table';
 import { z } from 'zod';
 
 import { useQuery } from '@tanstack/react-query';
-import { getCustomers } from '@/api/customers/get-customers';
+import { getCustomers } from '@/_api/customers/get-customers';
 
 import { CustomerTableSkeleton } from './_skeleton/customerTableSkeleton';
 import { Pagination } from './pagination';
@@ -20,7 +20,7 @@ import { CustomerTableRow } from './customerTableRow';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
-export default function CustomerTable() {
+export function CustomerTable() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -42,9 +42,9 @@ export default function CustomerTable() {
         pageIndex,
         nameFilter,
         cpfFilter,
-        phoneFilter: phoneFilter === 'all' ? null : phoneFilter
+        phoneFilter: phoneFilter === 'all' ? null : phoneFilter,
       }),
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   function handlePaginate(pageIndex: number) {
@@ -55,11 +55,11 @@ export default function CustomerTable() {
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>
+    <div className="space-y-4">
+      <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
         <CustomerTableFilter />
       </div>
-      <div className='max-h-[60vh] overflow-auto rounded-md border'>
+      <div className="max-h-[60vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -72,7 +72,7 @@ export default function CustomerTable() {
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className='w-full'>
+          <TableBody className="w-full">
             {isLoadingCustomers && <CustomerTableSkeleton />}
             {customers &&
               customers.content?.map((customer) => {

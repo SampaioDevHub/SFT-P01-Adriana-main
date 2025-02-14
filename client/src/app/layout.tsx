@@ -6,15 +6,16 @@ import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/_components/ui/sonner';
 import { ClerkProvider, ClerkLoading } from '@clerk/nextjs';
 import { ptBR } from '@clerk/localizations';
-import { ThemeProvider } from '@/components/providers/theme-provider';
+import { ThemeProvider } from '@/_components/providers/theme-provider';
 import { Analytics } from '@vercel/analytics/next';
-import { LoadingSpinner } from '@/components/loading';
-import ReactQueryProvider from '@/components/providers/react-query-provider';
+import { LoadingSpinner } from '@/_components/loading';
+import ReactQueryProvider from '@/_components/providers/react-query-provider';
 
 import './globals.css';
+import { FloatingChat } from '@/_components/FloatingChat';
 
 export const metadata: Metadata = {
   title: 'Projeto Adriana ShowRoom Anapolis',
@@ -55,6 +56,7 @@ export default async function RootLayout({
               <ReactQueryProvider>
                 {children}
                 <Analytics />
+                <FloatingChat />
               </ReactQueryProvider>
             </ThemeProvider>
           </NuqsAdapter>

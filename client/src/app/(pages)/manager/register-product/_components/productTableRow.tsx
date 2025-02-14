@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { TableRow, TableCell } from '@/components/ui/table';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import { GetProductContent } from '@/api/products/types/type-get-product';
+import { Button } from '@/_components/ui/button';
+import { TableRow, TableCell } from '@/_components/ui/table';
+import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
+import { GetProductContent } from '@/_api/products/_types/type-get-product';
 
 import { DeleteProductModal } from './deleteProductModal';
 import { EditProductModalContent } from './editProductModalContent';
@@ -16,7 +16,7 @@ export function ProductTableRow({
   subCategory,
   price,
   priceWithDiscount,
-  size
+  size,
 }: GetProductContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -27,10 +27,10 @@ export function ProductTableRow({
       <TableCell>{subCategory}</TableCell>
       <TableCell>
         {priceWithDiscount ? (
-          <div className='space-x-1'>
+          <div className="space-x-1">
             <span
               style={{ textDecoration: 'line-through' }}
-              className='text-xs text-muted-foreground'
+              className="text-xs text-muted-foreground"
             >
               R$ {price}
             </span>
@@ -42,10 +42,10 @@ export function ProductTableRow({
       </TableCell>
       <TableCell>{amount}</TableCell>
       <TableCell>{size}</TableCell>
-      <TableCell className='w-[10rem]'>
+      <TableCell className="w-[10rem]">
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogTrigger asChild>
-            <Button variant='outline' size='sm' className='mr-2'>
+            <Button variant="outline" size="sm" className="mr-2">
               Editar
             </Button>
           </DialogTrigger>
@@ -57,7 +57,7 @@ export function ProductTableRow({
         </Dialog>
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
           <DialogTrigger asChild>
-            <Button variant='destructive' size='sm'>
+            <Button variant="destructive" size="sm">
               Excluir
             </Button>
           </DialogTrigger>
