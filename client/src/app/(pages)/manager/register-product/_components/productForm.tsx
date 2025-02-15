@@ -101,7 +101,7 @@ export function ProductForm() {
   const category = watch('category');
   const isClothingCategory = category === 'Roupas';
 
-  // Observa o valor do campo "size"
+  // Observa o valor do campo 'size'
   const selectedSize = watch('size');
 
   // Adiciona o tamanho ao array sempre que o valor for alterado
@@ -120,37 +120,37 @@ export function ProductForm() {
       <CardContent>
         <form
           onSubmit={handleSubmit(handleCreateProduct)}
-          className="space-y-4"
+          className='space-y-4'
         >
-          <div className="space-y-2">
-            <Label className="gap-1" htmlFor="price">
+          <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
               Código do Produto
-              <span className="text-muted-foreground">(Opcional)</span>
+              <span className='text-muted-foreground'>(Opcional)</span>
             </Label>
-            <Input id="code" {...register('code')} />
+            <Input id='code' {...register('code')} />
             {errors.code?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.code?.message}
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome do Produto</Label>
-            <Input id="name" {...register('name')} required />
+          <div className='space-y-2'>
+            <Label htmlFor='name'>Nome do Produto</Label>
+            <Input id='name' {...register('name')} required />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label className="gap-1" htmlFor="price">
+          <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
               Desconto(%)
-              <span className="text-muted-foreground">(Opcional)</span>
+              <span className='text-muted-foreground'>(Opcional)</span>
             </Label>
             <Input
-              type="number"
-              id="discountPercentage"
+              type='number'
+              id='discountPercentage'
               {...register('discountPercentage')}
             />
             {errors.discountPercentage?.message && (
@@ -159,15 +159,15 @@ export function ProductForm() {
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="category">Categoria</Label>
+          <div className='space-y-2'>
+            <Label htmlFor='category'>Categoria</Label>
             <Controller
-              name="category" // Nome do campo no formulário
+              name='category' // Nome do campo no formulário
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria" />
+                    <SelectValue placeholder='Selecione uma categoria' />
                   </SelectTrigger>
                   <SelectContent>
                     {categories?.map((cat, index) => (
@@ -186,15 +186,15 @@ export function ProductForm() {
             )}
           </div>
           {category && (
-            <div className="space-y-2">
-              <Label htmlFor="subcategory">Subategoria</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='subcategory'>Subategoria</Label>
               <Controller
-                name="subCategory" // Nome do campo no formulário
+                name='subCategory' // Nome do campo no formulário
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma subcategoria" />
+                      <SelectValue placeholder='Selecione uma subcategoria' />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.map((categoryy) => {
@@ -220,13 +220,13 @@ export function ProductForm() {
               )}
             </div>
           )}
-          <div className="space-y-2">
-            <Label className="gap-1" htmlFor="price">
+          <div className='space-y-2'>
+            <Label className='gap-1' htmlFor='price'>
               Preço
-              <span className="text-muted-foreground">(Sem desconto)</span>
+              <span className='text-muted-foreground'>(Sem desconto)</span>
             </Label>
             <Controller
-              name="price" // Nome do campo no formulário
+              name='price' // Nome do campo no formulário
               control={control}
               render={({ field }) => <MoneyInput {...field} />}
             />
@@ -236,9 +236,9 @@ export function ProductForm() {
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="amount">Quantidade</Label>
-            <Input id="amount" {...register('amount')} type="number" required />
+          <div className='space-y-2'>
+            <Label htmlFor='amount'>Quantidade</Label>
+            <Input id='amount' {...register('amount')} type='number' required />
             {errors.amount?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.amount?.message}
@@ -246,16 +246,16 @@ export function ProductForm() {
             )}
           </div>
           {isClothingCategory && (
-            <div className="space-y-2">
-              <Label htmlFor="sizes">Tamanhos Disponíveis</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='sizes'>Tamanhos Disponíveis</Label>
               <Controller
-                name="size" // Nome do campo no formulário
+                name='size' // Nome do campo no formulário
                 control={control}
-                defaultValue="" // Valor inicial
+                defaultValue='' // Valor inicial
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione os tamanhos" />
+                      <SelectValue placeholder='Selecione os tamanhos' />
                     </SelectTrigger>
                     <SelectContent>
                       {availableSizes.map((size) => (
@@ -272,21 +272,21 @@ export function ProductForm() {
                   {errors.size?.message}
                 </p>
               )}
-              <div className="mt-2">
+              <div className='mt-2'>
                 Tamanhos selecionados: {sizesArray.join(', ')}
               </div>
             </div>
           )}
           {errorMessage && (
             <AlertError
-              title="Ops, parece que temos um erro!"
+              title='Ops, parece que temos um erro!'
               errorMessage={errorMessage}
             />
           )}
           <Button
             disabled={isSubmitting}
-            className="disabled:cursor-not-allowed disabled:opacity-70"
-            type="submit"
+            className='disabled:cursor-not-allowed disabled:opacity-70'
+            type='submit'
           >
             {isSubmitting ? 'Cadastrando...' : 'Cadastrar Produto'}
           </Button>

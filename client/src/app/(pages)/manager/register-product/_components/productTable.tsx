@@ -54,11 +54,11 @@ export function ProductTable() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
+    <div className='space-y-4'>
+      <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>
         <ProductTableFilter />
       </div>
-      <div className="max-h-[40vh] overflow-auto rounded-md border">
+      <div className='max-h-[40vh] overflow-auto rounded-md border'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -71,7 +71,7 @@ export function ProductTable() {
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="w-full">
+          <TableBody className='w-full'>
             {isLoadingProducts && <ProductTableSkeleton />}
             {products &&
               products.content?.map((product) => {

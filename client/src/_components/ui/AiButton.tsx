@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
-import { Sparkle } from "lucide-react";
-import { loadFull } from "tsparticles";
+import { useEffect, useMemo, useState } from 'react';
+import { Sparkle } from 'lucide-react';
+import { loadFull } from 'tsparticles';
 
-import type { ISourceOptions } from "@tsparticles/engine";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import type { ISourceOptions } from '@tsparticles/engine';
+import Particles, { initParticlesEngine } from '@tsparticles/react';
 
 const options: ISourceOptions = {
-  key: "star",
-  name: "Star",
+  key: 'star',
+  name: 'Star',
   particles: {
     number: {
       value: 20,
@@ -16,10 +16,18 @@ const options: ISourceOptions = {
       },
     },
     color: {
-      value: ["#7c3aed", "#bae6fd", "#a78bfa", "#93c5fd", "#0284c7", "#fafafa", "#38bdf8"],
+      value: [
+        '#7c3aed',
+        '#bae6fd',
+        '#a78bfa',
+        '#93c5fd',
+        '#0284c7',
+        '#fafafa',
+        '#38bdf8',
+      ],
     },
     shape: {
-      type: "star",
+      type: 'star',
       options: {
         star: {
           sides: 4,
@@ -38,7 +46,7 @@ const options: ISourceOptions = {
         max: 360,
       },
       enable: true,
-      direction: "clockwise",
+      direction: 'clockwise',
       animation: {
         enable: true,
         speed: 10,
@@ -63,8 +71,8 @@ const options: ISourceOptions = {
   smooth: true,
   fpsLimit: 120,
   background: {
-    color: "transparent",
-    size: "cover",
+    color: 'transparent',
+    size: 'cover',
   },
   fullScreen: {
     enable: false,
@@ -108,14 +116,14 @@ const options: ISourceOptions = {
 };
 
 export default function AiButton() {
-  const [particleState, setParticlesReady] = useState<"loaded" | "ready">();
+  const [particleState, setParticlesReady] = useState<'loaded' | 'ready'>();
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
       await loadFull(engine);
     }).then(() => {
-      setParticlesReady("loaded");
+      setParticlesReady('loaded');
     });
   }, []);
 
@@ -134,21 +142,21 @@ export default function AiButton() {
         <Sparkle className="size-6 -translate-y-0.5 animate-sparkle fill-white" />
         <Sparkle
           style={{
-            animationDelay: "1s",
+            animationDelay: '1s',
           }}
           className="absolute bottom-2.5 left-3.5 z-20 size-2 rotate-12 animate-sparkle fill-white"
         />
         <Sparkle
           style={{
-            animationDelay: "1.5s",
-            animationDuration: "2.5s",
+            animationDelay: '1.5s',
+            animationDuration: '2.5s',
           }}
           className="absolute left-5 top-2.5 size-1 -rotate-12 animate-sparkle fill-white"
         />
         <Sparkle
           style={{
-            animationDelay: "0.5s",
-            animationDuration: "2.5s",
+            animationDelay: '0.5s',
+            animationDuration: '2.5s',
           }}
           className="absolute left-3 top-3 size-1.5 animate-sparkle fill-white"
         />
@@ -158,9 +166,9 @@ export default function AiButton() {
       {!!particleState && (
         <Particles
           id="whatever"
-          className={`pointer-events-none absolute -bottom-4 -left-4 -right-4 -top-4 z-0 opacity-0 transition-opacity ${particleState === "ready" ? "group-hover:opacity-100" : ""}`}
+          className={`pointer-events-none absolute -bottom-4 -left-4 -right-4 -top-4 z-0 opacity-0 transition-opacity ${particleState === 'ready' ? 'group-hover:opacity-100' : ''}`}
           particlesLoaded={async () => {
-            setParticlesReady("ready");
+            setParticlesReady('ready');
           }}
           options={modifiedOptions}
         />

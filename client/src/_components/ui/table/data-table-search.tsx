@@ -37,7 +37,7 @@ interface DataTableSearchProps {
  *
  * The component returns an `Input` component with a placeholder that includes
  * the `searchKey`. The component is wrapped in a `div` with a class of
- * `"data-table-search"`.
+ * `'data-table-search'`.
  ***/
 
 export function DataTableSearch({

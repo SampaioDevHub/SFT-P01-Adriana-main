@@ -18,7 +18,9 @@ export function CepInput({ value = '', onChange }: CepInputProps) {
   // Manipulador de mudança
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const formattedCep = formatCep(event.target.value);
-    onChange({ target: { value: formattedCep } } as ChangeEvent<HTMLInputElement>);
+    onChange({
+      target: { value: formattedCep },
+    } as ChangeEvent<HTMLInputElement>);
   };
 
   return (

@@ -17,13 +17,15 @@ export function CpfInput({ value, onChange }: CpfInputProps) {
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const formattedCpf = formatCpf(event.target.value);
-    onChange({ target: { value: formattedCpf } } as ChangeEvent<HTMLInputElement>);
+    onChange({
+      target: { value: formattedCpf },
+    } as ChangeEvent<HTMLInputElement>);
   };
 
   return (
     <Input
       type="text"
-      value={value || ''}  // Garante que value nunca seja undefined
+      value={value || ''} // Garante que value nunca seja undefined
       onChange={handleChange}
     />
   );
