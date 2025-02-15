@@ -1,7 +1,7 @@
 import PageContainer from '@/_components/layout/page-container';
 
-import { ProductForm } from './_components/ProductForm';
-import { ProductTable } from './_components/ProductTable';
+import { ProductForm } from './_components/productForm';
+import { ProductTable } from './_components/productTable';
 
 export default function RegisterProduct() {
   return (
