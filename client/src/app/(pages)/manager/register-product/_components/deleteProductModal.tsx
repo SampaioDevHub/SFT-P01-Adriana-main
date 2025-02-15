@@ -46,7 +46,7 @@ export function DeleteProductModal({ productId, open, setIsOpen }: ModalProps) {
         <DialogTitle>Excluir Produto</DialogTitle>
       </DialogHeader>
       <p className='py-4'>
-        Tem certeza que deseja excluir o produto '{product?.name}'?
+        Tem certeza que deseja excluir o produto {product?.name}?
       </p>
       <DialogFooter>
         <Button variant='outline' onClick={() => setIsOpen(false)}>

@@ -49,7 +49,7 @@ export function DeleteCustomerModal({
         <DialogTitle>Excluir Produto</DialogTitle>
       </DialogHeader>
       <p className="py-4">
-        Tem certeza que deseja excluir o produto '{customer?.name}'?
+        Tem certeza que deseja excluir o produto {customer?.name}?
       </p>
       <DialogFooter>
         <Button variant="outline" onClick={() => setIsOpen(false)}>
