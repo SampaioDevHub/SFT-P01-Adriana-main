@@ -47,7 +47,7 @@ export function ProductForm() {
     reset,
     formState: { isSubmitting, errors },
   } = useForm<FormSchema>({
-    resolver: yupResolver(formSchema),
+    resolver: yupResolver(formSchema(false)),
     defaultValues: {
       category: '',
       size: '',
