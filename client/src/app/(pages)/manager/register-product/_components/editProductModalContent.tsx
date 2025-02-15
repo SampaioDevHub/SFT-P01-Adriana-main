@@ -70,7 +70,7 @@ export function EditProductModalContent({
     }
   }, [product?.size]);
   const sizesString = sizesArray.join(', ');
-
+  console.log(sizesArray.length > 0);
   const {
     handleSubmit,
     register,
@@ -79,7 +79,7 @@ export function EditProductModalContent({
     reset,
     formState: { isSubmitting, errors },
   } = useForm<FormSchema>({
-    resolver: yupResolver(formSchema),
+    resolver: yupResolver(formSchema(sizesArray.length > 0)),
     values: {
       code: product?.code,
       name: product?.name ?? '',
@@ -98,7 +98,7 @@ export function EditProductModalContent({
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
-
+  console.log(sizesString, sizesArray);
   async function handleUpdatedProduct(data: FormSchema) {
     try {
       await updatedProductFn({
@@ -277,6 +277,11 @@ export function EditProductModalContent({
                   </div>
                 ))}
               </div>
+              {sizesArray.length === 0 && (
+                <p className={`text-sm text-destructive`}>
+                  {errors.size?.message}
+                </p>
+              )}
             </div>
           )}
         </form>
