@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useCallbackRef } from '@/_hooks/use-callback-ref';
 
 /**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-controllable-state/src/useControllableState.tsx
+ * @see https://github.com/radix-ui/primitives/blob/div/packages/react/use-controllable-state/src/useControllableState.tsx
  */
 
 type UseControllableStateParams<T> = {

@@ -12,7 +12,7 @@ export const metadata = {
 export default function RegisterSale() {
   return (
     <PageContainer>
-      <main className="container mx-auto block h-auto flex-col px-4 py-6">
+      <div className="container mx-auto block h-auto flex-col px-4 py-6">
         <h1 className="mb-8 text-3xl font-bold">Cadastro de Vendas</h1>
         <SelectSales />
         <div className="flex flex-auto flex-col gap-6 md:flex-col">
@@ -23,7 +23,7 @@ export default function RegisterSale() {
           <SelectedProducts />
         </div>
         <GeneralSummary />
-      </main>
+      </div>
     </PageContainer>
   );
 }

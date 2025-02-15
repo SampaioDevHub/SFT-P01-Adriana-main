@@ -28,9 +28,9 @@ export default async function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <Header />
-          {/* page main content */}
+          {/* page div content */}
           {children}
-          {/* page main content ends */}
+          {/* page div content ends */}
         </SidebarInset>
       </SidebarProvider>
     </KBar>

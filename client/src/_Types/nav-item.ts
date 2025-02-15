@@ -29,6 +29,6 @@ export interface FooterItem {
   }[];
 }
 
-export type MainNavItem = NavItemWithOptionalChildren;
+export type divNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
