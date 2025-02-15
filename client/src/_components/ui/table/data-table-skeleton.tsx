@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Skeleton } from '@/_components/ui/skeleton';
 import {
   Table,

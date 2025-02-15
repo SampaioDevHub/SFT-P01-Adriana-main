@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Icons } from '@/_components/icons';
 export interface NavItem {
   title: string;

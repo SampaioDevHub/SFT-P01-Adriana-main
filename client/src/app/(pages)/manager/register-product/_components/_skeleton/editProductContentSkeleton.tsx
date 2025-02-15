@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { DialogFooter } from '@/_components/ui/dialog';
 import { Skeleton } from '@/_components/ui/skeleton';
 

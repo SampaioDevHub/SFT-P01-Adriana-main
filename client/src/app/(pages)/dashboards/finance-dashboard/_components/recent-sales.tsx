@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Avatar, AvatarFallback, AvatarImage } from '@/_components/ui/avatar';
 
 export function RecentSales() {

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 'use client';
 import { Button } from '@/_components/ui/button';
 import { ScrollArea, ScrollBar } from '@/_components/ui/scroll-area';

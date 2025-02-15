@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 'use client';
 
 import { QueryClientProvider } from '@tanstack/react-query';

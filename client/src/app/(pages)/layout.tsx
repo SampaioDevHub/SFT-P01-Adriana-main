@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-sync-scripts */
-/* eslint-disable import/no-unresolved */
+
 import KBar from '@/_components/kbar';
 import AppSidebar from '@/_components/layout/sidebar';
 import Header from '@/_components/layout/header';

@@ -1,5 +1,4 @@
-/* eslint-disable import/no-unresolved */
-import { NavItem } from "@/_Types/nav-item";
+import { NavItem } from '@/_Types/nav-item';
 
 export const navItems: NavItem[] = [
   {
@@ -11,13 +10,13 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Dashboard Finanças',
-        url: '/dashboards/finance-dashboard'
+        url: '/dashboards/finance-dashboard',
       },
       {
         title: 'Dashboard funcionarios',
-        url: '/dashboards/staff-dashboard'
+        url: '/dashboards/staff-dashboard',
       },
-    ]
+    ],
   },
   {
     title: 'Gerenciar',
@@ -29,21 +28,21 @@ export const navItems: NavItem[] = [
         title: 'Cadastrar Produtos',
         url: '/manager/register-product',
         shortcut: ['p', 'p'],
-        isActive: false
+        isActive: false,
       },
       {
         title: 'Cadastrar Clientes',
         url: '/manager/register-client',
         shortcut: ['p', 'p'],
-        isActive: false
+        isActive: false,
       },
       {
         title: 'Cadastro de vendas',
         url: '/manager/register-sale',
         shortcut: ['p', 'p'],
-        isActive: false
-      }
-    ]
+        isActive: false,
+      },
+    ],
   },
   {
     title: 'Relatórios',
@@ -55,15 +54,14 @@ export const navItems: NavItem[] = [
         title: 'Relatorio de Produtos',
         url: '/report/product-report',
         shortcut: ['p', 'p'],
-        isActive: false
+        isActive: false,
       },
       {
         title: 'Relatorio Financeiro',
         url: '/report/financial-report',
         shortcut: ['p', 'p'],
-        isActive: false
-      }
-    ]
-  }
-  
+        isActive: false,
+      },
+    ],
+  },
 ];

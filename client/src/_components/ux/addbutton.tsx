@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, CircleDashed } from 'lucide-react';

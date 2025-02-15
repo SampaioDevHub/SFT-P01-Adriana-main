@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -29,7 +28,6 @@ export function CustomerTableFilter() {
   const {
     handleSubmit,
     register,
-    reset,
     setValue,
     formState: { isSubmitting },
   } = useForm<FormSchema>({

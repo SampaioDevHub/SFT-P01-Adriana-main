@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { cn } from '@/_lib/utils';
 
 function Skeleton({

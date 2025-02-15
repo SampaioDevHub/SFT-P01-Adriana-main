@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { api } from '@/_lib/axios';
 
 import { GetProductContent } from './_types/type-get-product';

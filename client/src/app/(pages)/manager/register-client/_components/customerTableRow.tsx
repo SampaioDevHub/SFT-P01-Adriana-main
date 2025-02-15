@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';

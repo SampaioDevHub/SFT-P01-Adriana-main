@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { api } from '@/_lib/axios';
 import { GetCustomersBody } from './_types/type-get-custumer';
 

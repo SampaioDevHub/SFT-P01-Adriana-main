@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import {

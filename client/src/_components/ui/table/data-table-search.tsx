@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-
 'use client';
 
 import { Input } from '@/_components/ui/input';

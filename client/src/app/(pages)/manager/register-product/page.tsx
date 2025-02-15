@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import PageContainer from '@/_components/layout/page-container';
 
 import { ProductForm } from './_components/ProductForm';

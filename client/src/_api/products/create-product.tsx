@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { api } from '@/_lib/axios';
 import { CreateProductBody } from './_types/type-create-product';
 

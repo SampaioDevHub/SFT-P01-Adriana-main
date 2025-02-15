@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { Input } from '../ui/input';
 
 interface CpfInputProps {

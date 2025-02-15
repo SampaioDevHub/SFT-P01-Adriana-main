@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { useMediaQuery } from 'react-responsive';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import { Config } from 'tailwindcss/types/config';
@@ -11,14 +10,14 @@ const breakpoints = fullConfig?.theme?.screens || {
   sm: '640px',
   md: '768px',
   lg: '1024px',
-  xl: '1280px'
+  xl: '1280px',
 };
 
 export function useBreakpoint<K extends string>(breakpointKey: K) {
   const breakpointValue =
     breakpoints[breakpointKey as keyof typeof breakpoints];
   const bool = useMediaQuery({
-    query: `(max-width: ${breakpointValue})`
+    query: `(max-width: ${breakpointValue})`,
   });
   const capitalizedKey =
     breakpointKey[0].toUpperCase() + breakpointKey.substring(1);
@@ -29,6 +28,6 @@ export function useBreakpoint<K extends string>(breakpointKey: K) {
   return {
     [breakpointKey]: Number(String(breakpointValue).replace(/[^0-9]/g, '')),
     [`isAbove${capitalizedKey}`]: !bool,
-    [`isBelow${capitalizedKey}`]: bool
+    [`isBelow${capitalizedKey}`]: bool,
   } as Record<K, number> & Record<KeyAbove | KeyBelow, boolean>;
 }

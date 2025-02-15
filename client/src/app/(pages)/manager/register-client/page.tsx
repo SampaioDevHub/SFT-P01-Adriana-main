@@ -1,6 +1,4 @@
 'use client';
-/* eslint-disable import/no-unresolved */
-import { useState } from 'react';
 
 import PageContainer from '@/_components/layout/page-container';
 
@@ -8,8 +6,6 @@ import { CustomerForm } from './_components/customerForm';
 import { CustomerTable } from './_components/customerTable';
 
 export default function CustomersPage() {
-  const [showForm, setShowForm] = useState(false);
-
   return (
     <PageContainer>
       <div className="container mx-auto px-4 py-8">

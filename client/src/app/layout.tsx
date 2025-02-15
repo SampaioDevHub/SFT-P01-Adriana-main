@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-sync-scripts */
-/* eslint-disable import/no-unresolved */
 
 import type { Metadata } from 'next';
 import { Lato } from 'next/font/google';

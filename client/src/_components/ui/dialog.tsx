@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved */
+
 'use client';
 
 import * as React from 'react';
@@ -29,10 +29,6 @@ const DialogOverlay = React.forwardRef<
   />
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
-
-interface DiologButtonClose {
-  buttonClose: boolean;
-}
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,

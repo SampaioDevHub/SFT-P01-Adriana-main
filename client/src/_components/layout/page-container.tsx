@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React from 'react';
 import { ScrollArea } from '@/_components/ui/scroll-area';
 
