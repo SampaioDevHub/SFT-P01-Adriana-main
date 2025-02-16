@@ -44,11 +44,11 @@ export function EditProductModalContent({
   const queryClient = useQueryClient();
 
   const toggleSize = (size: string) => {
-    if (sizesArray?.includes(size)) {
-      setSizesArray(sizesArray.filter((s) => s !== size));
-    } else {
-      setSizesArray([...sizesArray, size]);
-    }
+    setSizesArray((prevSizes) =>
+      prevSizes.includes(size)
+        ? prevSizes.filter((s) => s !== size)
+        : [...prevSizes, size]
+    );
   };
 
   const { data: categoriesArray } = useQuery({
@@ -66,11 +66,13 @@ export function EditProductModalContent({
 
   useEffect(() => {
     if (product?.size) {
-      setSizesArray(product?.size.split(', '));
+      setSizesArray(product.size.split(', '));
     }
   }, [product?.size]);
+
+  console.log(product?.size)
+
   const sizesString = sizesArray.join(', ');
-  console.log(sizesArray.length > 0);
   const {
     handleSubmit,
     register,
@@ -86,7 +88,7 @@ export function EditProductModalContent({
       discountPercentage: product?.discountPercentage,
       price: JSON.stringify(product?.price) ?? '',
       amount: product?.amount ?? 0,
-      size: product?.size ?? '',
+      size: sizesString ?? '',
       category: product?.category ?? 'Roupas',
       subCategory: product?.subCategory ?? '',
     },
@@ -96,9 +98,11 @@ export function EditProductModalContent({
     mutationFn: updatedProduct,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['product'] });
     },
   });
   console.log(sizesString, sizesArray);
+  console.log(product?.size)
   async function handleUpdatedProduct(data: FormSchema) {
     try {
       await updatedProductFn({
@@ -113,6 +117,7 @@ export function EditProductModalContent({
         subCategory: data.subCategory,
       });
       reset();
+      setSizesArray([''])
       setIsOpen(false);
       setErrorMessage(null);
       toast.success('Produto atualizado com sucesso');
@@ -277,7 +282,7 @@ export function EditProductModalContent({
                   </div>
                 ))}
               </div>
-              {sizesArray.length === 0 && (
+              {errors.size?.message && (
                 <p className={`text-sm text-destructive`}>
                   {errors.size?.message}
                 </p>
