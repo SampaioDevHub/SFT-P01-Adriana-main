@@ -29,20 +29,20 @@ export function ProductTableRow({
       <TableCell>{subCategory}</TableCell>
       <TableCell>
         {discountPercentage && priceWithDiscount ? (
-          <div className="space-x-1">
+          <div className="space-x-1 flex flex-wrap">
             <span
               style={{ textDecoration: 'line-through' }}
-              className="text-xs text-muted-foreground"
+              className="text-xs text-muted-foreground className='whitespace-nowrap'"
             >
               R$ {price.toString().replace('.', ',')}
             </span>
-            <span>R$ {priceWithDiscount.toString().replace('.', ',')}</span>
+            <span className='whitespace-nowrap'>R$ {priceWithDiscount.toString().replace('.', ',')}</span>
           </div>
         ) : (
           <p>R$ {price.toString().replace('.', ',')}</p>
         )}
       </TableCell>
-      <TableCell>{amount}</TableCell>
+      <TableCell className='md:text-left text-center flex-1'>{amount}</TableCell>
       <TableCell>{size}</TableCell>
       <TableCell className="w-[10rem]">
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
