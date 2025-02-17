@@ -261,7 +261,7 @@ export function CustomerForm() {
                 <Input id='number' {...register('number')} />
                 {errors.number?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.name?.message}
+                    {errors.number?.message}
                   </p>
                 )}
               </div>
@@ -270,7 +270,7 @@ export function CustomerForm() {
                 <Input id='complement' {...register('complement')} />
                 {errors.complement?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.name?.message}
+                    {errors.complement?.message}
                   </p>
                 )}
               </div>
@@ -301,7 +301,7 @@ export function CustomerForm() {
                 <Input id='dataBirth' type='date' {...register('dateBirth')} />
                 {errors.dateBirth?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.name?.message}
+                    {errors.dateBirth?.message}
                   </p>
                 )}
               </div>
@@ -327,7 +327,7 @@ export function CustomerForm() {
                 </select>
                 {errors.maritalStatus?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.name?.message}
+                    {errors.maritalStatus?.message}
                   </p>
                 )}
               </div>
