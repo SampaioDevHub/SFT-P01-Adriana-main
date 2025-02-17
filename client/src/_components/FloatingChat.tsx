@@ -105,7 +105,7 @@ export function FloatingChat() {
           >
             <Card className="shadow-lg">
               <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="font-semibold">Adriana Showroom</h2>
+                <h2 className="font-semibold">Assistente Virtual</h2>
                 <Button
                   variant="ghost"
                   size="icon"

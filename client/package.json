@@ -132,5 +132,13 @@
   "overrides": {
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@clerk/shared",
+      "@tsparticles/engine",
+      "core-js",
+      "sharp"
+    ]
   }
 }
