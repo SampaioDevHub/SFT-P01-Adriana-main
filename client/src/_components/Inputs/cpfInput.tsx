@@ -25,6 +25,7 @@ export function CpfInput({ value, onChange }: CpfInputProps) {
   return (
     <Input
       type="text"
+      required
       value={value || ''} // Garante que value nunca seja undefined
       onChange={handleChange}
     />
