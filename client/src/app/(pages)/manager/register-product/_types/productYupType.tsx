@@ -36,7 +36,7 @@ export const formSchema = (isSizeNotRequired: boolean) =>
     subCategory: yup
       .string()
       .max(20, 'Você só pode inserir até 20 caracteres')
-      .required('Informe uma Subcategoria'),
+      .required('Informe uma SubCategoria'),
   });
 
 export type FormSchema = yup.InferType<ReturnType<typeof formSchema>>;

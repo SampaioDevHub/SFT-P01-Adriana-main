@@ -32,8 +32,9 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import type { Product } from '../types/product';
+import { GetProductContent, GetProductsBody } from '@/_api/products/_types/type-get-product';
 
-const columns: ColumnDef<Product>[] = [
+const columns: ColumnDef<GetProductContent>[] = [
   {
     accessorKey: 'name',
     header: 'Nome do Produto',
@@ -80,7 +81,7 @@ const columns: ColumnDef<Product>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="text-right">{row.getValue('stock')}</div>
+      <div className="text-right">{row.getValue('amount')}</div>
     ),
   },
   {
@@ -96,9 +97,6 @@ const columns: ColumnDef<Product>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="text-right">{row.getValue('sales')}</div>
-    ),
   },
   {
     accessorKey: 'lastUpdated',
@@ -113,7 +111,7 @@ const columns: ColumnDef<Product>[] = [
   },
 ];
 
-export function ProductsTable({ data }: { data: Product[] }) {
+export function ProductsTable({ data }: { data: GetProductContent[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

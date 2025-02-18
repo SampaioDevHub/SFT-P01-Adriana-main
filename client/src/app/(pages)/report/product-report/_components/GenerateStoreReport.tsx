@@ -5,37 +5,64 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
-
-// Sample data (replace with actual data from your store)
-const storeData = {
-  name: 'AdrianaShowRoom',
-  sales: 15000,
-  products: 100,
-  topSeller: 'Vestido Floral',
-};
+import { getProducts } from '@/_api/products/get-products';
+import { useQuery } from '@tanstack/react-query';
 
 export function GenerateStoreReport() {
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const { data: products, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts({}),
+    staleTime: Infinity,
+  });
+
+  if (!products || products.content.length === 0) {
+    return <p>Nenhum produto encontrado.</p>;
+  }
+
   const generatePDF = () => {
     setIsGenerating(true);
+    const doc = new jsPDF('p', 'mm', 'a4');
 
-    const doc = new jsPDF();
-
-    // Add content to the PDF
+    // Cabeçalho
     doc.setFontSize(22);
-    doc.text(`${storeData.name} - Relatório da Loja`, 20, 20);
-
-    doc.setFontSize(16);
-    doc.text('Resumo de Vendas', 20, 40);
+    doc.text('Relatório de Produtos', 14, 20);
 
     doc.setFontSize(12);
-    doc.text(`Total de Vendas: R$ ${storeData.sales.toFixed(2)}`, 20, 60);
-    doc.text(`Número de Produtos: ${storeData.products}`, 20, 70);
-    doc.text(`Produto Mais Vendido: ${storeData.topSeller}`, 20, 80);
+    doc.text(`Número de Produtos: ${String(products.content.length)}`, 14, 30);
 
-    // Save the PDF
-    doc.save('AdrianaShowRoom_Relatorio.pdf');
+    // Configuração inicial da tabela
+    let y = 50;
+    doc.setFontSize(10);
+    doc.text('Nome', 14, y);
+    doc.text('Preço', 60, y);
+    doc.text('Categoria', 105, y);
+    doc.text('SubCategoria', 130, y);
+    doc.text('Tamanho', 160, y);
+    doc.text('Qtd.', 185, y);
+    doc.line(14, y + 2, 200, y + 2);
+
+    y += 10;
+
+    products.content.forEach((product) => {
+      doc.text(String(product.name), 14, y);
+      doc.text(`R$ ${String(product.price)}`, 60, y);
+      doc.text(String(product.category), 105, y);
+      doc.text(String(product.subCategory), 130, y);
+      doc.text(String(product.size), 160, y);
+      doc.text(String(product.amount), 185, y);
+      y += 7;
+
+      // Verifica se precisa criar uma nova página
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    // Salvar PDF
+    doc.save('Relatorio_Produtos.pdf');
 
     setIsGenerating(false);
   };

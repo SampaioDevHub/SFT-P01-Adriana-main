@@ -70,7 +70,7 @@ export function EditProductModalContent({
     }
   }, [product?.size]);
 
-  console.log(product?.size)
+  console.log(product?.size);
 
   const sizesString = sizesArray.join(', ');
   const {
@@ -102,7 +102,7 @@ export function EditProductModalContent({
     },
   });
   console.log(sizesString, sizesArray);
-  console.log(product?.size)
+  console.log(product?.size);
   async function handleUpdatedProduct(data: FormSchema) {
     try {
       await updatedProductFn({
@@ -117,7 +117,7 @@ export function EditProductModalContent({
         subCategory: data.subCategory,
       });
       reset();
-      setSizesArray([''])
+      setSizesArray(['']);
       setIsOpen(false);
       setErrorMessage(null);
       toast.success('Produto atualizado com sucesso');
@@ -207,7 +207,7 @@ export function EditProductModalContent({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-subcategory">Subcategoria</Label>
+            <Label htmlFor="edit-subcategory">SubCategoria</Label>
             <select
               defaultValue=""
               className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"

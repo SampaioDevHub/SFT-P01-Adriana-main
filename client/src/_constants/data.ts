@@ -13,8 +13,8 @@ export const navItems: NavItem[] = [
         url: '/dashboards/finance-dashboard',
       },
       {
-        title: 'Dashboard funcionarios',
-        url: '/dashboards/staff-dashboard',
+        title: 'Dashboard Clientes',
+        url: '/dashboards/customer-dashboard',
       },
     ],
   },
