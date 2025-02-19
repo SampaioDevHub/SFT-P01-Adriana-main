@@ -12,7 +12,6 @@ export function CustomerTableRow({
   id,
   name,
   cpf,
-  email,
   phone,
   addressData,
 }: GetCustomerContent) {
@@ -33,8 +32,8 @@ export function CustomerTableRow({
     <TableRow key={id}>
       <TableCell>{name}</TableCell>
       <TableCell>{cpf}</TableCell>
-      <TableCell>{email}</TableCell>
       <TableCell>{formatPhoneNumber(phone)}</TableCell>
+      <TableCell>{addressData.zipCode}</TableCell>
       <TableCell>{addressData.city}</TableCell>
       <TableCell>{addressData.state}</TableCell>
       <TableCell className="w-[10rem]">

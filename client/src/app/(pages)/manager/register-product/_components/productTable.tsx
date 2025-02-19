@@ -64,7 +64,7 @@ export function ProductTable() {
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Categoria</TableHead>
-              <TableHead>Subcategoria</TableHead>
+              <TableHead>SubCategoria</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Quantidade</TableHead>
               <TableHead>Tamanhos</TableHead>
@@ -83,8 +83,8 @@ export function ProductTable() {
       <Pagination
         onPageChange={handlePaginate}
         pageIndex={pageIndex ?? 0}
-        totalCount={products?.totalElements ?? 8}
-        perPage={products?.pageable.pageSize ?? 8}
+        totalCount={products?.totalElements ?? 0}
+        perPage={products?.pageable.pageSize ?? 0}
       />
     </div>
   );

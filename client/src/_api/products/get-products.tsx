@@ -15,7 +15,7 @@ export async function getProducts({
   categoryFilter,
 }: GetProductsQuery) {
   const response = await api.get<GetProductsBody>(
-    `/products/find-all?size=8&page=${pageIndex}&name=${nameFilter}&code=${codeFilter}&category=${categoryFilter}`
+    `/products/find-all?size=10&page=${pageIndex ?? ''}&name=${nameFilter ?? ''}&code=${codeFilter ?? ''}&category=${categoryFilter ?? ''}`
   );
 
   return response.data;

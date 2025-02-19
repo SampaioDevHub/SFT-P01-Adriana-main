@@ -64,8 +64,8 @@ export function CustomerTable() {
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>CPF</TableHead>
-              <TableHead>Email</TableHead>
               <TableHead>Telefone</TableHead>
+              <TableHead>Cep</TableHead>
               <TableHead>Cidade</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Ações</TableHead>
@@ -83,8 +83,8 @@ export function CustomerTable() {
       <Pagination
         onPageChange={handlePaginate}
         pageIndex={pageIndex ?? 0}
-        totalCount={customers?.totalElements ?? 8}
-        perPage={customers?.pageable.pageSize ?? 8}
+        totalCount={customers?.totalElements ?? 0}
+        perPage={customers?.pageable.pageSize ?? 0}
       />
     </div>
   );

@@ -1,13 +1,23 @@
+'use client'
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import { ProductsTable } from './products-table';
-import type { Product } from '../types/product';
 import { DollarSign, Package, TrendingUp } from 'lucide-react';
 import type React from 'react'; // Import React
+
+import {
+  GetProductContent,
+  GetProductsBody,
+} from '@/_api/products/_types/type-get-product';
+import { useQuery } from '@tanstack/react-query';
+import { getProducts } from '@/_api/products/get-products';
+
+import type { Product } from '../types/product';
+import { ProductsTable } from './products-table';
 
 function StatCard({
   title,
@@ -34,22 +44,26 @@ function StatCard({
   );
 }
 
-export function ProductReport({ products }: { products: Product[] }) {
-  // Calcular estatísticas
-  const totalProducts = products.length;
-  const totalStock = products.reduce((acc, product) => acc + product.stock, 0);
-  const totalSales = products.reduce((acc, product) => acc + product.sales, 0);
-  const totalRevenue = products.reduce(
-    (acc, product) => acc + product.price * product.sales,
-    0
-  );
+export function ProductReport() {
+  const { data: products, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts({}),
+    staleTime: Infinity,
+  });
+
+  if (!products) {
+    return;
+  }
+
+  const totalproducts = products?.content.length;
+  const totalStock = products.content[0].amount;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total de Produtos"
-          value={totalProducts.toString()}
+          value={totalproducts.toString()}
           icon={Package}
           description="Produtos cadastrados"
         />
@@ -61,16 +75,13 @@ export function ProductReport({ products }: { products: Product[] }) {
         />
         <StatCard
           title="Total de Vendas"
-          value={totalSales.toString()}
+          value="1000"
           icon={TrendingUp}
           description="Unidades vendidas"
         />
         <StatCard
           title="Receita Total"
-          value={new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(totalRevenue)}
+          value={'R$ 1000,00'}
           icon={DollarSign}
           description="Receita gerada"
         />
@@ -81,7 +92,7 @@ export function ProductReport({ products }: { products: Product[] }) {
           <CardTitle>Relatório de Produtos</CardTitle>
         </CardHeader>
         <CardContent>
-          <ProductsTable data={products} />
+          <ProductsTable data={products.content} />
         </CardContent>
       </Card>
     </div>

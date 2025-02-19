@@ -187,14 +187,14 @@ export function ProductForm() {
           </div>
           {category && (
             <div className='space-y-2'>
-              <Label htmlFor='subcategory'>Subategoria</Label>
+              <Label htmlFor='subcategory'>SubCategoria</Label>
               <Controller
                 name='subCategory' // Nome do campo no formulário
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder='Selecione uma subcategoria' />
+                      <SelectValue placeholder='Selecione uma SubCategoria' />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.map((categoryy) => {
