@@ -4,9 +4,9 @@ import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { GetProductContent } from '@/_api/products/_types/type-get-product';
+import { DeleteModal } from '@/_components/layout/deleteModal';
 
-import { DeleteProductModal } from './deleteProductModal';
-import { EditProductModalContent } from './editProductModalContent';
+import { EditProductModalContent } from '../editProductModalContent';
 
 export function ProductTableRow({
   id,
@@ -36,13 +36,17 @@ export function ProductTableRow({
             >
               R$ {price.toString().replace('.', ',')}
             </span>
-            <span className='whitespace-nowrap'>R$ {priceWithDiscount.toString().replace('.', ',')}</span>
+            <span className="whitespace-nowrap">
+              R$ {priceWithDiscount.toString().replace('.', ',')}
+            </span>
           </div>
         ) : (
           <p>R$ {price.toString().replace('.', ',')}</p>
         )}
       </TableCell>
-      <TableCell className='md:text-left text-center flex-1'>{amount}</TableCell>
+      <TableCell className="md:text-left text-center flex-1">
+        {amount}
+      </TableCell>
       <TableCell>{size}</TableCell>
       <TableCell className="w-[10rem]">
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -63,10 +67,11 @@ export function ProductTableRow({
               Excluir
             </Button>
           </DialogTrigger>
-          <DeleteProductModal
+          <DeleteModal
+            title="Excluir Produto"
+            subTitle={`Tem certeza que deseja excluir o produto: ${name}?`}
             setIsOpen={setIsDeleteModalOpen}
-            open={isDeleteModalOpen}
-            productId={id}
+            id={id}
           />
         </Dialog>
       </TableCell>

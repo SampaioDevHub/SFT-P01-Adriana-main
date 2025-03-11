@@ -10,16 +10,16 @@ import {
 import { z } from 'zod';
 
 import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '@/_api/products/get-products';
+import { getSales } from '@/_api/sales/get-sales';
 
-import { ProductTableSkeleton } from './_skeleton/productTableSkeleton';
+import { SaleTableSkeleton } from '../_skeleton/saleTableSkeleton';
 import { Pagination } from './pagination';
-import { ProductTableFilter } from './productTableFilter';
-import { ProductTableRow } from './productTableRow';
+import { SaleTableFilter } from './saleTableFilter';
+import { SaleTableRow } from './saleTableRow';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
-export function ProductTable() {
+export function SaleTable() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -34,10 +34,10 @@ export function ProductTable() {
     .transform((page) => page - 1)
     .parse(page);
 
-  const { data: products, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ['products', pageIndex, nameFilter, codeFilter, categoryFilter],
+  const { data: sales, isLoading: isLoadingSales } = useQuery({
+    queryKey: ['sales', pageIndex, nameFilter, codeFilter, categoryFilter],
     queryFn: () =>
-      getProducts({
+      getSales({
         pageIndex,
         nameFilter,
         codeFilter,
@@ -54,28 +54,25 @@ export function ProductTable() {
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex w-full flex-col items-center justify-between gap-4 sm:flex-row'>
-        <ProductTableFilter />
+    <div className="space-y-4">
+      <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
+        <SaleTableFilter />
       </div>
-      <div className='max-h-[40vh] overflow-auto rounded-md border'>
+      <div className="max-h-[40vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>CPF</TableHead>
               <TableHead>Nome</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>SubCategoria</TableHead>
-              <TableHead>Preço</TableHead>
               <TableHead>Quantidade</TableHead>
-              <TableHead>Tamanhos</TableHead>
-              <TableHead>Ações</TableHead>
+              <TableHead>Data Final</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className='w-full'>
-            {isLoadingProducts && <ProductTableSkeleton />}
-            {products &&
-              products.content?.map((product) => {
-                return <ProductTableRow key={product.id} {...product} />;
+          <TableBody className="w-full">
+            {isLoadingSales && <SaleTableSkeleton />}
+            {sales &&
+              sales.content?.map((sale) => {
+                return <SaleTableRow key={sale.id} {...sale} />;
               })}
           </TableBody>
         </Table>
@@ -83,8 +80,8 @@ export function ProductTable() {
       <Pagination
         onPageChange={handlePaginate}
         pageIndex={pageIndex ?? 0}
-        totalCount={products?.totalElements ?? 0}
-        perPage={products?.pageable.pageSize ?? 0}
+        totalCount={sales?.totalElements ?? 0}
+        perPage={sales?.pageable.pageSize ?? 0}
       />
     </div>
   );

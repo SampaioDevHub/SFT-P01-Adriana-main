@@ -1,12 +1,13 @@
+import { useState } from 'react';
+
 import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
-
-import { EditCustomerModalContent } from './editCustomerModalContent';
-import { useState } from 'react';
-import { DeleteCustomerModal } from './deleteCustomerModal';
 import { GetCustomerContent } from '@/_api/customers/_types/type-get-custumer';
 import { DialogClose } from '@radix-ui/react-dialog';
+import { DeleteModal } from '@/_components/layout/deleteModal';
+
+import { EditCustomerModalContent } from '../editCustomerModalContent';
 
 export function CustomerTableRow({
   id,
@@ -56,10 +57,11 @@ export function CustomerTableRow({
               Excluir
             </Button>
           </DialogTrigger>
-          <DeleteCustomerModal
+          <DeleteModal
+            title="Excluir Cliente"
+            subTitle={`Tem certeza que deseja excluir o cliente: ${name}?`}
             setIsOpen={setIsDeleteModalOpen}
-            open={isDeleteModalOpen}
-            customerId={id}
+            id={id}
           />
         </Dialog>
       </TableCell>

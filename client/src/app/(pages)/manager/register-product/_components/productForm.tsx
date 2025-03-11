@@ -115,7 +115,7 @@ export function ProductForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Adicionar Novo Produto</CardTitle>
+        <CardTitle>Cadastrar Novo Produto</CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -123,7 +123,7 @@ export function ProductForm() {
           className='space-y-4'
         >
           <div className='space-y-2'>
-            <Label className='gap-1' htmlFor='price'>
+            <Label className='gap-1' htmlFor='code'>
               Código do Produto
               <span className='text-muted-foreground'>(Opcional)</span>
             </Label>

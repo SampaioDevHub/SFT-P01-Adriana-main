@@ -1,28 +1,38 @@
-import PageContainer from '@/_components/layout/page-container';
-import SelectSales from './_components/SelectSales';
-import CustomerSales from './_components/AddCustomer';
-import AddProducts from './_components/AddProducts';
-import SelectedProducts from './_components/SelectedProducts';
-import GeneralSummary from './_components/GeneralSummary';
+'use client'
 
-export const metadata = {
-  title: 'Financeiro | Painel Caixa',
-};
+import { motion } from 'framer-motion';
+
+import { Button } from '@/_components/ui/button';
+import PageContainer from '@/_components/layout/page-container';
+
+import { SaleTable } from './_components/_table/saleTable';
+import { SaleForm } from './_components/saleForm';
+import { useState } from 'react';
 
 export default function RegisterSale() {
+  const [isFormVisible, setIsFormVisible] = useState(false);
   return (
     <PageContainer>
-      <div className="container mx-auto block h-auto flex-col px-4 py-6">
-        <h1 className="mb-8 text-3xl font-bold">Cadastro de Vendas</h1>
-        <SelectSales />
-        <div className="flex flex-auto flex-col gap-6 md:flex-col">
-          <CustomerSales />
-          <AddProducts />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Vendas</h1>
+          <Button onClick={() => setIsFormVisible(!isFormVisible)}>
+            {isFormVisible ? 'Fechar Formulário' : 'Nova Venda'}
+          </Button>
         </div>
-        <div className="mt-60">
-          <SelectedProducts />
+        <div className="w-full space-y-8">
+          {isFormVisible && (
+            <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            >
+              <SaleForm />
+            </motion.div>
+          )}
+          <SaleTable />
         </div>
-        <GeneralSummary />
       </div>
     </PageContainer>
   );
