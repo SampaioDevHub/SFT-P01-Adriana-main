@@ -70,8 +70,6 @@ export function EditProductModalContent({
     }
   }, [product?.size]);
 
-  console.log(product?.size);
-
   const sizesString = sizesArray.join(', ');
   const {
     handleSubmit,

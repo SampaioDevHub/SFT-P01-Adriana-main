@@ -55,7 +55,7 @@ export function EditSaleModalContent({ saleId, setIsOpen, open }: ModalProps) {
     resolver: yupResolver(formSchema({})),
   });
 
-  const { mutateAsync: updatedSaleFn } = useMutation({
+  const {  } = useMutation({
     mutationFn: updatedSale,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['sales'] });

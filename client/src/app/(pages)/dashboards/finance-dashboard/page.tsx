@@ -9,7 +9,7 @@ import { MonthRevenueCard } from './_components/cards/month-revenue-card';
 import { RevenueChart } from './_components/revenue-chart';
 import { PopularProductsChart } from './_components/popular-products-chart';
 
-export default function page() {
+export default function FinanceDashboard() {
   const { user } = useUser();
   return (
     <PageContainer scrollable>
