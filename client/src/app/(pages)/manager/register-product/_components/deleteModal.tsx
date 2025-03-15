@@ -7,14 +7,16 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/_components/ui/dialog';
-import { DeleteSale } from '@/_api/sales/delete-sale';
 import { Button } from '@/_components/ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { DeleteCustomer } from '@/_api/customers/delete-customer';
+import { DeleteProduct } from '@/_api/products/delete-product';
 
 interface ModalProps {
   title: string;
   subTitle: string;
   id: string;
+  
   setIsOpen: (isOpen: boolean) => void;
 }
 
@@ -22,10 +24,9 @@ export function DeleteModal({ id, title, subTitle, setIsOpen }: ModalProps) {
   const queryClient = useQueryClient();
 
   const { mutateAsync: deleteSaleFn, isPending } = useMutation({
-    mutationFn: () => DeleteSale({ saleId: id }),
+    mutationFn: () => DeleteProduct({ productId: id }),
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      queryClient.invalidateQueries({ queryKey: ['salesLength'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
 

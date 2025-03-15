@@ -5,7 +5,7 @@ import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { GetCustomerContent } from '@/_api/customers/_types/type-get-custumer';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { DeleteModal } from '@/_components/layout/deleteModal';
+import { DeleteModal } from '../deleteModal';
 
 import { EditCustomerModalContent } from '../editCustomerModalContent';
 

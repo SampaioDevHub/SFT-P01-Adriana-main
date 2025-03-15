@@ -4,7 +4,7 @@ import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { GetProductContent } from '@/_api/products/_types/type-get-product';
-import { DeleteModal } from '@/_components/layout/deleteModal';
+import { DeleteModal } from '../deleteModal';
 
 import { EditProductModalContent } from '../editProductModalContent';
 

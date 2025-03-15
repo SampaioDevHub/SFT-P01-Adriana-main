@@ -11,7 +11,7 @@ import {
 import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
-import { DeleteSelectedProductModal } from './DeleteSelectedProductModal';
+import { DeleteSelectedProductModal } from './deleteSelectedProductModal';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 
 export function TableOfSelectedProducts() {

@@ -19,7 +19,7 @@ import { CpfInput } from '@/_components/Inputs/cpfInput';
 import { formSchema, FormSchema } from '../_types/saleYupType';
 import { FinishLater } from './finishLater';
 import { TableOfSelectedProducts } from './tableOfSelectedProducts';
-import Overview from './Overview';
+import Overview from './overview';
 
 export function SaleForm() {
   const [finishLater, setFinishLater] = useState(false);
