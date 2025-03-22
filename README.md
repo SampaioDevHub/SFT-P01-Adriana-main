@@ -78,19 +78,13 @@ O MVP do Adriana Showroom é uma plataforma digital projetada para otimizar e mo
 - Vinícius Sampaio
 
 ### **Desenvolvedores Frontend:**
-- Ana Clara Souza
-- Lucas Pereira
+- Gabril Lingnal
+- Nathan 
 
 ### **Desenvolvedores Backend:**
-- Bruno Almeida
-- Juliana Ribeiro
-
-### **Design de UI/UX:**
-- Marina Oliveira
-
-### **QA (Quality Assurance):**
-- Felipe Mendes
-
+- Eduardo   
+- Robert
+- Junior
 ---
 
 ## Contato 📩
