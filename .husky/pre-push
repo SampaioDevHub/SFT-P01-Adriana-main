@@ -1,0 +1,2 @@
+# Comando para rodar os testes antes de enviar as alterações
+npm run test:push
