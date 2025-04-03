@@ -25,8 +25,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { Button } from '../ui/button';
-import { DialogTitle } from '../ui/dialog';
 
 export const company = {
   name: 'Adriana ShowRoom',

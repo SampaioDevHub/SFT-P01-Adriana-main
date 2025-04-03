@@ -42,7 +42,7 @@ export function TableOfSelectedProducts() {
                   onOpenChange={setIsDeleteSelectedProductModalOpen}
                 >
                   <DialogTrigger asChild>
-                    <Button variant="hover" size="sm" className="mr-2">
+                    <Button variant="default" size="sm" className="mr-2">
                       Remover
                     </Button>
                   </DialogTrigger>

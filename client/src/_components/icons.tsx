@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   AlertTriangle,
   ArrowRight,
@@ -36,6 +37,17 @@ import {
   X
 } from 'lucide-react';
 
+import {
+  ShoppingCartSimple,
+  Storefront,
+  Tag,
+  Package,
+  Barcode,
+  Truck,
+  Money,
+  CreditCard as PhosphorCreditCard
+} from "@phosphor-icons/react";
+
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -45,6 +57,14 @@ export const Icons = {
   close: X,
   folderCog: FolderCog,
   product: LucideShoppingBag,
+  cart: ShoppingCartSimple,  // Ícone de carrinho
+  store: Storefront,         // Ícone de loja
+  tag: Tag,                  // Ícone de etiqueta (promoção)
+  package: Package,          // Ícone de pacotes
+  barcode: Barcode,          // Ícone de código de barras
+  delivery: Truck,           // Ícone de entrega
+  payment: Money,            // Ícone de pagamento
+  billing: PhosphorCreditCard, // Alternativa para o ícone de cartão de crédito
   spinner: Loader2,
   kanban: CircuitBoardIcon,
   chevronLeft: ChevronLeft,
@@ -58,7 +78,6 @@ export const Icons = {
   user2: UserCircle2Icon,
   media: Image,
   settings: Settings,
-  billing: CreditCard,
   ellipsis: MoreVertical,
   add: Plus,
   dollarSign: DollarSign,
