@@ -14,7 +14,7 @@
     "test:watchAll": "jest --watchAll",
     "test:watch": "jest --watch --maxWorkers=25%",
     "test:staged": "jest --findRelatedTests --passWithNoTests",
-    "test:push": "jest --coverage",
+    "test:push": "jest --coverage --passWithNoTests",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint src --fix && pnpm format",
     "lint:strict": "eslint --max-warnings=0 src",
