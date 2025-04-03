@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-sync-scripts */
 
-import KBar from '@/_components/kbar';
+
+
+import KBar from '@/_components/kbar'
 import AppSidebar from '@/_components/layout/sidebar';
 import Header from '@/_components/layout/header';
+
 import { SidebarInset, SidebarProvider } from '@/_components/ui/sidebar';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
