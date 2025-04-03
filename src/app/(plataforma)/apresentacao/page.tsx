@@ -29,7 +29,7 @@ export default function Presentation() {
             Olá, tudo bem {user?.firstName || 'Usuário'}? 👋
           </h1>
           <p className="text-lg md:text-2xl mb-8 animate-fade-in-delay">
-            Bem-vindo ao sistema da{' '}
+            Bem-vindo ao sistema da
             <span className="text-pink-600 font-semibold">Adriana Showroom</span>! 
             Explore um mundo de estilo e exclusividade, gerencie sua loja com 
             facilidade e rapidez para encantar seus clientes.
