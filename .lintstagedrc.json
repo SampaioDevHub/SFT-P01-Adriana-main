@@ -3,6 +3,6 @@
   "src/**/*.ts": [
     "eslint --fix src/**/*.ts",
     "prettier --write src/**/*.ts",
-    "npm run test:staged"
+    "pnpm run test:staged"
   ]
 }
