@@ -9,11 +9,13 @@ export const formSchema = (isSizeNotRequired: boolean) =>
       .required('Informe o nome do produto'),
     discountPercentage: yup
       .number()
+      .nullable()
       .transform((value, originalValue) =>
         originalValue === '' ? undefined : value
       ) // Permite campo vazio
-      .nullable()
-      .max(99, 'O número deve ter no máximo 2 dígitos'),
+      .min(0, 'O campo "Disconto(%)" não pode ser negativo.')
+      .max(100, 'O campo "Disconto(%)" não pode exceder 100.')
+      .optional(),
     price: yup.string().required('Informe o preço do produto'),
     amount: yup
       .number()

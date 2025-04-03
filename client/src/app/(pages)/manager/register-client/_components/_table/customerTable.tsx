@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { getCustomers } from '@/_api/customers/get-customers';
 
-import { CustomerTableSkeleton } from './_skeleton/customerTableSkeleton';
+import { CustomerTableSkeleton } from '../_skeleton/customerTableSkeleton';
 import { Pagination } from './pagination';
 import { CustomerTableFilter } from './customerTableFilter';
 import { CustomerTableRow } from './customerTableRow';

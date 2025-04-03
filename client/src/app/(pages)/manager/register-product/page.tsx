@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import PageContainer from '@/_components/layout/page-container';
 import { ProductForm } from './_components/productForm';
-import { ProductTable } from './_components/productTable';
+import { ProductTable } from './_components/_table/productTable';
 import { Button } from '@/_components/ui/button';
 
 export default function RegisterProduct() {
@@ -14,7 +14,7 @@ export default function RegisterProduct() {
     <PageContainer>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Cadastro de Produtos</h1>
+          <h1 className="text-3xl font-bold">Produtos</h1>
           <Button onClick={() => setIsFormVisible(!isFormVisible)}>
             {isFormVisible ? 'Fechar Formulário' : 'Novo Produto'}
           </Button>

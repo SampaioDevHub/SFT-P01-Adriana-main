@@ -18,6 +18,7 @@ export const formSchema = yup.object({
     .max(20, 'Você só pode inserir até 20 caracteres'),
   cpf: yup
     .string()
+    .min(14, 'O minimo é 14 caracteres')
     .max(14, 'Você só pode inserir até 14 caracteres')
     .required('Informe o CPF do cliente'),
   dateBirth: yup.string().nullable(),

@@ -7,46 +7,41 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/_components/ui/dialog';
-import { DeleteProduct } from '@/_api/products/delete-product';
-import { getProductsById } from '@/_api/products/get-products-by-id';
 import { Button } from '@/_components/ui/button';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { DeleteCustomer } from '@/_api/customers/delete-customer';
+import { DeleteProduct } from '@/_api/products/delete-product';
 
 interface ModalProps {
-  productId: string;
-  open: boolean;
+  title: string;
+  subTitle: string;
+  id: string;
+  
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export function DeleteProductModal({ productId, open, setIsOpen }: ModalProps) {
+export function DeleteModal({ id, title, subTitle, setIsOpen }: ModalProps) {
   const queryClient = useQueryClient();
 
-  const { data: product } = useQuery({
-    queryKey: ['product'],
-    queryFn: () => getProductsById({ productId }),
-    enabled: open,
-  });
-
-  const { mutateAsync: deleteProductFn, isPending } = useMutation({
-    mutationFn: () => DeleteProduct({ productId }),
+  const { mutateAsync: deleteSaleFn, isPending } = useMutation({
+    mutationFn: () => DeleteProduct({ productId: id }),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['productsLength'] });
     },
   });
 
-  async function handleDeleteProduct() {
-    deleteProductFn();
+  async function handleDeleteSale() {
+    deleteSaleFn();
     setIsOpen(false);
   }
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Excluir Produto</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
       <p className='py-4'>
-        Tem certeza que deseja excluir o produto {product?.name}?
+        {subTitle}
       </p>
       <DialogFooter>
         <Button variant='outline' onClick={() => setIsOpen(false)}>
@@ -56,7 +51,7 @@ export function DeleteProductModal({ productId, open, setIsOpen }: ModalProps) {
           disabled={isPending}
           className='disabled:cursor-not-allowed disabled:opacity-70'
           variant='destructive'
-          onClick={handleDeleteProduct}
+          onClick={handleDeleteSale}
         >
           Excluir
         </Button>

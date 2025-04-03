@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import PageContainer from '@/_components/layout/page-container';
 import { CustomerForm } from './_components/customerForm';
-import { CustomerTable } from './_components/customerTable';
-import { Button } from '@/_components/ui/button';
+import { CustomerTable } from './_components/_table/customerTable';
+import { Button } from '@/_components/ui/button'
 
 export default function CustomersPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);
