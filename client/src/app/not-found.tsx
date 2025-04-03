@@ -22,7 +22,7 @@ export default function NotFound() {
           Voltar
         </Button>
         <Button
-          onClick={() => router.push('/dashboards/finance-dashboard')}
+          onClick={() => router.push('/painel/financeiro')}
           variant="ghost"
           size="lg"
         >
