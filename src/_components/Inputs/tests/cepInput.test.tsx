@@ -11,17 +11,19 @@ describe('Cep Input Tests', () => {
 
   it('should render the input ', () => {
     // renderizo o input
-    render(<CepInput onChange={onChange_mock} value="" />);
+    const wrapper = render(<CepInput onChange={onChange_mock} value="" />);
 
     // busca o input
     const input = screen.getByRole('textbox') as HTMLInputElement;
 
     // verifica se  o input esta sendo renderizado corretamente
     expect(input).toBeInTheDocument();
+
+    wrapper.debug();
   });
   it('should type on the input and verify if the format function is called and if the value was really formatted', () => {
     // renderizo o input
-    render(<CepInput onChange={onChange_mock} value="" />);
+    const wrapper = render(<CepInput onChange={onChange_mock} value="" />);
 
     // busca o input
     const input = screen.getByRole('textbox') as HTMLInputElement;
@@ -40,7 +42,7 @@ describe('Cep Input Tests', () => {
     );
 
     // renderiza novamente
-    render(<CepInput onChange={onChange_mock} value="99999-999" />);
+    wrapper.rerender(<CepInput onChange={onChange_mock} value="99999-999" />);
 
     // outra renderização do input porem com o cep digitado formatado
     const inputFormatted = screen.getByDisplayValue(
@@ -49,5 +51,7 @@ describe('Cep Input Tests', () => {
 
     //verificando se exibe o cep formatado
     expect(inputFormatted.value).toBe('99999-999');
+
+    wrapper.debug();
   });
 });
