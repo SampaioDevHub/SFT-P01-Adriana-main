@@ -10,32 +10,20 @@ describe('CPF Input Tests', () => {
 
   it('should render the input ', () => {
     // renderizo o input
-    render(<CpfInput onChange={onChange_mock} value="" />);
+    const wrapper = render(<CpfInput onChange={onChange_mock} value="" />);
 
     // busca o input
     const input = screen.getByRole('textbox') as HTMLInputElement;
 
     // verifica se  o input esta sendo renderizado corretamente
     expect(input).toBeInTheDocument();
-  });
 
-  it('should type the cpf on input and call the format function', () => {
-    // renderizo o input
-    render(<CpfInput onChange={onChange_mock} value="" />);
-
-    // busca o input
-    const input = screen.getByRole('textbox') as HTMLInputElement;
-
-    // simula a digitação de um cpf (sem formatação) no input
-    fireEvent.change(input, { target: { value: '12345678909' } });
-
-    // verifica se onChange() foi chamada
-    expect(onChange_mock).toHaveBeenCalled();
+    wrapper.debug();
   });
 
   it('should type on the input and verify if the format function is called and if the value was really formatted', () => {
     // renderiza o input
-    render(<CpfInput onChange={onChange_mock} value="" />);
+    const wrapper = render(<CpfInput onChange={onChange_mock} value="" />);
 
     // busca  o input
     const input = screen.getByRole('textbox') as HTMLInputElement;
@@ -54,7 +42,9 @@ describe('CPF Input Tests', () => {
     );
 
     // renderiza novamente o input
-    render(<CpfInput onChange={onChange_mock} value="123.456.789-09" />);
+    wrapper.rerender(
+      <CpfInput onChange={onChange_mock} value="123.456.789-09" />
+    );
 
     // outra renderização do input porem com o cpf digitado formatado
     const inputFormatted = screen.getByDisplayValue(
@@ -63,5 +53,7 @@ describe('CPF Input Tests', () => {
 
     //verificando se exibe o cpf formatado
     expect(inputFormatted.value).toBe('123.456.789-09');
+
+    wrapper.debug();
   });
 });
