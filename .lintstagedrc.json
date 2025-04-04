@@ -1,5 +1,4 @@
 {
-  "allowEmpty": "true",
   "src/**/*.{ts,tsx}": [
     "eslint --fix",
     "prettier --write",
