@@ -1,8 +1,8 @@
 {
   "allowEmpty": "true",
-  "src/**/*.ts(x)": [
-    "eslint --fix src/**/*.ts",
-    "prettier --write src/**/*.ts",
+  "src/**/*.{ts,tsx}": [
+    "eslint --fix",
+    "prettier --write",
     "npm run test:staged"
   ]
 }
