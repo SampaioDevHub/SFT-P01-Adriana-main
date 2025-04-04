@@ -19,7 +19,7 @@ describe('Cep Input Tests', () => {
     // verifica se  o input esta sendo renderizado corretamente
     expect(input).toBeInTheDocument();
   });
-  it('should type on the input and format the value', () => {
+  it('should type on the input and verify if the format function is called and if the value was really formatted', () => {
     // renderizo o input
     render(<CepInput onChange={onChange_mock} value="" />);
 
