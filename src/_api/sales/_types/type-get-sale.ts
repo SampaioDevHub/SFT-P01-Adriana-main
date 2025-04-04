@@ -17,7 +17,7 @@ export interface GetSaleContent {
       size?: string;
       category: string;
       subCategory: string;
-    }
+    },
   ];
   discountPercentage?: number;
   valueTotalDiscount?: number;

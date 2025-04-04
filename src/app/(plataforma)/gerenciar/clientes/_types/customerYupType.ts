@@ -6,7 +6,10 @@ export const formSchema = yup.object({
     .max(60, 'Você só pode inserir até 60 caracteres')
     .required('Informe o nome do cliente'),
   phone: yup.string().max(19, 'Você só pode inserir até 19 caracteres'),
-  email: yup.string().max(60, 'Você só pode inserir até 60 caracteres').nullable(),
+  email: yup
+    .string()
+    .max(60, 'Você só pode inserir até 60 caracteres')
+    .nullable(),
   address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
   number: yup.string().max(10, 'Você só pode inserir até 10 caracteres'),
   complement: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
@@ -26,7 +29,9 @@ export const formSchema = yup.object({
   enterprise: yup.string().max(50, 'Você só pode inserir até 50 caracteres'),
   businessPhone: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
   lengthService: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
-  businessZipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+  businessZipCode: yup
+    .string()
+    .max(20, 'Você só pode inserir até 20 caracteres'),
   businessAddress: yup
     .string()
     .max(60, 'Você só pode inserir até 60 caracteres'),
@@ -38,7 +43,7 @@ export const formSchema = yup.object({
   bank: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   agency: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
   father: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
-  mother: yup.string().max(60, 'Você só pode inserir até 60 caracteres')
+  mother: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
 });
 
 export type FormSchema = yup.InferType<typeof formSchema>;

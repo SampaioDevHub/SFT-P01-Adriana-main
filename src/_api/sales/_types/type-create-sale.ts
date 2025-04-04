@@ -16,7 +16,7 @@ export interface CreateSaleBody {
       size?: string;
       category: string;
       subCategory: string;
-    }
+    },
   ];
   discountPercentage?: number;
   valueTotalDiscount?: number;
