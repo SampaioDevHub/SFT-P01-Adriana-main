@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import { Button } from '@/_components/ui/button';
 import Image from 'next/image';
 
-// Sample data (replace with actual data from your store)
 const storeData = {
   name: 'AdrianaShowRoom',
   sales: 15000,

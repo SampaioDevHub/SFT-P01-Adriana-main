@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 export function GenerateStoreReport() {
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const { data: products, isLoading: isLoadingProducts } = useQuery({
+  const { data: products } = useQuery({
     queryKey: ['products'],
     queryFn: () => getProducts({}),
     staleTime: Infinity,

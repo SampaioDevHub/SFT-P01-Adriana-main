@@ -8,7 +8,7 @@ import { DeleteModal } from '../deleteModal';
 
 import { EditSaleModalContent } from '../editSaleModalContent';
 
-export function SaleTableRow({ id, startDate, endDate }: GetSaleContent) {
+export function SaleTableRow({ id, endDate }: GetSaleContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 

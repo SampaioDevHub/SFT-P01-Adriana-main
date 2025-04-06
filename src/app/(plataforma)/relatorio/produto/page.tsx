@@ -1,6 +1,5 @@
 'use client'
 
-
 import { GenerateStoreReport } from './_components/GenerateStoreReport';
 
 export default function ReportPage() {

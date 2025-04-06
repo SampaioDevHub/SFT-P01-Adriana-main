@@ -1,19 +1,16 @@
-/* eslint-disable @next/next/no-sync-scripts */
-
-
-
-import KBar from '@/_components/kbar'
+// layout.tsx
+import KBar from '@/_components/kbar';
 import AppSidebar from '@/_components/layout/sidebar';
 import Header from '@/_components/layout/header';
-
 import { SidebarInset, SidebarProvider } from '@/_components/ui/sidebar';
-import type { Metadata } from 'next';
+
 import { cookies } from 'next/headers';
+import { Metadata } from 'next';
 import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: 'Painel Principal',
-  description: 'Algoritimo sendo Desenvolvido',
+  description: 'Algoritmo sendo desenvolvido',
 };
 
 export default async function DashboardLayout({
@@ -21,9 +18,18 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Persisting the sidebar state in the cookie.
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
+  let defaultOpen = false;
+
+  try {
+    const cookieStore = await cookies();
+    const sidebarState = cookieStore.get('sidebar:state')?.value;
+    const isValid = sidebarState === 'true' || sidebarState === 'false';
+    defaultOpen = isValid && sidebarState === 'true';
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Erro ao recuperar estado do sidebar:', error);
+  }
+
   return (
     <KBar>
       <SidebarProvider defaultOpen={defaultOpen}>
@@ -31,9 +37,9 @@ export default async function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <Header />
-          {/* page div content */}
-          {children}
-          {/* page div content ends */}
+          <main className="flex flex-col flex-1">
+            {children}
+          </main>
         </SidebarInset>
       </SidebarProvider>
     </KBar>
