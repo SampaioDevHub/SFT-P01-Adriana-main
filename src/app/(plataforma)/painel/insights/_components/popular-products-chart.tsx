@@ -1,105 +1,73 @@
-import { BarChart } from 'lucide-react';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import colors from 'tailwindcss/colors';
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/_components/ui/card';
+import { useEffect, useState } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
+import { Skeleton } from '@/_components/ui/skeleton';
 
-const data = [
-  { product: 'Calça', amount: 40 },
-  { product: 'Camiseta', amount: 30 },
-  { product: 'Camisa', amount: 50 },
-  { product: 'Moletom', amount: 16 },
-  { product: 'Sapato', amount: 26 },
-]
+type ProductData = {
+  name: string;
+  sales: number;
+};
 
-const COLORS = [
-  colors.sky[500],
-  colors.amber[500],
-  colors.violet[500],
-  colors.emerald[500],
-  colors.rose[500],
-];
+export function GraficoBarra() {
+  const [data, setData] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-function CustomTooltip({ active, payload, label }: any) {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-black bg-opacity-70 p-4 rounded-sm text-white">
-        <p className="label">{`${payload[0].name} : ${payload[0].value}`}</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    async function fetchPopularProducts() {
+      try {
+        const res = await fetch(
+          'http://localhost:8080/manage_store/v1/products/popular'
+        );
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error('Erro ao carregar produtos populares', err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  return null;
-}
+    fetchPopularProducts();
+  }, []);
 
-export function PopularProductsChart() {
   return (
-    <Card className="w-full md:w-[60%] lg:w-[40%] bg-transparent">
-      <CardHeader className="pb-8">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-medium">
-            Produtos populares
-          </CardTitle>
-          <BarChart className="h-[1rem] w-[1rem] text-muted-foreground" />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={240}>
-          <PieChart style={{ fontSize: 12 }}>
-            <Pie
-              data={data}
-              nameKey="product"
-              dataKey="amount"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              innerRadius={40}
-              strokeWidth={4}
-              labelLine={false}
-              label={({
-                cx,
-                cy,
-                midAngle,
-                innerRadius,
-                outerRadius,
-                value,
-                index,
-              }) => {
-                const RADIAN = Math.PI / 180;
-                const radius = 12 + innerRadius + (outerRadius - innerRadius);
-                const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md p-6 w-full">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        Produtos Mais Vendidos
+      </h3>
 
-                return (
-                  <text
-                    x={x}
-                    y={y}
-                    className="fill-muted-foreground text-xs"
-                    textAnchor={x > cx ? 'start' : 'end'}
-                    dominantBaseline="central"
-                  >
-                    {data[index].product.length > 12
-                      ? data[index].product.substring(0, 12).concat('...')
-                      : data[index].product}{' '}
-                    ({value})
-                  </text>
-                );
+      {loading ? (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-6 w-1/3 rounded" />
+          <Skeleton className="h-[300px] w-full rounded-xl" />
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
               }}
-            >
-              {data.map((_, index) => {
-                return (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index]}
-                    className="stroke-background hover:opacity-80"
-                  />
-                );
-              })}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-          </PieChart>
+            />
+            <Bar dataKey="sales" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+          </BarChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }

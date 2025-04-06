@@ -3,7 +3,7 @@ export interface CreateProductBody {
   name: string;
   discountPercentage?: number | null;
   price: string;
-  amount: number;
+  quantityInStock: number;
   size?: string;
   category: string;
   subCategory: string;

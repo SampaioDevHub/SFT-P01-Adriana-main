@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import axios from 'axios'
+import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_DATABASE_URL,
-})
+  baseURL: 'http://206.42.51.75:8081/manage_store/v1',
+});

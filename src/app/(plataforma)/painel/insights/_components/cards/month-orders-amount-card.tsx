@@ -1,22 +1,58 @@
+'use client';
 
-import { Utensils } from 'lucide-react'
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/_components/ui/card'
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/_components/ui/card';
+import { Skeleton } from '@/_components/ui/skeleton';
+import { PackageCheck } from 'lucide-react';
 
 export function MonthOrdersAmountCard() {
+  const [ordersCount, setOrdersCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const res = await fetch(
+          'http://localhost:8080/manage_store/v1/orders/count/month'
+        );
+        const json = await res.json();
+        setOrdersCount(json.total);
+      } catch (err) {
+        console.error('Erro ao carregar pedidos do mês', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchOrders();
+  }, []);
+
   return (
-    <Card className='transition-all duration-300 hover:scale-105 hover:shadow-md'>
-      <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-semibold">Vendas (mês)</CardTitle>
-        <Utensils className="h-[1rem] w-[1rem] text-muted-foreground" />
-      </CardHeader>
-      <CardContent className="space-y-1">
-        <span className="text-2xl font-bold tracking-tight">246</span>
-        <p className="text-xs text-muted-foreground">
-          <span className="text-emerald-500 dark:text-emerald-400">+6%</span> em
-          relação ao mês passado
-        </p>
+    <Card className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md">
+      <CardContent className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-muted-foreground">
+            Pedidos no Mês
+          </p>
+          <PackageCheck className="w-5 h-5 text-yellow-500" />
+        </div>
+
+        {loading ? (
+          <div className="flex flex-col gap-2 mt-2">
+            <Skeleton className="h-8 w-1/2 rounded" />
+            <Skeleton className="h-3 w-1/3 rounded" />
+          </div>
+        ) : (
+          <>
+            <p className="text-3xl font-bold text-yellow-600 mt-2">
+              {ordersCount} pedidos
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Comparado ao mês anterior
+            </p>
+          </>
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -5,7 +5,7 @@ export interface GetProductContent {
   discountPercentage?: number | null;
   priceWithDiscount?: string;
   price: string;
-  amount: number;
+  quantityInStock: number;
   size: string;
   category: string;
   subCategory: string;
