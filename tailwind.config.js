@@ -97,6 +97,21 @@ module.exports = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+      fontSize: {
+        'xs': ['0.875rem', { lineHeight: '1.125rem' }],   // 12px → 16px
+        'sm': ['1rem', { lineHeight: '1.375rem' }],       // 14px → 18px
+        'base': ['1.125rem', { lineHeight: '1.625rem' }], // 16px → 20px
+        'lg': ['1.25rem', { lineHeight: '1.875rem' }],    // 18px → 22px
+        'xl': ['1.375rem', { lineHeight: '2rem' }],       // 20px → 24px
+        '2xl': ['1.75rem', { lineHeight: '2.25rem' }],    // 24px → 28px
+        '3xl': ['2.125rem', { lineHeight: '2.5rem' }],    // 30px → 34px
+        '4xl': ['2.5rem', { lineHeight: '2.75rem' }],     // 36px → 40px
+        '5xl': ['3.25rem', { lineHeight: '1' }],          // 48px → 52px
+        '6xl': ['4rem', { lineHeight: '1' }],             // 60px → 64px
+        '7xl': ['4.75rem', { lineHeight: '1' }],          // 72px → 76px
+        '8xl': ['6.25rem', { lineHeight: '1' }],          // 96px → 100px
+        '9xl': ['8.25rem', { lineHeight: '1' }],          // 128px → 132px
+      }
     },
   },
   plugins: [require('tailwindcss-animate')],
