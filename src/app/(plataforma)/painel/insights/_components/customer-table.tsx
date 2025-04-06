@@ -43,9 +43,9 @@ export function ClientesTable() {
   }, []);
 
   return (
-    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md w-full">
+    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border backdrop-blur-md w-full">
       <CardHeader className="p-6">
-        <CardTitle className="text-lg font-semibold text-gray-800">
+        <CardTitle className="text-lg font-semibold">
           Clientes Recentes
         </CardTitle>
       </CardHeader>
@@ -53,13 +53,13 @@ export function ClientesTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[150px] text-gray-600">
+              <TableHead className="min-w-[150px]">
                 Nome
               </TableHead>
-              <TableHead className="min-w-[200px] text-gray-600">
+              <TableHead className="min-w-[200px]">
                 Email
               </TableHead>
-              <TableHead className="min-w-[150px] text-gray-600">
+              <TableHead className="min-w-[150px]">
                 Última Compra
               </TableHead>
             </TableRow>
@@ -81,13 +81,13 @@ export function ClientesTable() {
                 ))
               : customers?.map((customer) => (
                   <TableRow key={customer.id}>
-                    <TableCell className="font-medium text-gray-900">
+                    <TableCell className="font-medium">
                       {customer.name}
                     </TableCell>
-                    <TableCell className="text-gray-700">
+                    <TableCell className="">
                       {customer.email}
                     </TableCell>
-                    <TableCell className="text-gray-700">
+                    <TableCell className="">
                       {new Date(customer.lastPurchase).toLocaleDateString(
                         'pt-BR'
                       )}

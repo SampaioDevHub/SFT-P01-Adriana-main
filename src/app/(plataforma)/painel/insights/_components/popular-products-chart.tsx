@@ -40,7 +40,7 @@ export function GraficoBarra() {
   }, []);
 
   return (
-    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md p-6 w-full">
+    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border backdrop-blur-md p-6 w-full">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">
         Produtos Mais Vendidos
       </h3>
@@ -60,7 +60,7 @@ export function GraficoBarra() {
               contentStyle={{
                 backgroundColor: 'white',
                 border: '1px solid #e5e7eb',
-                borderRadius: '8px',
+                borderRadius: '8px', 
                 fontSize: '0.875rem',
               }}
             />

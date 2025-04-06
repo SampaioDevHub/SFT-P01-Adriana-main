@@ -28,7 +28,7 @@ export function MonthRevenueCard() {
   }, []);
 
   return (
-    <Card className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md">
+    <Card className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border backdrop-blur-md">
       <CardContent className="p-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-muted-foreground">

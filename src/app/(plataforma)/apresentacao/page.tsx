@@ -22,7 +22,7 @@ export default function Presentation() {
   const { user } = useUser();
 
   return (
-    <div className="min-h-screen rounded-sm shadow-md flex flex-col items-center justify-center bg-white text-zinc-900 p-4">
+    <div className="min-h-screen rounded-sm shadow-md flex flex-col items-center justify-center bg-background  p-4">
       <PageContainer>
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
@@ -37,7 +37,7 @@ export default function Presentation() {
         </div>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <Card className="bg-white backdrop-blur-md text-zinc-900 border-none shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up">
+          <Card className="backdrop-blur-md border-none shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up">
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <BarChart className="w-6 h-6 text-pink-600" /> Gestão Simplificada
@@ -47,7 +47,7 @@ export default function Presentation() {
               <p>Controle estoque, vendas e clientes em poucos cliques.</p>
             </CardContent>
           </Card>
-          <Card className="bg-white backdrop-blur-md text-zinc-900 border-none shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up delay-100">
+          <Card className="backdrop-blur-md border-none shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up delay-100">
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <Package className="w-6 h-6 text-pink-600" /> Coleções Exclusivas
@@ -57,7 +57,7 @@ export default function Presentation() {
               <p>Adicione e exiba produtos únicos com facilidade.</p>
             </CardContent>
           </Card>
-          <Card className="bg-white backdrop-blur-md text-zinc-900 border-none shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up delay-200">
+          <Card className="backdrop-blur-md border-none shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up delay-200">
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <Users className="w-6 h-6 text-pink-600" /> Experiência do Cliente
