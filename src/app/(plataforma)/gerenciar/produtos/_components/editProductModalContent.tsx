@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use client';
 
 import {
@@ -85,7 +86,7 @@ export function EditProductModalContent({
       name: product?.name ?? '',
       discountPercentage: product?.discountPercentage,
       price: JSON.stringify(product?.price) ?? '',
-      amount: product?.amount ?? 0,
+      amount: product?.quantityInStock ?? 0,
       size: sizesString ?? '',
       category: product?.category ?? 'Roupas',
       subCategory: product?.subCategory ?? '',
@@ -109,7 +110,7 @@ export function EditProductModalContent({
         name: data.name,
         discountPercentage: data.discountPercentage,
         price: data.price.replace(/[^\d.-]/g, ''),
-        amount: data.amount,
+        quantityInStock: data.amount,
         size: data.category === 'Roupas' ? sizesString : '',
         category: data.category,
         subCategory: data.subCategory,

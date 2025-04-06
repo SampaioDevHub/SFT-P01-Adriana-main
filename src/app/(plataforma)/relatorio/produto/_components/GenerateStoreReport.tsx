@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import jsPDF from 'jspdf';
@@ -51,7 +52,7 @@ export function GenerateStoreReport() {
       doc.text(String(product.category), 105, y);
       doc.text(String(product.subCategory), 130, y);
       doc.text(String(product.size), 160, y);
-      doc.text(String(product.amount), 185, y);
+      doc.text(String(product.quantityInStock), 185, y);
       y += 7;
 
       // Verifica se precisa criar uma nova página

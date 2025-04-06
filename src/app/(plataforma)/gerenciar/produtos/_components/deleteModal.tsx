@@ -9,7 +9,6 @@ import {
 } from '@/_components/ui/dialog';
 import { Button } from '@/_components/ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { DeleteCustomer } from '@/_api/customers/delete-customer';
 import { DeleteProduct } from '@/_api/products/delete-product';
 
 interface ModalProps {

@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '@/_components/ui/button';

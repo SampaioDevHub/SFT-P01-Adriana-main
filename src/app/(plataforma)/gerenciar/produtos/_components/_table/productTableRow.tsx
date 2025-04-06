@@ -11,7 +11,7 @@ import { EditProductModalContent } from '../editProductModalContent';
 export function ProductTableRow({
   id,
   name,
-  amount,
+  quantityInStock,
   category,
   subCategory,
   price,
@@ -45,7 +45,7 @@ export function ProductTableRow({
         )}
       </TableCell>
       <TableCell className="md:text-left text-center flex-1">
-        {amount}
+        {quantityInStock}
       </TableCell>
       <TableCell>{size}</TableCell>
       <TableCell className="w-[10rem]">

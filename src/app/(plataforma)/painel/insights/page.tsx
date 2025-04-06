@@ -11,7 +11,6 @@ import { MonthOrdersAmountCard } from './_components/cards/month-orders-amount-c
 import { MonthRevenueCard } from './_components/cards/month-revenue-card';
 import { GraficoArea } from './_components/revenue-chart';
 import { GraficoBarra } from './_components/popular-products-chart';
-import { CustomerTable } from '../../gerenciar/clientes/_components/_table/customerTable';
 import { ClientesTable } from './_components/customer-table';
 
 type Produto = {
