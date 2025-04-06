@@ -40,7 +40,7 @@ export function GraficoArea() {
   }, []);
 
   return (
-    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md p-6 w-full">
+    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border backdrop-blur-md p-6 w-full">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">
         Receita Mensal
       </h3>
