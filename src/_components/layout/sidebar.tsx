@@ -26,7 +26,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 
 export const company = {
   name: 'Adriana ShowRoom',
@@ -35,6 +35,7 @@ export const company = {
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
 
   return (
     <Sidebar
@@ -127,7 +128,7 @@ export default function AppSidebar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-pink-600 text-white shadow-lg border border-white/10">
             <company.logo className="size-4" />
           </div>
-          <div className="flex flex-col leading-tight">
+          <div className="flex flex-row items-center mr-4 leading-tight">
             <UserButton />
           </div>
         </div>

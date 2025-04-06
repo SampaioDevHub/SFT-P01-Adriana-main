@@ -60,4 +60,44 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+  {
+    title: 'Link novo',
+    url: '',
+    icon: 'clipboardList',
+    isActive: true,
+    items: [
+      {
+        title: 'Link base',
+        url: '/',
+        shortcut: ['p', 'p'],
+        isActive: true,
+      },
+      {
+        title: 'Link base',
+        url: '/relatorio/financeiro',
+        shortcut: ['p', 'p'],
+        isActive: true,
+      },
+    ],
+  },
+  {
+    title: 'Link novo',
+    url: '',
+    icon: 'clipboardList',
+    isActive: true,
+    items: [
+      {
+        title: 'Link base',
+        url: '/',
+        shortcut: ['p', 'p'],
+        isActive: true,
+      },
+      {
+        title: 'Link base',
+        url: '/relatorio/financeiro',
+        shortcut: ['p', 'p'],
+        isActive: true,
+      },
+    ],
+  },
 ];

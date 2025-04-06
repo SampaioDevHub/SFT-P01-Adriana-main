@@ -131,9 +131,6 @@ export default function Header() {
 
         {/* Dark Mode */}
         <ModeToggle />
-
-        {/* Perfil do Usuário */}
-        <UserNav />
       </div>
     </header>
   );
