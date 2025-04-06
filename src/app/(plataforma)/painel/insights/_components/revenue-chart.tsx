@@ -1,87 +1,85 @@
-'use client'
+'use client';
 
+import { useEffect, useState } from 'react';
 import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
-} from 'recharts'
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
+import { Skeleton } from '@/_components/ui/skeleton';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/_components/ui/card'
-
-const data = [
-  { date: '10/12', revenue: 1200 },
-  { date: '11/12', revenue: 800 },
-  { date: '12/12', revenue: 900 },
-  { date: '13/12', revenue: 400 },
-  { date: '14/12', revenue: 2300 },
-  { date: '15/12', revenue: 800 },
-  { date: '16/12', revenue: 640 },
-]
-
-function CustomTooltip ({ active, payload }: any) {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-black bg-opacity-70 p-4 rounded-sm text-white">
-        <p className="label">{`${payload[0].name} : ${payload[0].value}`}</p>
-      </div>
-    );
-  }
-
-  return null;
+type RevenueData = {
+  month: string;
+  revenue: number;
 };
 
-export function RevenueChart() {
+export function GraficoArea() {
+  const [data, setData] = useState<RevenueData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRevenue() {
+      try {
+        const res = await fetch(
+          'http://206.42.51.75:8081/manage_store/v1/products/find-all'
+        );
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error('Erro ao carregar dados de receita', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRevenue();
+  }, []);
+
   return (
-    <Card className="bg-transparent w-full">
-      <CardHeader className="flex-row items-center justify-between pb-8">
-        <div className="space-y-1">
-          <CardTitle className="text-base font-medium">
-            Receita no período
-          </CardTitle>
-          <CardDescription>Receita diária no período</CardDescription>
+    <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md p-6 w-full">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        Receita Mensal
+      </h3>
+
+      {loading ? (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-6 w-1/3 rounded" />
+          <Skeleton className="h-[300px] w-full rounded-xl" />
         </div>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={240}>
-          <LineChart data={data} style={{ fontSize: 12 }}>
-            <XAxis dataKey="date" axisLine={false} tickLine={false} dy={16} />
-            <Tooltip content={<CustomTooltip/>}/>
-            <YAxis
-              stroke="#888"
-              axisLine={false}
-              tickLine={false}
-              width={80}
-              tickFormatter={(value: number) =>
-                value.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })
-              }
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={data}>
+            <defs>
+              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+              }}
             />
-            <CartesianGrid
-              vertical={false}
-              className="stroke-muted-foreground"
-            />
-            <Line
-              stroke="hsl(47.9 95.8% 53.1%)"
-              className="stroke-[--primary]"
-              type="linear"
-              strokeWidth={2}
+            <CartesianGrid strokeDasharray="3 3" />
+            <Area
+              type="monotone"
               dataKey="revenue"
+              stroke="#4f46e5"
+              fillOpacity={1}
+              fill="url(#colorRevenue)"
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
-  )
+      )}
+    </div>
+  );
 }

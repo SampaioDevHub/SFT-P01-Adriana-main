@@ -1,22 +1,59 @@
+'use client';
 
-import { Utensils } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/_components/ui/card';
+import { Skeleton } from '@/_components/ui/skeleton';
+import { Users } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/_components/ui/card'
+export function ActiveCustomersCard() {
+  const [activeCustomers, setActiveCustomers] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export function DayOrdersAmountCard() {
+  useEffect(() => {
+    async function fetchCustomers() {
+      try {
+        const res = await fetch(
+          'http://206.42.51.75:8081/manage_store/v1/customers/find-all'
+        );
+        const json = await res.json();
+        setActiveCustomers(json.totalElements);
+        console.warn('clientes', json.content);
+      } catch (err) {
+        console.error('Erro ao carregar clientes ativos', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCustomers();
+  }, []);
+
   return (
-    <Card className='transition-all duration-300 hover:scale-105 hover:shadow-md'>
-      <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-semibold">Vendas (dia)</CardTitle>
-        <Utensils className="h-[1rem] w-[1rem] text-muted-foreground" />
-      </CardHeader>
-      <CardContent className="space-y-1">
-        <span className="text-2xl font-bold tracking-tight">12</span>
-        <p className="text-xs text-muted-foreground">
-          <span className="text-rose-500 dark:text-rose-400">-4%</span> em
-          relação a ontem
-        </p>
+    <Card className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-200 bg-white/80 backdrop-blur-md">
+      <CardContent className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-muted-foreground">
+            Clientes Ativos
+          </p>
+          <Users className="w-5 h-5 text-indigo-500" />
+        </div>
+
+        {loading ? (
+          <div className="flex flex-col gap-2 mt-2">
+            <Skeleton className="h-8 w-1/2 rounded" />
+            <Skeleton className="h-3 w-1/3 rounded" />
+          </div>
+        ) : (
+          <>
+            <p className="text-4xl font-bold text-indigo-600 mt-2 flex items-center justify-center">
+              {activeCustomers}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Comparado ao mês anterior
+            </p>
+          </>
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }
