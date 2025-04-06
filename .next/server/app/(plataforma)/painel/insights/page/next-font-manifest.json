@@ -1,0 +1,12 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/src/app/(plataforma)/painel/insights/page": [
+      "static/media/S6uyw4BMUTPHjx4wXiWtFCc-s.p.b70afd82.woff2",
+      "static/media/S6u9w4BMUTPHh6UVSwiPGQ3q5d0-s.p.c516d566.woff2",
+      "static/media/S6u9w4BMUTPHh50XSwiPGQ3q5d0-s.p.00726523.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

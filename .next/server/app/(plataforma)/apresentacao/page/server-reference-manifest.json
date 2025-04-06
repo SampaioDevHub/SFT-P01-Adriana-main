@@ -1,0 +1,49 @@
+{
+  "node": {
+    "7fb4ad59e869c345faa53703b3438b66f2458b7de4": {
+      "workers": {
+        "app/(plataforma)/apresentacao/page": {
+          "moduleId": "[project]/.next-internal/server/app/(plataforma)/apresentacao/page/actions.js { ACTIONS_MODULE0 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/(plataforma)/apresentacao/page": "rsc"
+      }
+    },
+    "7fc80f1cf2c1bc723786a04066440659da11e5ce6b": {
+      "workers": {
+        "app/(plataforma)/apresentacao/page": {
+          "moduleId": "[project]/.next-internal/server/app/(plataforma)/apresentacao/page/actions.js { ACTIONS_MODULE0 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/(plataforma)/apresentacao/page": "action-browser"
+      }
+    },
+    "7f67f1b73e76027724573f17f41db4233d8bd16014": {
+      "workers": {
+        "app/(plataforma)/apresentacao/page": {
+          "moduleId": "[project]/.next-internal/server/app/(plataforma)/apresentacao/page/actions.js { ACTIONS_MODULE0 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/(plataforma)/apresentacao/page": "rsc"
+      }
+    },
+    "7f996b44c2e3f7be6094fc01c683fa43fc295a9dd0": {
+      "workers": {
+        "app/(plataforma)/apresentacao/page": {
+          "moduleId": "[project]/.next-internal/server/app/(plataforma)/apresentacao/page/actions.js { ACTIONS_MODULE0 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/node_modules/.pnpm/@clerk+nextjs@6.13.0_next@1_a911fe37f37abcc28c85f78a4db2f4c4/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/(plataforma)/apresentacao/page": "rsc"
+      }
+    }
+  },
+  "edge": {}
+}

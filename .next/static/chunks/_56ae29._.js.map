@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/Vinicius/Desktop/SFT-P01-Adriana-main/src/app/page.tsx"],"sourcesContent":["'use client'\r\nimport { useAuth } from '@clerk/nextjs';\r\nimport { useRouter } from 'next/navigation';\r\nimport { useEffect } from 'react';\r\n\r\nexport default function App () {\r\n    const { isLoaded, userId } = useAuth();\r\n    const router = useRouter();\r\n\r\n    useEffect(() => {\r\n        if (!isLoaded) {\r\n            return;\r\n        }\r\n\r\n        if (!userId) {\r\n            router.push('/sign-in');\r\n        } else {\r\n            router.push('/apresentacao');\r\n        }\r\n    }, [isLoaded, userId, router]);\r\n\r\n    if (!isLoaded) {\r\n        return <div>Loading...</div>;\r\n    }\r\n\r\n    return null;\r\n}"],"names":[],"mappings":";;;;AAEA;AACA;AAFA;;;AADA;;;;AAKe,SAAS;;IACpB,MAAM,EAAE,QAAQ,EAAE,MAAM,EAAE,GAAG,CAAA,GAAA,+VAAA,CAAA,UAAO,AAAD;IACnC,MAAM,SAAS,CAAA,GAAA,8OAAA,CAAA,YAAS,AAAD;IAEvB,CAAA,GAAA,sQAAA,CAAA,YAAS,AAAD;yBAAE;YACN,IAAI,CAAC,UAAU;gBACX;YACJ;YAEA,IAAI,CAAC,QAAQ;gBACT,OAAO,IAAI,CAAC;YAChB,OAAO;gBACH,OAAO,IAAI,CAAC;YAChB;QACJ;wBAAG;QAAC;QAAU;QAAQ;KAAO;IAE7B,IAAI,CAAC,UAAU;QACX,qBAAO,sSAAC;sBAAI;;;;;;IAChB;IAEA,OAAO;AACX;GArBwB;;QACS,+VAAA,CAAA,UAAO;QACrB,8OAAA,CAAA,YAAS;;;KAFJ"}},
+    {"offset": {"line": 63, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}
