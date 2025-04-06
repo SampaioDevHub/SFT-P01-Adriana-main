@@ -1,11 +1,15 @@
-import { Loader2 } from 'lucide-react';
+'use client';
 
 export function LoadingSpinner() {
   return (
-    <div className="flex h-screen w-screen items-center justify-center">
-      <div className="flex flex-col items-center gap-2">
-        <Loader2 className="h-8 w-8 animate-spin text-rose-600" />
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+    <div className="flex h-screen w-screen items-center justify-center bg-white">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="flex space-x-2">
+          <span className="block w-4 h-4 rounded-full bg-[#AD6BFF] animate-bounce [animation-delay:-0.3s]"></span>
+          <span className="block w-4 h-4 rounded-full bg-[#AD6BFF] animate-bounce [animation-delay:-0.15s]"></span>
+          <span className="block w-4 h-4 rounded-full bg-[#AD6BFF] animate-bounce"></span>
+        </div>
+        <p className="text-[#5E5E5E] font-medium tracking-wide">Carregando Adriana Showroom...</p>
       </div>
     </div>
   );

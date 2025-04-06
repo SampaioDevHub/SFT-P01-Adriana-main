@@ -128,7 +128,7 @@ export default function AppSidebar() {
             <company.logo className="size-4" />
           </div>
           <div className="flex flex-col leading-tight">
-            <UserButton />
+            <UserButton showName={true} />
           </div>
         </div>
       </SidebarFooter>

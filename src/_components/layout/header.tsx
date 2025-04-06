@@ -7,7 +7,6 @@ import { Separator } from '../ui/separator';
 import { Breadcrumbs } from '../breadcrumbs';
 import SearchInput from '../kbar/search-input';
 import { ModeToggle } from './ModeToggle';
-import { UserNav } from './user-nav';
 import { Bell } from 'lucide-react';
 import {
   DropdownMenu,
@@ -131,9 +130,6 @@ export default function Header() {
 
         {/* Dark Mode */}
         <ModeToggle />
-
-        {/* Perfil do Usuário */}
-        <UserNav />
       </div>
     </header>
   );
