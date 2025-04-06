@@ -1,39 +1,47 @@
-'use client'
+import { Suspense } from 'react';
+import RegisterSale from './vendas';
+import { Loader } from '@/_components/Loader';
 
-import { motion } from 'framer-motion';
-
-import { Button } from '@/_components/ui/button';
-import PageContainer from '@/_components/layout/page-container';
-
-import { SaleTable } from './_components/_table/saleTable';
-import { SaleForm } from './_components/saleForm';
-import { useState } from 'react';
-
-export default function RegisterSale() {
-  const [isFormVisible, setIsFormVisible] = useState(false);
+export default function Page() {
   return (
-    <PageContainer>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Vendas</h1>
-          <Button onClick={() => setIsFormVisible(!isFormVisible)}>
-            {isFormVisible ? 'Fechar Formulário' : 'Nova Venda'}
-          </Button>
-        </div>
-        <div className="w-full space-y-8">
-          {isFormVisible && (
-            <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            >
-              <SaleForm />
-            </motion.div>
-          )}
-          <SaleTable />
-        </div>
+    <Suspense fallback={<PageFallback />}>
+      <RegisterSale />
+    </Suspense>
+  );
+}
+
+// Fallback estiloso para vendas
+function PageFallback() {
+  return (
+    <div className="min-h-screen px-4 py-8 flex flex-col items-center gap-6">
+      <div className="flex items-center gap-3 text-muted-foreground">
+        <Loader className="w-6 h-6 animate-spin text-primary" />
+        <p className="text-sm">Carregando vendas. Por favor, aguarde...</p>
       </div>
-    </PageContainer>
+
+      {/* Skeleton de tabela de vendas */}
+      <div className="w-full max-w-6xl mx-auto border border-border rounded-lg overflow-hidden shadow-sm animate-pulse">
+        <div className="grid grid-cols-5 gap-4 p-4 bg-muted/40 font-semibold text-muted-foreground">
+          <div className="h-4 w-24 bg-muted rounded" />
+          <div className="h-4 w-32 bg-muted rounded" />
+          <div className="h-4 w-20 bg-muted rounded" />
+          <div className="h-4 w-24 bg-muted rounded" />
+          <div className="h-4 w-12 bg-muted rounded" />
+        </div>
+
+        {[...Array(5)].map((_, idx) => (
+          <div
+            key={idx}
+            className="grid grid-cols-5 gap-4 p-4 border-t border-border bg-muted/10"
+          >
+            <div className="h-3 w-20 bg-muted rounded" />
+            <div className="h-3 w-28 bg-muted rounded" />
+            <div className="h-3 w-16 bg-muted rounded" />
+            <div className="h-3 w-20 bg-muted rounded" />
+            <div className="h-3 w-10 bg-muted rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
