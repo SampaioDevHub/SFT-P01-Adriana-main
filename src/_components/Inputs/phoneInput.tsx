@@ -15,6 +15,7 @@ export function PhoneInput({ value = '', onChange }: PhoneInputProps) {
 
   return (
     <PhoneInputComponent
+      limitMaxLength
       defaultCountry="BR"
       inputComponent={Input}
       value={value}

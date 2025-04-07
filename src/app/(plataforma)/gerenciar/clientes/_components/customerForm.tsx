@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -9,7 +8,7 @@ import {
 } from '@/_components/ui/card';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/_components/ui/button';
@@ -28,6 +27,12 @@ import { formSchema, FormSchema } from '../_types/customerYupType';
 
 export function CustomerForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [exibirReferencias, setExibirReferencias] = useState(false);
+
+  function handleReference() {
+    setExibirReferencias(true);
+    append({ name: '', phone: '' });
+  }
 
   const queryClient = useQueryClient();
 
@@ -41,6 +46,14 @@ export function CustomerForm() {
     formState: { isSubmitting, errors },
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
+    defaultValues: {
+      referencias: [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'referencias',
   });
 
   const zipCode = watch('zipCode')?.replace(/\D/g, '');
@@ -87,6 +100,28 @@ export function CustomerForm() {
     }
   }, [businessZipCode, setValue]);
 
+  const referenceZipCode = watch(`referencias.0.zipCode` as const)?.replace(/\D/g, '');
+  console.log(referenceZipCode)
+
+  // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
+  useEffect(() => {
+    if (referenceZipCode && referenceZipCode.length === 8) {
+      fetch(`https://viacep.com.br/ws/${referenceZipCode}/json/`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.erro) {
+            setValue(
+              `referencias.0.address` as const,
+              `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
+            );
+            setValue(`referencias.0.city` as const, data.localidade);
+            setValue(`referencias.0.state` as const, data.estado);
+          }
+        })
+        .catch((error) => toast.error('Erro ao buscara o CEP'));
+    }
+  }, [referenceZipCode, setValue]);
+
   const { mutateAsync: createCustomerFn } = useMutation({
     mutationFn: createCustomer,
     onSuccess() {
@@ -125,9 +160,24 @@ export function CustomerForm() {
         agency: data.agency,
         father: data.father,
         mother: data.mother,
+        referenceEntityList: [
+          {
+            name: data.referencias?.[0].name,
+            phone: data.referencias?.[0].phone,
+            addressData: {
+              zipCode: data.referencias?.[0].zipCode,
+              address: data.referencias?.[0].address,
+              number: data.referencias?.[0].number,
+              complement: data.referencias?.[0].complement,
+              referencePoint: data.referencias?.[0].referencePoint,
+              city: data.referencias?.[0].city,
+              state: data.referencias?.[0].state,
+            },
+          },
+        ],
       });
       reset();
-
+      setExibirReferencias(false);
       setValue('cpf', '');
       setErrorMessage(null);
       toast.success('Cliente cadastrado com sucesso');
@@ -154,28 +204,28 @@ export function CustomerForm() {
       <CardContent>
         <form
           onSubmit={handleSubmit(handleCreateCustomer)}
-          className='space-y-6'
+          className="space-y-6"
         >
           {/* Informações Pessoais */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium'>Informações Pessoais</h3>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='space-y-2'>
-                <Label className='gap-1' htmlFor='name'>
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Informações Pessoais</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="gap-1" htmlFor="name">
                   Nome{' '}
-                  <span className='text-muted-foreground'>(Obrigatório)</span>
+                  <span className="text-muted-foreground">(Obrigatório)</span>
                 </Label>
-                <Input id='name' {...register('name')} required />
+                <Input id="name" {...register('name')} required />
                 {errors.name?.message && (
-                  <p className='text-sm text-destructive'>
+                  <p className="text-sm text-destructive">
                     {errors.name?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='phone'>Telefone</Label>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
                 <Controller
-                  name='phone'
+                  name="phone"
                   control={control}
                   render={({ field }) => <PhoneInput {...field} />}
                 />
@@ -185,9 +235,9 @@ export function CustomerForm() {
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='email'>E-mail</Label>
-                <Input id='email' {...register('email')} />
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input id="email" {...register('email')} />
                 {errors.email?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.email?.message}
@@ -197,77 +247,77 @@ export function CustomerForm() {
             </div>
           </div>
           {/* Endereço Residencial */}
-          <div className='space-y-4'>
-            <div className='flex items-center gap-1'>
-              <p className='text-end text-lg font-medium'>
+          <div className="space-y-4">
+            <div className="flex items-center gap-1">
+              <p className="text-end text-lg font-medium">
                 Endereço Residencial
               </p>
-              <p className='text-sm text-muted-foreground'>
+              <p className="text-sm text-muted-foreground">
                 (Digite o CEP Primeiro)
               </p>
             </div>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='space-y-2'>
-                <Label htmlFor='cep'>CEP</Label>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="cep">CEP</Label>
                 <Controller
-                  name='zipCode'
+                  name="zipCode"
                   control={control}
                   render={({ field }) => <CepInput {...field} />}
                 />
                 {errors.zipCode?.message && (
-                  <p className='text-sm text-destructive'>
+                  <p className="text-sm text-destructive">
                     {errors.zipCode?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='address'>Endereço</Label>
-                <Input id='address' {...register('address')} />
+              <div className="space-y-2">
+                <Label htmlFor="address">Endereço</Label>
+                <Input id="address" {...register('address')} />
                 {errors.address?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.address?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='city'>Cidade</Label>
-                <Input id='city' {...register('city')} />
+              <div className="space-y-2">
+                <Label htmlFor="city">Cidade</Label>
+                <Input id="city" {...register('city')} />
                 {errors.city?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.city?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='state'>Estado</Label>
-                <Input id='state' {...register('state')} />
+              <div className="space-y-2">
+                <Label htmlFor="state">Estado</Label>
+                <Input id="state" {...register('state')} />
                 {errors.state?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.state?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='referencePoint'>Ponto de referência</Label>
-                <Input id='referencePoint' {...register('referencePoint')} />
+              <div className="space-y-2">
+                <Label htmlFor="referencePoint">Ponto de referência</Label>
+                <Input id="referencePoint" {...register('referencePoint')} />
                 {errors.referencePoint?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.referencePoint?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='number'>Numero da casa</Label>
-                <Input id='number' {...register('number')} />
+              <div className="space-y-2">
+                <Label htmlFor="number">Numero da casa</Label>
+                <Input id="number" {...register('number')} />
                 {errors.number?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.number?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='complement'>Complemento</Label>
-                <Input id='complement' {...register('complement')} />
+              <div className="space-y-2">
+                <Label htmlFor="complement">Complemento</Label>
+                <Input id="complement" {...register('complement')} />
                 {errors.complement?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.complement?.message}
@@ -277,47 +327,47 @@ export function CustomerForm() {
             </div>
           </div>
           {/* Documentos */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium'>Documentos</h3>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='space-y-2'>
-                <Label className='gap-1' htmlFor='name'>
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Documentos</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="gap-1" htmlFor="name">
                   CPF{' '}
-                  <span className='text-muted-foreground'>(Obrigatório)</span>
+                  <span className="text-muted-foreground">(Obrigatório)</span>
                 </Label>
                 <Controller
-                  name='cpf'
+                  name="cpf"
                   control={control}
                   render={({ field }) => <CpfInput {...field} />}
                 />
                 {errors.cpf?.message && (
-                  <p className='text-sm text-destructive'>
+                  <p className="text-sm text-destructive">
                     {errors.cpf?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='dataBirth'>Data de nascimento</Label>
-                <Input id='dataBirth' type='date' {...register('dateBirth')} />
+              <div className="space-y-2">
+                <Label htmlFor="dataBirth">Data de nascimento</Label>
+                <Input id="dataBirth" type="date" {...register('dateBirth')} />
                 {errors.dateBirth?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.dateBirth?.message}
                   </p>
                 )}
               </div>
-              <div className='flex flex-col space-y-2'>
-                <Label htmlFor='maritalStatus'>Estado civil</Label>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="maritalStatus">Estado civil</Label>
                 <select
-                  defaultValue='all'
-                  className='flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
+                  defaultValue="all"
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   {...register('maritalStatus')}
                 >
-                  <option value='all' disabled hidden>
+                  <option value="all" disabled hidden>
                     Selecione um status
                   </option>
                   {CustomerStatus?.map((status, index) => (
                     <option
-                      className='w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none'
+                      className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
                       key={index}
                       value={status}
                     >
@@ -334,22 +384,22 @@ export function CustomerForm() {
             </div>
           </div>
           {/* Informações Profissionais */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium'>Informações Profissionais</h3>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='space-y-2'>
-                <Label htmlFor='enterprise'>Empresa</Label>
-                <Input id='enterprise' {...register('enterprise')} />
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Informações Profissionais</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="enterprise">Empresa</Label>
+                <Input id="enterprise" {...register('enterprise')} />
                 {errors.enterprise?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.enterprise?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='businessPhone'>Telefone comercial</Label>
+              <div className="space-y-2">
+                <Label htmlFor="businessPhone">Telefone comercial</Label>
                 <Controller
-                  name='businessPhone'
+                  name="businessPhone"
                   control={control}
                   render={({ field }) => <PhoneInput {...field} />}
                 />
@@ -359,59 +409,59 @@ export function CustomerForm() {
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='lengthService'>Tempo de serviço</Label>
-                <Input id='lengthService' {...register('lengthService')} />
+              <div className="space-y-2">
+                <Label htmlFor="lengthService">Tempo de serviço</Label>
+                <Input id="lengthService" {...register('lengthService')} />
                 {errors.lengthService?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.lengthService?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='businessCep'>CEP</Label>
+              <div className="space-y-2">
+                <Label htmlFor="businessCep">CEP</Label>
                 <Controller
-                  name='businessZipCode'
+                  name="businessZipCode"
                   control={control}
                   render={({ field }) => <CepInput {...field} />}
                 />
                 {errors.businessZipCode?.message && (
-                  <p className='text-sm text-destructive'>
+                  <p className="text-sm text-destructive">
                     {errors.businessZipCode?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='businessAddress'>Endereço comercial</Label>
-                <Input id='businessAddress' {...register('businessAddress')} />
+              <div className="space-y-2">
+                <Label htmlFor="businessAddress">Endereço comercial</Label>
+                <Input id="businessAddress" {...register('businessAddress')} />
                 {errors.businessAddress?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.businessAddress?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='businessCity'>Cidade</Label>
-                <Input id='businessCity' {...register('businessCity')} />
+              <div className="space-y-2">
+                <Label htmlFor="businessCity">Cidade</Label>
+                <Input id="businessCity" {...register('businessCity')} />
                 {errors.businessCity?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.businessCity?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='businessState'>Estado</Label>
-                <Input id='businessState' {...register('businessState')} />
+              <div className="space-y-2">
+                <Label htmlFor="businessState">Estado</Label>
+                <Input id="businessState" {...register('businessState')} />
                 {errors.businessState?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.businessState?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='businessPosition'>Cargo</Label>
+              <div className="space-y-2">
+                <Label htmlFor="businessPosition">Cargo</Label>
                 <Input
-                  id='businessPosition'
+                  id="businessPosition"
                   {...register('businessPosition')}
                 />
                 {errors.businessPosition?.message && (
@@ -423,21 +473,21 @@ export function CustomerForm() {
             </div>
           </div>
           {/* Informações Bancárias */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium'>Informações Bancárias</h3>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='space-y-2'>
-                <Label htmlFor='bank'>Banco</Label>
-                <Input id='bank' {...register('bank')} />
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Informações Bancárias</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="bank">Banco</Label>
+                <Input id="bank" {...register('bank')} />
                 {errors.bank?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.bank?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='agency'>Agência</Label>
-                <Input id='agency' {...register('agency')} />
+              <div className="space-y-2">
+                <Label htmlFor="agency">Agência</Label>
+                <Input id="agency" {...register('agency')} />
                 {errors.agency?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.agency?.message}
@@ -447,21 +497,21 @@ export function CustomerForm() {
             </div>
           </div>
           {/* Filiação */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium'>Filiação</h3>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='space-y-2'>
-                <Label htmlFor='father'>Pai</Label>
-                <Input id='father' {...register('father')} />
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Filiação</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="father">Pai</Label>
+                <Input id="father" {...register('father')} />
                 {errors.father?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.father?.message}
                   </p>
                 )}
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='mother'>Mãe</Label>
-                <Input id='mother' {...register('mother')} />
+              <div className="space-y-2">
+                <Label htmlFor="mother">Mãe</Label>
+                <Input id="mother" {...register('mother')} />
                 {errors.mother?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.mother?.message}
@@ -469,17 +519,186 @@ export function CustomerForm() {
                 )}
               </div>
             </div>
+            {!exibirReferencias && (
+              <Button type="button" variant="outline" onClick={handleReference}>
+                Adicionar referência
+              </Button>
+            )}
           </div>
+
+          {exibirReferencias && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Referências</h3>
+
+              {fields.map((field, index) => (
+                <Card className="flex flex-col gap-3 bg-background p-4">
+                  <div
+                    key={field.id}
+                    className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                  >
+                    <div className="space-y-2">
+                      <Label className="gap-1" htmlFor="name">
+                        Nome{' '}
+                        <span className="text-muted-foreground">
+                          (Obrigatório)
+                        </span>
+                      </Label>
+                      <Input
+                        id="name"
+                        {...register(`referencias.${index}.name` as const)}
+                        required
+                      />
+                      {errors.referencias?.[index]?.name && (
+                        <p className="text-sm text-destructive">
+                          {errors.referencias?.[index]?.name?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2 flex-1">
+                      <Label htmlFor="phone">Telefone</Label>
+                      <Controller
+                        name={`referencias.${index}.phone` as const}
+                        control={control}
+                        render={({ field }) => <PhoneInput {...field} />}
+                      />
+                      {errors.referencias?.[index]?.phone && (
+                        <p className="text-destructive text-sm">
+                          {errors.referencias?.[index]?.phone?.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <p className="text-end text-sm text-muted-foreground">
+                      Endereço Residencial
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      (Digite o CEP Primeiro)
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="cep">CEP</Label>
+                      <Controller
+                        name={`referencias.${index}.zipCode` as const}
+                        control={control}
+                        render={({ field }) => <CepInput {...field} />}
+                      />
+                      {errors.referencias?.[index]?.zipCode?.message && (
+                        <p className="text-sm text-destructive">
+                          {errors.referencias?.[index]?.zipCode?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Endereço</Label>
+                      <Input
+                        id="address"
+                        {...register(`referencias.${index}.address` as const)}
+                      />
+                      {errors.referencias?.[index]?.address?.message && (
+                        <p className={`text-sm text-destructive`}>
+                          {errors.referencias?.[index]?.address?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="city">Cidade</Label>
+                      <Input
+                        id="city"
+                        {...register(`referencias.${index}.city` as const)}
+                      />
+                      {errors.referencias?.[index]?.city?.message && (
+                        <p className={`text-sm text-destructive`}>
+                          {errors.referencias?.[index]?.city?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="state">Estado</Label>
+                      <Input
+                        id="state"
+                        {...register(`referencias.${index}.state` as const)}
+                      />
+                      {errors.referencias?.[index]?.state?.message && (
+                        <p className={`text-sm text-destructive`}>
+                          {errors.referencias?.[index]?.state?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="referencePoint">
+                        Ponto de referência
+                      </Label>
+                      <Input
+                        id="referencePoint"
+                        {...register(
+                          `referencias.${index}.referencePoint` as const
+                        )}
+                      />
+                      {errors.referencias?.[index]?.referencePoint?.message && (
+                        <p className={`text-sm text-destructive`}>
+                          {errors.referencias?.[index]?.referencePoint?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="number">Numero da casa</Label>
+                      <Input
+                        id="number"
+                        {...register(`referencias.${index}.number` as const)}
+                      />
+                      {errors.referencias?.[index]?.number?.message && (
+                        <p className={`text-sm text-destructive`}>
+                          {errors.referencias?.[index]?.number?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="complement">Complemento</Label>
+                      <Input
+                        id="complement"
+                        {...register(
+                          `referencias.${index}.complement` as const
+                        )}
+                      />
+                      {errors.referencias?.[index]?.complement?.message && (
+                        <p className={`text-sm text-destructive`}>
+                          {errors.referencias?.[index]?.complement?.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => remove(index)}
+                    >
+                      Remover referência
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => append({ name: '', phone: '' })}
+              >
+                Adicionar mais uma referência
+              </Button>
+            </div>
+          )}
           {errorMessage && (
             <AlertError
-              title='Ops, parece que temos um erro!'
+              title="Ops, parece que temos um erro!"
               errorMessage={errorMessage}
             />
           )}
           <Button
             disabled={isSubmitting}
-            className='disabled:cursor-not-allowed disabled:opacity-70'
-            type='submit'
+            className="disabled:cursor-not-allowed disabled:opacity-70"
+            type="submit"
           >
             {isSubmitting ? 'Cadastrando...' : 'Cadastrar Cliente'}
           </Button>

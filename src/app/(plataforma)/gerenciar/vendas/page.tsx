@@ -1,15 +1,22 @@
-'use client'
+'use client';
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/_components/ui/tabs';
 import PageContainer from '@/_components/layout/page-container';
 
 import { SaleTable } from './_components/_table/saleTable';
-import { SaleForm } from './_components/saleForm';
-import { useState } from 'react';
+import { AddProduct } from './_components/addProduct';
+import { AddClient } from './_components/client';
 
-export default function RegisterSale() {
+export default function RegisterSale(tabsValue: string) {
   const [isFormVisible, setIsFormVisible] = useState(false);
   return (
     <PageContainer>
@@ -23,12 +30,23 @@ export default function RegisterSale() {
         <div className="w-full space-y-8">
           {isFormVisible && (
             <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
             >
-              <SaleForm />
+              <Tabs defaultValue="product" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="product">Produtos</TabsTrigger>
+                  <TabsTrigger value="client">Cliente</TabsTrigger>
+                </TabsList>
+                <TabsContent value="product">
+                  <AddProduct />
+                </TabsContent>
+                <TabsContent value="client">
+                  <AddClient />
+                </TabsContent>
+              </Tabs>
             </motion.div>
           )}
           <SaleTable />

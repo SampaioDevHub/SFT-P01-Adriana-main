@@ -23,7 +23,7 @@ import { CpfInput } from '@/_components/Inputs/cpfInput';
 
 import { formSchema, FormSchema } from '../_types/saleYupType';
 import { EditSaleContentSkeleton } from './_skeleton/editSaleContentSkeleton';
-import { FinishLater } from './finishLater';
+import { FinishLater } from './addProduct/finishLater';
 
 interface ModalProps {
   saleId: string;
@@ -55,7 +55,7 @@ export function EditSaleModalContent({ saleId, setIsOpen, open }: ModalProps) {
     resolver: yupResolver(formSchema({})),
   });
 
-  const {  } = useMutation({
+  const {} = useMutation({
     mutationFn: updatedSale,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['sales'] });

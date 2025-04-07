@@ -5,7 +5,7 @@ import { Checkbox } from '@/_components/ui/checkbox';
 import { Label } from '@/_components/ui/label';
 import { Input } from '@/_components/ui/input';
 
-import { FormSchema } from '../_types/saleYupType';
+import { FormSchema } from '../../_types/saleYupType';
 import { format } from 'date-fns';
 
 interface FinishLaterProps {

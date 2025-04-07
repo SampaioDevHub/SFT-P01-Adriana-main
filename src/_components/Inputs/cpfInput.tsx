@@ -24,6 +24,7 @@ export function CpfInput({ value, onChange }: CpfInputProps) {
 
   return (
     <Input
+      maxLength={14}
       type="text"
       required
       value={value || ''} // Garante que value nunca seja undefined

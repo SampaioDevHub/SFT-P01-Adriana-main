@@ -74,7 +74,7 @@ export function ProductForm() {
         name: data.name,
         discountPercentage: data.discountPercentage,
         price: data.price,
-        quantityInStock: data.amount,
+        quantityInStock: data.quantityInStock,
         size: sizesString,
         category: data.category,
         subCategory: data.subCategory,
@@ -237,11 +237,11 @@ export function ProductForm() {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="amount">Quantidade</Label>
-            <Input id="amount" {...register('amount')} type="number" required />
-            {errors.amount?.message && (
+            <Label htmlFor="quantityInStock">Quantidade</Label>
+            <Input id="quantityInStock" {...register('quantityInStock')} type="number" required />
+            {errors.quantityInStock?.message && (
               <p className={`text-sm text-destructive`}>
-                {errors.amount?.message}
+                {errors.quantityInStock?.message}
               </p>
             )}
           </div>
