@@ -63,6 +63,9 @@ describe('Money Input Tests', () => {
         const updatedInput = screen.getByRole('textbox') as HTMLInputElement;
 
         // regex para verificar se realmente é exibido o valor formatado em R$
+        /* 
+        O regex /\u00A0/g substitui espaços não separáveis (non-breaking spaces) por espaços normais, garantindo que a formatação do valor seja comparada corretamente.
+        */
         expect(updatedInput.value.replace(/\u00A0/g, ' ')).toBe('R$ 100,00');
     });
     it('should work with big numbers)', async () => {
@@ -104,8 +107,55 @@ describe('Money Input Tests', () => {
         const updatedInput = screen.getByRole('textbox') as HTMLInputElement;
 
         // regex para verificar se realmente é exibido o valor formatado em R$
+        /* 
+        O regex /\u00A0/g substitui espaços não separáveis (non-breaking spaces) por espaços normais, garantindo que a formatação do valor seja comparada corretamente.
+        */
         expect(updatedInput.value.replace(/\u00A0/g, ' ')).toBe(
             'R$ 1.234.567,89'
         );
+    });
+    it('should type on the input with a value and verify if the value is NaN', async () => {
+        // valor do input inicia vazio
+        let test_value = '';
+
+        // renderiza o componente
+        const wrapper = render(
+            <MoneyInput
+                onChange={(e) => {
+                    test_value = e.target.value;
+                }}
+                value={test_value}
+            />
+        );
+
+        // busca o input
+        const input = screen.getByRole('textbox') as HTMLInputElement;
+
+        // simula a digitação de um valor que não é numérico
+        // chama a função mascaraMoeda para que sempre os 2 últimos dígitos sejam centavos
+        await fireEvent.change(input, { target: { value: 'valor NaN' } });
+
+        // verifica se formata o valor para 0 reais
+        expect(test_value).toBe('0.00');
+
+        // renderiza novamente o componente com o novo value
+        // função maskCurrency aqui formata para R$
+        wrapper.rerender(
+            <MoneyInput
+                onChange={(e) => {
+                    test_value = e.target.value;
+                }}
+                value={test_value}
+            />
+        );
+
+        // busca novamente o input porém espera ter o valor formatado
+        const updatedInput = screen.getByRole('textbox') as HTMLInputElement;
+
+        // regex verifica se realmente é exibido o valor formatado em R$ 0.00
+        /* 
+        O regex /\u00A0/g substitui espaços não separáveis (non-breaking spaces) por espaços normais, garantindo que a formatação do valor seja comparada corretamente.
+        */
+        expect(updatedInput.value.replace(/\u00A0/g, ' ')).toBe('R$ 0,00');
     });
 });
