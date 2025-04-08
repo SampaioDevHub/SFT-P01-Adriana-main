@@ -160,5 +160,38 @@ describe('Money Input Tests', () => {
         O regex /\u00A0/g substitui espaços não separáveis (non-breaking spaces) por espaços normais, garantindo que a formatação do valor seja comparada corretamente.
         */
         expect(input.value.replace(/\u00A0/g, ' ')).toBe('R$ 0,00');
+
+        console.log(`valor no input: ${input.value}`);
+        wrapper.debug();
+    });
+    it('should test when the input has no value', async () => {
+        // mock da função onChange()
+        const onChange_mock = jest.fn();
+
+        // renderiza o componente
+        const wrapper = render(
+            <MoneyInput onChange={onChange_mock} value="" />
+        );
+
+        // busca o input
+        const input = screen.getByRole('textbox') as HTMLInputElement;
+
+        // verifica se o valor inicial é vazio
+        expect(input.value).toBe('');
+
+        // verifica se onChange() não foi chamado pois não mudou o valor
+        expect(onChange_mock).not.toHaveBeenCalled();
+
+        // verifica se não houve valor digitado
+        await fireEvent.change(input, { target: { value: '' } });
+
+        // verifica se o valor retornado é  vazio
+        expect(input.value).toBe('');
+
+        // verifica se onChange() continua não chamado pois não mudou o valor
+        expect(onChange_mock).not.toHaveBeenCalled();
+
+        console.log(`valor no input: ${input.value}`);
+        wrapper.debug();
     });
 });
