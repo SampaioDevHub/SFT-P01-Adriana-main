@@ -126,13 +126,13 @@ export function CustomerForm() {
             if (!data.erro) {
               setValue(
                 `referencias.${index}.addressData.address`,
-                `${data.logradouro ?? ''} ${data.complemento ?? ''}`.trim()
+                `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`.trim()
               );
               setValue(
                 `referencias.${index}.addressData.city`,
                 data.localidade
               );
-              setValue(`referencias.${index}.addressData.state`, data.uf);
+              setValue(`referencias.${index}.addressData.state`, data.state);
             }
           })
           .catch(() => {
