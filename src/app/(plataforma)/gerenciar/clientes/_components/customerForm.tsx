@@ -132,7 +132,7 @@ export function CustomerForm() {
                 `referencias.${index}.addressData.city`,
                 data.localidade
               );
-              setValue(`referencias.${index}.addressData.state`, data.state);
+              setValue(`referencias.${index}.addressData.state`, data.uf);
             }
           })
           .catch(() => {
