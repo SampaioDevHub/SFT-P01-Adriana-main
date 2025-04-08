@@ -118,13 +118,17 @@ describe('Money Input Tests', () => {
         // valor do input inicia vazio
         let test_value = '';
 
+        // mock da função onChange()
+        const onChange_mock = jest.fn();
+
         // renderiza o componente
         const wrapper = render(
             <MoneyInput
                 onChange={(e) => {
+                    onChange_mock(e);
                     test_value = e.target.value;
                 }}
-                value={test_value}
+                value=""
             />
         );
 
@@ -133,29 +137,28 @@ describe('Money Input Tests', () => {
 
         // simula a digitação de um valor que não é numérico
         // chama a função mascaraMoeda para que sempre os 2 últimos dígitos sejam centavos
-        await fireEvent.change(input, { target: { value: 'valor NaN' } });
+        await fireEvent.change(input, { target: { value: 'abc' } }); // coloco o valor não numérico
 
-        // verifica se formata o valor para 0 reais
-        expect(test_value).toBe('0.00');
+        // verifica se onChange() realmente tem o valor de 0.00 (função transforma valores nao numéricos em 0 reais)
+        expect(onChange_mock).toHaveBeenCalledWith({
+            target: { value: '0.00' },
+        });
 
-        // renderiza novamente o componente com o novo value
-        // função maskCurrency aqui formata para R$
+        // renderiza o componente novamente com o valor atualizado
         wrapper.rerender(
             <MoneyInput
                 onChange={(e) => {
+                    onChange_mock(e);
                     test_value = e.target.value;
                 }}
-                value={test_value}
+                value={'0.00'} // valor esperado que seja exibido
             />
         );
-
-        // busca novamente o input porém espera ter o valor formatado
-        const updatedInput = screen.getByRole('textbox') as HTMLInputElement;
 
         // regex verifica se realmente é exibido o valor formatado em R$ 0.00
         /* 
         O regex /\u00A0/g substitui espaços não separáveis (non-breaking spaces) por espaços normais, garantindo que a formatação do valor seja comparada corretamente.
         */
-        expect(updatedInput.value.replace(/\u00A0/g, ' ')).toBe('R$ 0,00');
+        expect(input.value.replace(/\u00A0/g, ' ')).toBe('R$ 0,00');
     });
 });
