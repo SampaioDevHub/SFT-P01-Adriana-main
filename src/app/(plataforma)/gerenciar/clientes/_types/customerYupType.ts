@@ -51,15 +51,18 @@ export const formSchema = yup.object({
         .max(60, 'Você só pode inserir até 60 caracteres')
         .required('Informe o nome da referência'),
       phone: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
-      address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
-      number: yup.string().max(10, 'Você só pode inserir até 10 caracteres'),
-      complement: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
-      city: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
-      state: yup.string().max(2, 'Você só pode inserir até 2 caracteres'),
-      zipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
-      referencePoint: yup
-        .string()
-        .max(20, 'Você só pode inserir até 20 caracteres'),
+  
+      addressData: yup.object().shape({
+        address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
+        number: yup.string().max(10, 'Você só pode inserir até 10 caracteres'),
+        complement: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+        city: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+        state: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+        zipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+        referencePoint: yup
+          .string()
+          .max(20, 'Você só pode inserir até 20 caracteres'),
+      }),
     })
   ),
 });

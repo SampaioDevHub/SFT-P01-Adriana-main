@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '@/_components/ui/card';
 import { AxiosError } from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -30,8 +31,21 @@ export function CustomerForm() {
   const [exibirReferencias, setExibirReferencias] = useState(false);
 
   function handleReference() {
+    const criarReferenciaVazia = () => ({
+      name: '',
+      phone: '',
+      addressData: {
+        zipCode: '',
+        address: '',
+        number: '',
+        complement: '',
+        referencePoint: '',
+        city: '',
+        state: '',
+      },
+    });
     setExibirReferencias(true);
-    append({ name: '', phone: '' });
+    append(criarReferenciaVazia());
   }
 
   const queryClient = useQueryClient();
@@ -100,27 +114,37 @@ export function CustomerForm() {
     }
   }, [businessZipCode, setValue]);
 
-  const referenceZipCode = watch(`referencias.0.zipCode` as const)?.replace(/\D/g, '');
-  console.log(referenceZipCode)
-
-  // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
-    if (referenceZipCode && referenceZipCode.length === 8) {
-      fetch(`https://viacep.com.br/ws/${referenceZipCode}/json/`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.erro) {
-            setValue(
-              `referencias.0.address` as const,
-              `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
-            );
-            setValue(`referencias.0.city` as const, data.localidade);
-            setValue(`referencias.0.state` as const, data.estado);
-          }
-        })
-        .catch((error) => toast.error('Erro ao buscara o CEP'));
-    }
-  }, [referenceZipCode, setValue]);
+    fields.forEach((_, index) => {
+      const zipCode = watch(`referencias.${index}.addressData.zipCode`);
+      const cleanZipCode = zipCode?.replace(/\D/g, '');
+
+      if (cleanZipCode && cleanZipCode.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cleanZipCode}/json/`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.erro) {
+              setValue(
+                `referencias.${index}.addressData.address`,
+                `${data.logradouro ?? ''} ${data.complemento ?? ''}`.trim()
+              );
+              setValue(
+                `referencias.${index}.addressData.city`,
+                data.localidade
+              );
+              setValue(`referencias.${index}.addressData.state`, data.uf);
+            }
+          })
+          .catch(() => {
+            toast.error(`Erro ao buscar o CEP da referência ${index + 1}`);
+          });
+      }
+    });
+  }, [
+    fields
+      .map((_, index) => watch(`referencias.${index}.addressData.zipCode`))
+      .join(','),
+  ]);
 
   const { mutateAsync: createCustomerFn } = useMutation({
     mutationFn: createCustomer,
@@ -160,21 +184,7 @@ export function CustomerForm() {
         agency: data.agency,
         father: data.father,
         mother: data.mother,
-        referenceEntityList: [
-          {
-            name: data.referencias?.[0].name,
-            phone: data.referencias?.[0].phone,
-            addressData: {
-              zipCode: data.referencias?.[0].zipCode,
-              address: data.referencias?.[0].address,
-              number: data.referencias?.[0].number,
-              complement: data.referencias?.[0].complement,
-              referencePoint: data.referencias?.[0].referencePoint,
-              city: data.referencias?.[0].city,
-              state: data.referencias?.[0].state,
-            },
-          },
-        ],
+        referenceEntityList: data.referencias,
       });
       reset();
       setExibirReferencias(false);
@@ -529,161 +539,208 @@ export function CustomerForm() {
           {exibirReferencias && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Referências</h3>
-
-              {fields.map((field, index) => (
-                <Card className="flex flex-col gap-3 bg-background p-4">
-                  <div
+              <AnimatePresence>
+                {fields.map((field, index) => (
+                  <motion.div
                     key={field.id}
-                    className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    <div className="space-y-2">
-                      <Label className="gap-1" htmlFor="name">
-                        Nome{' '}
-                        <span className="text-muted-foreground">
-                          (Obrigatório)
-                        </span>
-                      </Label>
-                      <Input
-                        id="name"
-                        {...register(`referencias.${index}.name` as const)}
-                        required
-                      />
-                      {errors.referencias?.[index]?.name && (
-                        <p className="text-sm text-destructive">
-                          {errors.referencias?.[index]?.name?.message}
+                    <Card className="flex flex-col gap-3 bg-background p-4">
+                      <div
+                        key={field.id}
+                        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                      >
+                        <div className="space-y-2">
+                          <Label className="gap-1" htmlFor="name">
+                            Nome{' '}
+                            <span className="text-muted-foreground">
+                              (Obrigatório)
+                            </span>
+                          </Label>
+                          <Input
+                            id="name"
+                            {...register(`referencias.${index}.name` as const)}
+                            required
+                          />
+                          {errors.referencias?.[index]?.name && (
+                            <p className="text-sm text-destructive">
+                              {errors.referencias?.[index]?.name?.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2 flex-1">
+                          <Label htmlFor="phone">Telefone</Label>
+                          <Controller
+                            name={`referencias.${index}.phone` as const}
+                            control={control}
+                            render={({ field }) => <PhoneInput {...field} />}
+                          />
+                          {errors.referencias?.[index]?.phone && (
+                            <p className="text-destructive text-sm">
+                              {errors.referencias?.[index]?.phone?.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <p className="text-end text-sm text-muted-foreground">
+                          Endereço Residencial
                         </p>
-                      )}
-                    </div>
-                    <div className="space-y-2 flex-1">
-                      <Label htmlFor="phone">Telefone</Label>
-                      <Controller
-                        name={`referencias.${index}.phone` as const}
-                        control={control}
-                        render={({ field }) => <PhoneInput {...field} />}
-                      />
-                      {errors.referencias?.[index]?.phone && (
-                        <p className="text-destructive text-sm">
-                          {errors.referencias?.[index]?.phone?.message}
+                        <p className="text-sm text-muted-foreground">
+                          (Digite o CEP Primeiro)
                         </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-end text-sm text-muted-foreground">
-                      Endereço Residencial
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      (Digite o CEP Primeiro)
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="cep">CEP</Label>
-                      <Controller
-                        name={`referencias.${index}.zipCode` as const}
-                        control={control}
-                        render={({ field }) => <CepInput {...field} />}
-                      />
-                      {errors.referencias?.[index]?.zipCode?.message && (
-                        <p className="text-sm text-destructive">
-                          {errors.referencias?.[index]?.zipCode?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Endereço</Label>
-                      <Input
-                        id="address"
-                        {...register(`referencias.${index}.address` as const)}
-                      />
-                      {errors.referencias?.[index]?.address?.message && (
-                        <p className={`text-sm text-destructive`}>
-                          {errors.referencias?.[index]?.address?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="city">Cidade</Label>
-                      <Input
-                        id="city"
-                        {...register(`referencias.${index}.city` as const)}
-                      />
-                      {errors.referencias?.[index]?.city?.message && (
-                        <p className={`text-sm text-destructive`}>
-                          {errors.referencias?.[index]?.city?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="state">Estado</Label>
-                      <Input
-                        id="state"
-                        {...register(`referencias.${index}.state` as const)}
-                      />
-                      {errors.referencias?.[index]?.state?.message && (
-                        <p className={`text-sm text-destructive`}>
-                          {errors.referencias?.[index]?.state?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="referencePoint">
-                        Ponto de referência
-                      </Label>
-                      <Input
-                        id="referencePoint"
-                        {...register(
-                          `referencias.${index}.referencePoint` as const
-                        )}
-                      />
-                      {errors.referencias?.[index]?.referencePoint?.message && (
-                        <p className={`text-sm text-destructive`}>
-                          {errors.referencias?.[index]?.referencePoint?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="number">Numero da casa</Label>
-                      <Input
-                        id="number"
-                        {...register(`referencias.${index}.number` as const)}
-                      />
-                      {errors.referencias?.[index]?.number?.message && (
-                        <p className={`text-sm text-destructive`}>
-                          {errors.referencias?.[index]?.number?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="complement">Complemento</Label>
-                      <Input
-                        id="complement"
-                        {...register(
-                          `referencias.${index}.complement` as const
-                        )}
-                      />
-                      {errors.referencias?.[index]?.complement?.message && (
-                        <p className={`text-sm text-destructive`}>
-                          {errors.referencias?.[index]?.complement?.message}
-                        </p>
-                      )}
-                    </div>
+                      </div>
+                      <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="cep">CEP</Label>
+                          <Controller
+                            name={
+                              `referencias.${index}.addressData.zipCode` as const
+                            }
+                            control={control}
+                            render={({ field }) => <CepInput {...field} />}
+                          />
+                          {errors.referencias?.[index]?.addressData?.zipCode
+                            ?.message && (
+                            <p className="text-sm text-destructive">
+                              {
+                                errors.referencias?.[index]?.addressData
+                                  ?.zipCode?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="address">Endereço</Label>
+                          <Input
+                            id="address"
+                            {...register(
+                              `referencias.${index}.addressData.address` as const
+                            )}
+                          />
+                          {errors.referencias?.[index]?.addressData?.address
+                            ?.message && (
+                            <p className={`text-sm text-destructive`}>
+                              {
+                                errors.referencias?.[index]?.addressData
+                                  ?.address?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="city">Cidade</Label>
+                          <Input
+                            id="city"
+                            {...register(
+                              `referencias.${index}.addressData.city` as const
+                            )}
+                          />
+                          {errors.referencias?.[index]?.addressData?.city
+                            ?.message && (
+                            <p className={`text-sm text-destructive`}>
+                              {
+                                errors.referencias?.[index]?.addressData?.city
+                                  ?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="state">Estado</Label>
+                          <Input
+                            id="state"
+                            {...register(
+                              `referencias.${index}.addressData.state` as const
+                            )}
+                          />
+                          {errors.referencias?.[index]?.addressData?.state
+                            ?.message && (
+                            <p className={`text-sm text-destructive`}>
+                              {
+                                errors.referencias?.[index]?.addressData?.state
+                                  ?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="referencePoint">
+                            Ponto de referência
+                          </Label>
+                          <Input
+                            id="referencePoint"
+                            {...register(
+                              `referencias.${index}.addressData.referencePoint` as const
+                            )}
+                          />
+                          {errors.referencias?.[index]?.addressData
+                            ?.referencePoint?.message && (
+                            <p className={`text-sm text-destructive`}>
+                              {
+                                errors.referencias?.[index]?.addressData
+                                  ?.referencePoint?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="number">Numero da casa</Label>
+                          <Input
+                            id="number"
+                            {...register(
+                              `referencias.${index}.addressData.number` as const
+                            )}
+                          />
+                          {errors.referencias?.[index]?.addressData?.number
+                            ?.message && (
+                            <p className={`text-sm text-destructive`}>
+                              {
+                                errors.referencias?.[index]?.addressData?.number
+                                  ?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="complement">Complemento</Label>
+                          <Input
+                            id="complement"
+                            {...register(
+                              `referencias.${index}.addressData.complement` as const
+                            )}
+                          />
+                          {errors.referencias?.[index]?.addressData?.complement
+                            ?.message && (
+                            <p className={`text-sm text-destructive`}>
+                              {
+                                errors.referencias?.[index]?.addressData
+                                  ?.complement?.message
+                              }
+                            </p>
+                          )}
+                        </div>
 
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => remove(index)}
-                    >
-                      Remover referência
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => remove(index)}
+                        >
+                          Remover referência
+                        </Button>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
 
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => append({ name: '', phone: '' })}
+                onClick={handleReference}
               >
                 Adicionar mais uma referência
               </Button>
