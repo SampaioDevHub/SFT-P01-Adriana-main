@@ -77,7 +77,6 @@
   }
   body {
     @apply box-border bg-background text-foreground;
-    
   }
 }
 

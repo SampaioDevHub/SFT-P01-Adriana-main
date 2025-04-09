@@ -15,7 +15,10 @@ import { DeleteSelectedProductModal } from './deleteSelectedProductModal';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 
 export function TableOfSelectedProducts() {
-  const [isDeleteSelectedProductModalOpen, setIsDeleteSelectedProductModalOpen] = useState(false);
+  const [
+    isDeleteSelectedProductModalOpen,
+    setIsDeleteSelectedProductModalOpen,
+  ] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -42,7 +45,7 @@ export function TableOfSelectedProducts() {
                   onOpenChange={setIsDeleteSelectedProductModalOpen}
                 >
                   <DialogTrigger asChild>
-                    <Button variant="default" size="sm" className="mr-2">
+                    <Button variant="destructive" size="sm" className="mr-2">
                       Remover
                     </Button>
                   </DialogTrigger>

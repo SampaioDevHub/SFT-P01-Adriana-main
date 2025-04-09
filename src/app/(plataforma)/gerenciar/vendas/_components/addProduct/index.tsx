@@ -16,12 +16,12 @@ import { Label } from '@/_components/ui/label';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CpfInput } from '@/_components/Inputs/cpfInput';
 
-import { formSchema, FormSchema } from '../_types/saleYupType';
+import { formSchema, FormSchema } from '../../_types/saleYupType';
 import { FinishLater } from './finishLater';
 import { TableOfSelectedProducts } from './tableOfSelectedProducts';
-import Overview from './overview';
+import Overview from './productSummary';
 
-export function SaleForm() {
+export function AddProduct() {
   const [finishLater, setFinishLater] = useState(false);
 
   const {
@@ -45,29 +45,7 @@ export function SaleForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(handleAddProduct)} className="space-y-4">
-            <FinishLater
-              register={register}
-              errors={errors}
-              finishLater={finishLater}
-              setFinishLater={setFinishLater} // Passando o estado de controle para FinishLater
-            />
             <div className="grid w-full grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="gap-1" htmlFor="customer">
-                  CPF do Cliente
-                  <span className="text-muted-foreground">(Pesquise)</span>
-                </Label>
-                <Controller
-                  name="customer"
-                  control={control}
-                  render={({ field }) => <CpfInput {...field} />}
-                />
-                {errors.customer?.message && (
-                  <p className={`text-sm text-destructive`}>
-                    {errors.customer?.message}
-                  </p>
-                )}
-              </div>
               <div className="space-y-2">
                 <Label className="gap-1" htmlFor="productDiscountPercentage">
                   Desconto(%)

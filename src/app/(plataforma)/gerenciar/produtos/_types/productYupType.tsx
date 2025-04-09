@@ -17,7 +17,7 @@ export const formSchema = (isSizeNotRequired: boolean) =>
       .max(100, 'O campo "Disconto(%)" não pode exceder 100.')
       .optional(),
     price: yup.string().required('Informe o preço do produto'),
-    amount: yup
+    quantityInStock: yup
       .number()
       .integer()
       .typeError('Informe a quantidade do produto')

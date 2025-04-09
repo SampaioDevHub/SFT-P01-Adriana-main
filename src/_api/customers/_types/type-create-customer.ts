@@ -27,6 +27,19 @@ export interface CreateCustomerContent {
   agency?: string;
   father?: string;
   mother?: string;
+  referenceEntityList?: {
+    name: string;
+    phone?: string;
+    addressData: {
+      zipCode?: string;
+      address?: string;
+      number?: string;
+      complement?: string;
+      referencePoint?: string;
+      city?: string;
+      state?: string;
+    };
+  }[];
 }
 
 export interface CreateCustomerBody {

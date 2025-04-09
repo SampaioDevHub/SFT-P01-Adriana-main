@@ -49,8 +49,8 @@ export const navItems: NavItem[] = [
         isActive: true,
       },
       {
-        title: 'Usuários',
-        url: '/gerenciar/usuarios',
+        title: 'Funcionarios',
+        url: '/gerenciar/funcionarios',
         shortcut: ['u', 'u'],
         isActive: true,
       },
@@ -116,26 +116,6 @@ export const navItems: NavItem[] = [
         title: 'Lançamentos',
         url: '/financeiro/lancamentos',
         shortcut: ['f', 'l'],
-        isActive: true,
-      },
-    ],
-  },
-  {
-    title: 'Configurações',
-    url: '',
-    icon: 'settings',
-    isActive: true,
-    items: [
-      {
-        title: 'Perfil',
-        url: '/configuracoes/perfil',
-        shortcut: ['s', 'p'],
-        isActive: true,
-      },
-      {
-        title: 'Sistema',
-        url: '/configuracoes/sistema',
-        shortcut: ['s', 's'],
         isActive: true,
       },
     ],

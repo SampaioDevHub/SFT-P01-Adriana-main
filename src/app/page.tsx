@@ -11,6 +11,6 @@ export default function AuthRedirect() {
   useEffect(() => {
     if (!isLoaded) return;
 
-    router.replace(userId ? '/apresentacao' : '/sign-in');
+    router.replace(userId ? '/painel/insights' : '/sign-in');
   }, [isLoaded, userId, router]);
 }

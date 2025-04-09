@@ -10,7 +10,6 @@ export default function Page() {
   );
 }
 
-// Fallback estiloso para vendas
 function PageFallback() {
   return (
     <div className="min-h-screen px-4 py-8 flex flex-col items-center gap-6">

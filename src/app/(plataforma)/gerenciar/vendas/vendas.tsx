@@ -6,7 +6,6 @@ import { Button } from '@/_components/ui/button';
 import PageContainer from '@/_components/layout/page-container';
 
 import { SaleTable } from './_components/_table/saleTable';
-import { SaleForm } from './_components/saleForm';
 import { useState } from 'react';
 
 export default function RegisterSale() {
@@ -28,7 +27,7 @@ export default function RegisterSale() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
             >
-              <SaleForm />
+              
             </motion.div>
           )}
           <SaleTable />

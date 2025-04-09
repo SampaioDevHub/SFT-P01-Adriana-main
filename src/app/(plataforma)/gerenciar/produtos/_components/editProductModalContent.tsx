@@ -86,7 +86,7 @@ export function EditProductModalContent({
       name: product?.name ?? '',
       discountPercentage: product?.discountPercentage,
       price: JSON.stringify(product?.price) ?? '',
-      amount: product?.quantityInStock ?? 0,
+      quantityInStock: product?.quantityInStock ?? 0,
       size: sizesString ?? '',
       category: product?.category ?? 'Roupas',
       subCategory: product?.subCategory ?? '',
@@ -110,7 +110,7 @@ export function EditProductModalContent({
         name: data.name,
         discountPercentage: data.discountPercentage,
         price: data.price.replace(/[^\d.-]/g, ''),
-        quantityInStock: data.amount,
+        quantityInStock: data.quantityInStock,
         size: data.category === 'Roupas' ? sizesString : '',
         category: data.category,
         subCategory: data.subCategory,
@@ -254,10 +254,10 @@ export function EditProductModalContent({
           </div>
           <div className="space-y-2">
             <Label>Quantidade</Label>
-            <Input {...register('amount')} type="number" required />
-            {errors.amount?.message && (
+            <Input {...register('quantityInStock')} type="number" required />
+            {errors.quantityInStock?.message && (
               <p className={`text-sm text-destructive`}>
-                {errors.amount?.message}
+                {errors.quantityInStock?.message}
               </p>
             )}
           </div>
