@@ -25,9 +25,11 @@ export function SaleTable() {
   const router = useRouter();
 
   const page = searchParams.get('page') ?? '1';
-  const nameFilter = searchParams.get('name') ?? '';
-  const codeFilter = searchParams.get('code') ?? '';
-  const categoryFilter = searchParams.get('category') ?? '';
+  const cpfFilter = searchParams.get('cpf') ?? '';
+  const statusFilter = searchParams.get('status') ?? '';
+  const priceFilter = searchParams.get('price') ?? '';
+
+  console.log(cpfFilter, statusFilter, priceFilter)
 
   const pageIndex = z.coerce
     .number()
@@ -35,13 +37,13 @@ export function SaleTable() {
     .parse(page);
 
   const { data: sales, isLoading: isLoadingSales } = useQuery({
-    queryKey: ['sales', pageIndex, nameFilter, codeFilter, categoryFilter],
+    queryKey: ['sales', pageIndex, cpfFilter, statusFilter, priceFilter],
     queryFn: () =>
       getSales({
         pageIndex,
-        nameFilter,
-        codeFilter,
-        categoryFilter: categoryFilter === 'all' ? null : categoryFilter,
+        cpfFilter,
+        statusFilter,
+        priceFilter,
       }),
     staleTime: Infinity,
   });
@@ -63,9 +65,9 @@ export function SaleTable() {
           <TableHeader>
             <TableRow>
               <TableHead>CPF</TableHead>
-              <TableHead>Nome</TableHead>
               <TableHead>Quantidade</TableHead>
-              <TableHead>Data Final</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">

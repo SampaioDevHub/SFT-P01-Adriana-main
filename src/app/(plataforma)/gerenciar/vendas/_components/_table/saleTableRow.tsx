@@ -4,33 +4,47 @@ import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
+
 import { DeleteModal } from '../deleteModal';
 
-import { EditSaleModalContent } from '../editSaleModalContent';
-
-export function SaleTableRow({ id, startDate, endDate }: GetSaleContent) {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+export function SaleTableRow({
+  id,
+  customerCpf,
+  totalItems,
+  totalPrice,
+  priceWithDiscount,
+  discountPercentage,
+  status,
+}: GetSaleContent) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   return (
     <TableRow key={id}>
-      <TableCell>{endDate}</TableCell>
-      <TableCell>{endDate}</TableCell>
-      <TableCell>{endDate}</TableCell>
-      <TableCell>{endDate}</TableCell>
-      <TableCell className="w-[10rem]">
-        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="mr-2">
-              Editar
-            </Button>
-          </DialogTrigger>
-          <EditSaleModalContent
-            setIsOpen={setIsEditModalOpen}
-            open={isEditModalOpen}
-            saleId={id}
-          />
-        </Dialog>
+      <TableCell>{customerCpf}</TableCell>
+      <TableCell>{totalItems}</TableCell>
+      <TableCell>
+        {discountPercentage && priceWithDiscount ? (
+          <div className="space-x-1 flex flex-wrap">
+            <span
+              style={{ textDecoration: 'line-through' }}
+              className="text-xs text-muted-foreground className='whitespace-nowrap'"
+            >
+              R$ {totalPrice.toString().replace('.', ',')}
+            </span>
+            <span className="whitespace-nowrap">
+              R$ {priceWithDiscount.toString().replace('.', ',')}
+            </span>
+          </div>
+        ) : (
+          <p>R$ {totalPrice.toString().replace('.', ',')}</p>
+        )}
+      </TableCell>
+      <TableCell>
+        {status === 'FINALIZADO'
+          ? 'Finalizado'
+          : status === 'PENDENTE' && 'Pendente'}
+      </TableCell>
+      <TableCell className="w-[5rem]">
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
           <DialogTrigger asChild>
             <Button variant="destructive" size="sm">

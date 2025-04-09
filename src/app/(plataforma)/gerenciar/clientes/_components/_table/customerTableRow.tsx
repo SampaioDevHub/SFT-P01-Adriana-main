@@ -1,3 +1,4 @@
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
@@ -5,8 +6,8 @@ import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { GetCustomerContent } from '@/_api/customers/_types/type-get-custumer';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { DeleteModal } from '../deleteModal';
 
+import { DeleteModal } from '../deleteModal';
 import { EditCustomerModalContent } from '../editCustomerModalContent';
 
 export function CustomerTableRow({
@@ -20,13 +21,15 @@ export function CustomerTableRow({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const formatPhoneNumber = (phone: string | undefined) => {
-    if (!phone) return;
-    const onlyDigits = phone.replace(/\D/g, ''); // Remove tudo que não é número
+    if (!phone) return '';
 
-    return onlyDigits.replace(
-      /^(\d{2})(\d{2})(\d{5})(\d{4})$/,
-      '+$1 ($2) $3-$4'
-    );
+    const phoneNumber = parsePhoneNumberFromString(phone);
+
+    if (phoneNumber && phoneNumber.isValid()) {
+      return phoneNumber.formatInternational(); // +55 11 91234-5678
+    }
+
+    return phone; // fallback para o número original
   };
 
   return (

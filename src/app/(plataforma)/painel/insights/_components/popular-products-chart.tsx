@@ -21,23 +21,23 @@ export function GraficoBarra() {
   const [data, setData] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchPopularProducts() {
-      try {
-        const res = await fetch(
-          'http://localhost:8080/manage_store/v1/products'
-        );
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error('Erro ao carregar produtos populares', err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchPopularProducts() {
+  //     try {
+  //       const res = await fetch(
+  //         'http://localhost:8080/manage_store/v1/products'
+  //       );
+  //       const json = await res.json();
+  //       setData(json);
+  //     } catch (err) {
+  //       console.error('Erro ao carregar produtos populares', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
 
-    fetchPopularProducts();
-  }, []);
+  //   fetchPopularProducts();
+  // }, []);
 
   return (
     <div className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border backdrop-blur-md p-6 w-full">

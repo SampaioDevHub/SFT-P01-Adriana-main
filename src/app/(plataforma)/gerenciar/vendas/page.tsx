@@ -15,6 +15,7 @@ import PageContainer from '@/_components/layout/page-container';
 import { SaleTable } from './_components/_table/saleTable';
 import { AddProduct } from './_components/addProduct';
 import { AddClient } from './_components/client';
+import { Overview } from './_components/overview';
 
 export default function RegisterSale(tabsValue: string) {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -36,15 +37,19 @@ export default function RegisterSale(tabsValue: string) {
               transition={{ duration: 0.3 }}
             >
               <Tabs defaultValue="product" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="product">Produtos</TabsTrigger>
                   <TabsTrigger value="client">Cliente</TabsTrigger>
+                  <TabsTrigger value="overview">Resumo</TabsTrigger>
                 </TabsList>
                 <TabsContent value="product">
                   <AddProduct />
                 </TabsContent>
                 <TabsContent value="client">
                   <AddClient />
+                </TabsContent>
+                <TabsContent value="overview">
+                  <Overview />
                 </TabsContent>
               </Tabs>
             </motion.div>

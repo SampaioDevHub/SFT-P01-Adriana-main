@@ -2,7 +2,7 @@ import { Button } from '@/_components/ui/button';
 import { Card } from '@/_components/ui/card';
 import { TabsList, TabsTrigger } from '@/_components/ui/tabs';
 
-export default function Overview() {
+export function ProductSummary() {
   const resumo = [
     { label: 'Total de Produtos', valor: '6' },
     { label: 'Subtotal', valor: 'R$ 300,00' },

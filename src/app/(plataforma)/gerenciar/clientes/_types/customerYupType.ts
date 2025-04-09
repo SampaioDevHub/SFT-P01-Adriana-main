@@ -1,3 +1,4 @@
+import { isValidPhoneNumber } from 'libphonenumber-js';
 import * as yup from 'yup';
 
 export const formSchema = yup.object({
@@ -5,14 +6,22 @@ export const formSchema = yup.object({
     .string()
     .max(60, 'Você só pode inserir até 60 caracteres')
     .required('Informe o nome do cliente'),
-  phone: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
+  phone: yup
+    .string()
+    .max(15, 'Você só pode inserir até 15 caracteres')
+    .test(
+      'valid-phone',
+      'Telefone inválido ou sem DDD',
+      (value) => !!value && isValidPhoneNumber(value)
+    ),
   email: yup
     .string()
     .max(60, 'Você só pode inserir até 60 caracteres')
     .nullable(),
+  profile: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
   number: yup.string().max(10, 'Você só pode inserir até 10 caracteres'),
-  complement: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+  complement: yup.string().max(50, 'Você só pode inserir até 50 caracteres'),
   city: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   state: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
   zipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
@@ -51,11 +60,13 @@ export const formSchema = yup.object({
         .max(60, 'Você só pode inserir até 60 caracteres')
         .required('Informe o nome da referência'),
       phone: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
-  
+
       addressData: yup.object().shape({
         address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
         number: yup.string().max(10, 'Você só pode inserir até 10 caracteres'),
-        complement: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
+        complement: yup
+          .string()
+          .max(20, 'Você só pode inserir até 20 caracteres'),
         city: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
         state: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),
         zipCode: yup.string().max(20, 'Você só pode inserir até 20 caracteres'),

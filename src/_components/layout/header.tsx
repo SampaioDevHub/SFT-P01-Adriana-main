@@ -28,24 +28,24 @@ export default function Header() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchNotifications() {
-      try {
-        const res = await fetch(
-          'http://localhost:8080/manage_store/v1/notifications'
-        );
-        if (!res.ok) throw new Error('Erro ao buscar notificações');
-        const data = await res.json();
-        setNotifications(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchNotifications() {
+  //     try {
+  //       const res = await fetch(
+  //         'http://localhost:8080/manage_store/v1/notifications'
+  //       );
+  //       if (!res.ok) throw new Error('Erro ao buscar notificações');
+  //       const data = await res.json();
+  //       setNotifications(data);
+  //     } catch (err) {
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
 
-    fetchNotifications();
-  }, []);
+  //   fetchNotifications();
+  // }, []);
 
   return (
     <header className="sticky top-0 z-50 flex h-20 md:h-24 items-center justify-between px-4 border-b border-border bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl shadow-md transition-all duration-300">

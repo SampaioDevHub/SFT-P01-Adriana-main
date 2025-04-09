@@ -16,9 +16,9 @@ import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 
 const formSchema = yup.object().shape({
-  name: yup.string(),
-  code: yup.string(),
-  category: yup.string(),
+  cpf: yup.string(),
+  status: yup.string(),
+  price: yup.string(),
 });
 
 type FormSchema = yup.InferType<typeof formSchema>;
@@ -28,9 +28,9 @@ export function SaleTableFilter() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const nameFilter = searchParams.get('name') ?? '';
-  const codeFilter = searchParams.get('code') ?? '';
-  const categoryFilter = searchParams.get('category') ?? '';
+  const cpfFilter = searchParams.get('cpf') ?? '';
+  const statusFilter = searchParams.get('status') ?? '';
+  const priceFilter = searchParams.get('price') ?? '';
 
   const {
     handleSubmit,
@@ -42,34 +42,34 @@ export function SaleTableFilter() {
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema),
     defaultValues: {
-      category: categoryFilter ?? '',
-      code: codeFilter ?? '',
-      name: nameFilter ?? '',
+      cpf: cpfFilter ?? '',
+      status: statusFilter ?? '',
+      price: priceFilter ?? '',
     },
   });
 
   function handleSubmitFilter(data: FormSchema) {
     const newParams = new URLSearchParams(searchParams);
 
-    if (data.name) {
-      newParams.set('name', (data.name ?? '').toString());
+    if (data.cpf) {
+      newParams.set('cpf', (data.cpf ?? '').toString());
     } else {
-      newParams.delete('name');
+      newParams.delete('cpf');
     }
 
-    if (data.code) {
-      newParams.set('code', (data.code ?? '').toString());
-    } else {
-      newParams.delete('code');
-    }
-
-    if (data.category) {
+    if (data.status) {
       newParams.set(
-        'category',
-        (data.category !== 'all' ? data.category : '').toString()
+        'status',
+        (data.status !== 'all' ? data.status : '').toString()
       );
     } else {
-      newParams.delete('category');
+      newParams.delete('status');
+    }
+
+    if (data.price) {
+      newParams.set('price', (data.price ?? '').toString());
+    } else {
+      newParams.delete('price');
     }
 
     newParams.set('page', '1');
@@ -79,13 +79,13 @@ export function SaleTableFilter() {
 
   function handleClearFilters() {
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete('name');
-    newParams.delete('code');
-    newParams.delete('category');
+    newParams.delete('cpf');
+    newParams.delete('status');
+    newParams.delete('price');
     newParams.set('page', '1');
     router.push(`${pathname}?${newParams.toString()}`);
 
-    reset(), setValue('category', '');
+    reset(), setValue('status', '');
   }
 
   return (
@@ -94,25 +94,20 @@ export function SaleTableFilter() {
       className="flex w-full items-center gap-2"
     >
       <span className="text-sm">Filtros:</span>
-      <Input {...register('name')} placeholder="Nome do produto" />
-      <Input
-        {...register('code')}
-        placeholder="Código do Produto"
-        className="overflow-hidden text-ellipsis whitespace-nowrap"
-      />
+      <Input {...register('cpf')} placeholder="CPF do client" />
+      <Input {...register('price')} placeholder="Preço da venda" />
       <Controller
         control={control}
-        name="category"
+        name="status"
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value}>
             <SelectTrigger className="max-w-[11rem]">
-              <SelectValue placeholder="Categorias" />
+              <SelectValue placeholder="Status da Venda" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="Roupas">Roupas</SelectItem>
-              <SelectItem value="Acessórios">Acessórios</SelectItem>
-              <SelectItem value="Perfumaria">Perfumaria</SelectItem>
+              <SelectItem value="FINALIZADO">Finalizado</SelectItem>
+              <SelectItem value="PENDENTE">Pendente</SelectItem>
             </SelectContent>
           </Select>
         )}

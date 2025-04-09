@@ -4,7 +4,7 @@ import * as yup from 'yup';
 export const productResponseSchema = yup.object({
   code: yup.string().optional(),
   name: yup.string().required('O campo "Nome do Produto" é obrigatório.'),
-  amount: yup
+  quantityInStock: yup
     .number()
     .transform((value, originalValue) =>
       originalValue === '' ? undefined : value
@@ -38,7 +38,7 @@ export const formSchema = ({ finishLater }: formSchemaProps) => {
           ? schema.notRequired()
           : schema.required('Coloque a Data Final');
       }),
-    customer: yup
+    customerCpf: yup
       .string()
       .required('O campo "CPF do cliente" é obrigatório.')
       .min(14, 'O minimo é 14 caracteres')

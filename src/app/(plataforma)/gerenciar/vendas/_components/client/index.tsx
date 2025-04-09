@@ -42,13 +42,13 @@ export function AddClient() {
                 <span className="text-muted-foreground">(Pesquise)</span>
               </Label>
               <Controller
-                name="customer"
+                name="customerCpf"
                 control={control}
                 render={({ field }) => <CpfInput {...field} />}
               />
-              {errors.customer?.message && (
+              {errors.customerCpf?.message && (
                 <p className={`text-sm text-destructive`}>
-                  {errors.customer?.message}
+                  {errors.customerCpf?.message}
                 </p>
               )}
             </div>

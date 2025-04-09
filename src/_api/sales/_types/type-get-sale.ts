@@ -1,28 +1,21 @@
 export interface GetSaleContent {
   id: string;
-  startDate?: string;
-  endDate?: string;
-  status: string;
+  customerCpf: string;
+  discountPercentage?: number;
   totalItems: number;
-  customer: string;
+  priceWithDiscount?: number;
+  totalPrice: number;
   productResponses: [
     {
-      id: number;
-      code?: string;
+      id: string;
+      code: string;
       name: string;
-      priceWithDiscount?: number;
-      discountPercentage?: number | null;
-      price: number;
+      unitPrice: number;
+      totalPrice: number;
       amount: number;
-      size?: string;
-      category: string;
-      subCategory: string;
     }
   ];
-  discountPercentage?: number;
-  valueTotalDiscount?: number;
-  totalDiscount?: number;
-  totalPayable: number;
+  status: "FINALIZADO" | "PENDENTE"
 }
 
 export interface GetSalesBody {

@@ -1,40 +1,64 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 'use client';
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/_components/ui/command';
+import { Search } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 
-import { Button } from '@/_components/ui/button';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/_components/ui/input';
 import { Label } from '@/_components/ui/label';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { CpfInput } from '@/_components/Inputs/cpfInput';
+import { Button } from '@/_components/ui/button';
+import { useQuery } from '@tanstack/react-query';
+import { getProducts } from '@/_api/products/get-products';
 
 import { formSchema, FormSchema } from '../../_types/saleYupType';
-import { FinishLater } from './finishLater';
+import {ProductSummary} from './productSummary';
 import { TableOfSelectedProducts } from './tableOfSelectedProducts';
-import Overview from './productSummary';
 
 export function AddProduct() {
   const [finishLater, setFinishLater] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const {
     handleSubmit,
     register,
+    watch,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema({ finishLater })),
   });
 
+  const code = watch('productResponses.0.code');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(code || '');
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [code]);
+
+  const { data: products, isLoading } = useQuery({
+    queryKey: ['products', debouncedSearch],
+    queryFn: () => getProducts({ codeFilter: debouncedSearch }),
+    enabled: debouncedSearch.length >= 2,
+  });
+
   function handleAddProduct(data: FormSchema) {
-    data;
+    console.log('Form enviado com:', data);
   }
 
   return (
@@ -47,69 +71,115 @@ export function AddProduct() {
           <form onSubmit={handleSubmit(handleAddProduct)} className="space-y-4">
             <div className="grid w-full grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="gap-1" htmlFor="productDiscountPercentage">
-                  Desconto(%)
-                  <span className="text-muted-foreground"></span>
-                </Label>
+                <Label htmlFor="discountPercentage">Desconto (%)</Label>
                 <Input
                   type="number"
                   id="discountPercentage"
                   {...register('discountPercentage')}
                 />
                 {errors.discountPercentage?.message && (
-                  <p className={`text-sm text-destructive`}>
-                    {errors.discountPercentage?.message}
+                  <p className="text-sm text-destructive">
+                    {errors.discountPercentage.message}
                   </p>
                 )}
               </div>
-              <div className="space-y-2 col-span-2">
-                <Label className="gap-1" htmlFor="customer">
-                  Código do Produto
+
+              <div className="space-y-2 col-span-2 relative">
+                <Label htmlFor="code">
+                  Código do Produto{' '}
                   <span className="text-muted-foreground">(Pesquise)</span>
                 </Label>
-                <Input
-                  id="code"
-                  {...register(`productResponses.${0}.code` as const)}
+
+                <Controller
+                  name="productResponses.0.code"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="code"
+                        autoComplete="off"
+                        onFocus={() => setOpen(true)}
+                        onBlur={() => setTimeout(() => setOpen(false), 200)}
+                        placeholder="Digite o código"
+                      />
+
+                      {open && (
+                        <div className="absolute z-50 w-full border rounded-md shadow-md mt-1">
+                          <Command>
+                            <CommandGroup className='max-h-[30vh] overflow-auto' heading="Resultados">
+                              {products?.content?.length ? (
+                                products.content.map((product) => (
+                                  <CommandItem
+                                    key={product.id}
+                                    value={product.code}
+                                    onSelect={() => {
+                                      setValue(
+                                        'productResponses.0.code',
+                                        product.code
+                                      );
+                                      setValue(
+                                        'productResponses.0.name',
+                                        product.name
+                                      );
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <div className="flex flex-col">
+                                      <span className="font-medium">
+                                        {product.name}
+                                      </span>
+                                      <span className="text-sm text-muted-foreground">
+                                        Código: {product.code}
+                                      </span>
+                                    </div>
+                                  </CommandItem>
+                                ))
+                              ) : (
+                                <div className="text-muted-foreground p-2">
+                                  Nenhum produto encontrado
+                                </div>
+                              )}
+                            </CommandGroup>
+                          </Command>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 />
+
                 {errors.productResponses?.[0]?.code?.message && (
-                  <p className={`text-sm text-destructive`}>
+                  <p className="text-sm text-destructive">
                     {errors.productResponses?.[0]?.code?.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label className="gap-1" htmlFor="name">
-                  Nome do Produto
-                  <span className="text-muted-foreground">(Pesquise)</span>
-                </Label>
-                <Input
-                  id="name"
-                  {...register(`productResponses.${0}.name` as const)}
-                />
+                <Label htmlFor="name">Nome do Produto</Label>
+                <Input id="name" {...register(`productResponses.0.name`)} />
                 {errors.productResponses?.[0]?.name?.message && (
-                  <p className={`text-sm text-destructive`}>
+                  <p className="text-sm text-destructive">
                     {errors.productResponses?.[0]?.name?.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label className="gap-1" htmlFor="amount">
-                  Quantidade
-                  <span className="text-muted-foreground"></span>
-                </Label>
+                <Label htmlFor="amount">Quantidade</Label>
                 <Input
                   id="amount"
-                  {...register(`productResponses.${0}.amount` as const)}
+                  type="number"
+                  {...register(`productResponses.0.quantityInStock`)}
                 />
-                {errors.productResponses?.[0]?.amount?.message && (
-                  <p className={`text-sm text-destructive`}>
-                    {errors.productResponses?.[0]?.amount?.message}
+                {errors.productResponses?.[0]?.quantityInStock?.message && (
+                  <p className="text-sm text-destructive">
+                    {errors.productResponses?.[0]?.quantityInStock?.message}
                   </p>
                 )}
               </div>
             </div>
+
             <Button
               disabled={isSubmitting}
               variant="secondary"
@@ -118,11 +188,13 @@ export function AddProduct() {
             >
               {isSubmitting ? 'Adicionando...' : 'Adicionar Produto'}
             </Button>
+
             <TableOfSelectedProducts />
           </form>
         </CardContent>
       </Card>
-      <Overview />
+
+      <ProductSummary />
     </div>
   );
 }

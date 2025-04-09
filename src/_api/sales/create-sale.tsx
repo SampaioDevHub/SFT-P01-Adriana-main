@@ -3,25 +3,21 @@ import { api } from '@/_lib/axios';
 import { CreateSaleBody } from './_types/type-create-sale';
 
 export async function createSale({
-  startDate,
-  endDate,
+  discountPercentage,
   status,
   totalItems,
-  customer,
+  customerCpf,
   productResponses,
-  valueTotalDiscount,
-  totalDiscount,
-  totalPayable,
+  priceWithDiscount,
+  totalPrice,
 }: CreateSaleBody) {
   await api.post('/sales/create', {
-    startDate,
-    endDate,
+    discountPercentage,
     status,
     totalItems,
-    customer,
+    customerCpf,
     productResponses,
-    valueTotalDiscount,
-    totalDiscount,
-    totalPayable,
+    priceWithDiscount,
+    totalPrice,
   });
 }

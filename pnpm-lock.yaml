@@ -176,6 +176,9 @@ importers:
       kbar:
         specifier: 0.1.0-beta.45
         version: 0.1.0-beta.45(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      libphonenumber-js:
+        specifier: ^1.12.6
+        version: 1.12.6
       lucide-react:
         specifier: ^0.468.0
         version: 0.468.0(react@19.0.0)
