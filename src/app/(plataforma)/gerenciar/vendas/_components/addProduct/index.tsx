@@ -24,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/_api/products/get-products';
 
 import { formSchema, FormSchema } from '../../_types/saleYupType';
-import {ProductSummary} from './productSummary';
+import { ProductSummary } from './productSummary';
 import { TableOfSelectedProducts } from './tableOfSelectedProducts';
 
 export function AddProduct() {
@@ -39,21 +39,30 @@ export function AddProduct() {
     formState: { errors, isSubmitting },
   } = useForm<FormSchema>({
     resolver: yupResolver(formSchema({ finishLater })),
+    defaultValues: {
+      discountPercentage: 0,
+      productResponses: [
+        {
+          name: '',
+          quantityInStock: 1,
+        },
+      ],
+    },
   });
 
-  const code = watch('productResponses.0.code');
+  const name = watch('productResponses.0.name');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch(code || '');
+      setDebouncedSearch(name || '');
     }, 300);
     return () => clearTimeout(handler);
-  }, [code]);
+  }, [name]);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['products', debouncedSearch],
-    queryFn: () => getProducts({ codeFilter: debouncedSearch }),
+    queryFn: () => getProducts({ nameFilter: debouncedSearch }),
     enabled: debouncedSearch.length >= 2,
   });
 
@@ -70,7 +79,7 @@ export function AddProduct() {
         <CardContent>
           <form onSubmit={handleSubmit(handleAddProduct)} className="space-y-4">
             <div className="grid w-full grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="col-span-2 space-y-2">
                 <Label htmlFor="discountPercentage">Desconto (%)</Label>
                 <Input
                   type="number"
@@ -84,40 +93,38 @@ export function AddProduct() {
                 )}
               </div>
 
-              <div className="space-y-2 col-span-2 relative">
-                <Label htmlFor="code">
-                  Código do Produto{' '}
+              <div className="space-y-2 relative">
+                <Label htmlFor="name">
+                  Nome do Produto{' '}
                   <span className="text-muted-foreground">(Pesquise)</span>
                 </Label>
 
                 <Controller
-                  name="productResponses.0.code"
+                  name="productResponses.0.name"
                   control={control}
                   render={({ field }) => (
                     <div className="relative">
                       <Input
                         {...field}
-                        id="code"
+                        id="name"
                         autoComplete="off"
                         onFocus={() => setOpen(true)}
                         onBlur={() => setTimeout(() => setOpen(false), 200)}
-                        placeholder="Digite o código"
                       />
 
                       {open && (
                         <div className="absolute z-50 w-full border rounded-md shadow-md mt-1">
                           <Command>
-                            <CommandGroup className='max-h-[30vh] overflow-auto' heading="Resultados">
+                            <CommandGroup
+                              className="max-h-[30vh] overflow-auto"
+                              heading="Resultados"
+                            >
                               {products?.content?.length ? (
                                 products.content.map((product) => (
                                   <CommandItem
                                     key={product.id}
-                                    value={product.code}
+                                    value={product.name}
                                     onSelect={() => {
-                                      setValue(
-                                        'productResponses.0.code',
-                                        product.code
-                                      );
                                       setValue(
                                         'productResponses.0.name',
                                         product.name
@@ -130,7 +137,7 @@ export function AddProduct() {
                                         {product.name}
                                       </span>
                                       <span className="text-sm text-muted-foreground">
-                                        Código: {product.code}
+                                        Categoria: {product.category}
                                       </span>
                                     </div>
                                   </CommandItem>
@@ -148,16 +155,6 @@ export function AddProduct() {
                   )}
                 />
 
-                {errors.productResponses?.[0]?.code?.message && (
-                  <p className="text-sm text-destructive">
-                    {errors.productResponses?.[0]?.code?.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome do Produto</Label>
-                <Input id="name" {...register(`productResponses.0.name`)} />
                 {errors.productResponses?.[0]?.name?.message && (
                   <p className="text-sm text-destructive">
                     {errors.productResponses?.[0]?.name?.message}

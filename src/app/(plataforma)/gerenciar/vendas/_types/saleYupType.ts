@@ -43,6 +43,7 @@ export const formSchema = ({ finishLater }: formSchemaProps) => {
       .required('O campo "CPF do cliente" é obrigatório.')
       .min(14, 'O minimo é 14 caracteres')
       .max(14, 'Você só pode inserir até 14 caracteres'),
+    paymentMethod: yup.string(),
     discountPercentage: yup
       .number()
       .nullable()

@@ -13,5 +13,6 @@ export interface CreateSaleBody {
       amount: number;
     }
   ];
-  status: "FINALIZADO" | "PENDENTE"
+  status: "FINALIZADO" | "PENDENTE";
+  paymentMethod?: "CREDIT" | "DEBIT" | "PIX"
 }

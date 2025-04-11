@@ -31,7 +31,7 @@ export function ProductSummary() {
       ))}
       <TabsList asChild>
         <TabsTrigger value="client" asChild>
-          <Button className="bg-green-500 text-background col-span-1 font-bold hover:bg-green-600">
+          <Button className="disabled:cursor-not-allowed disabled:opacity-70 bg-green-500 text-background col-span-1 font-bold hover:bg-green-600">
             Continuar
           </Button>
         </TabsTrigger>

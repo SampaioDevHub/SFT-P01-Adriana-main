@@ -15,7 +15,7 @@ export async function getCustomers({
   phoneFilter,
 }: GetCustomersQuery) {
   const response = await api.get<GetCustomersBody>(
-    `/customers/find-all?size=10&page=${pageIndex}&name=${nameFilter}&cpf=${cpfFilter}&phone=${phoneFilter}`
+    `/customers/find-all?size=10&page=${pageIndex ?? ''}&name=${nameFilter ?? ''}&cpf=${cpfFilter ?? ''}&phone=${phoneFilter ?? ''}`
   );
 
   return response.data;

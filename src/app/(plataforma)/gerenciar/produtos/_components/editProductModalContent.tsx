@@ -149,7 +149,7 @@ export function EditProductModalContent({
           onSubmit={handleSubmit(handleUpdatedProduct)}
           className="max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden pr-2"
         >
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="code">Código do Produto</Label>
             <Input id="code" {...register('code')} />
             {errors.code?.message && (
@@ -157,7 +157,7 @@ export function EditProductModalContent({
                 {errors.code?.message}
               </p>
             )}
-          </div>
+          </div> */}
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Produto</Label>
             <Input id="name" {...register('name')} required />

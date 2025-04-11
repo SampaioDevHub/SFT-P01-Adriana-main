@@ -1,12 +1,13 @@
 import { ChangeEvent } from 'react';
-import { Input } from '../ui/input';
 
-interface CpfInputProps {
+import { Input, InputProps } from '../ui/input';
+
+interface CpfInputProps extends InputProps {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function CpfInput({ value, onChange }: CpfInputProps) {
+export function CpfInput({ value, onChange, ...props }: CpfInputProps) {
   const formatCpf = (cpf: string) => {
     return cpf
       .replace(/\D/g, '')
@@ -24,6 +25,7 @@ export function CpfInput({ value, onChange }: CpfInputProps) {
 
   return (
     <Input
+      {...props}
       maxLength={14}
       type="text"
       required

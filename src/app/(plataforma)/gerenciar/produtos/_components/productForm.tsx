@@ -122,7 +122,7 @@ export function ProductForm() {
           onSubmit={handleSubmit(handleCreateProduct)}
           className="space-y-4"
         >
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label className="gap-1" htmlFor="code">
               Código do Produto
               <span className="text-muted-foreground">(Opcional)</span>
@@ -133,7 +133,7 @@ export function ProductForm() {
                 {errors.code?.message}
               </p>
             )}
-          </div>
+          </div> */}
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Produto</Label>
             <Input id="name" {...register('name')} required />
