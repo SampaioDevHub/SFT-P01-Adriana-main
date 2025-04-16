@@ -69,6 +69,7 @@ export function SaleTable() {
               <TableHead>Quantidade</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">

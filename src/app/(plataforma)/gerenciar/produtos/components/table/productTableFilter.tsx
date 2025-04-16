@@ -101,7 +101,7 @@ export function ProductTableFilter() {
       <Input
         type="number"
         {...register('quantityInStock')}
-        placeholder="Quantidade em stock"
+        placeholder="Quantidade em stoque"
       />
       <Controller
         control={control}

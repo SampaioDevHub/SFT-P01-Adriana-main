@@ -68,6 +68,7 @@ export function ProductTable() {
               <TableHead>Preço</TableHead>
               <TableHead>Quantidade</TableHead>
               <TableHead>Tamanhos</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">

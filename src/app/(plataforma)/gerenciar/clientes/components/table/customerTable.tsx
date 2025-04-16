@@ -68,6 +68,7 @@ export function CustomerTable() {
               <TableHead>Cep</TableHead>
               <TableHead>Cidade</TableHead>
               <TableHead>Estado</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
