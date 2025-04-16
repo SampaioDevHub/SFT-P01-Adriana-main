@@ -1,24 +1,34 @@
+// RegisterSale.tsx
 'use client';
 
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-
-import { Button } from '@/_components/ui/button';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/_components/ui/tabs';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+
+import { Button } from '@/_components/ui/button';
+import { useSale } from '@/_components/providers/saleContext';
 import PageContainer from '@/_components/layout/page-container';
 
-import { SaleTable } from './_components/_table/saleTable';
-import { AddProduct } from './_components/addProduct';
-import { AddClient } from './_components/client';
-import { Overview } from './_components/overview';
+import { SaleTable } from './components/table/saleTable';
+import { AddProduct } from './components/addProduct';
+import { AddClient } from './components/client';
+import { Overview } from './components/overview';
 
-export default function RegisterSale(tabsValue: string) {
+export default function RegisterSale() {
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const { activeTab, setActiveTab, productData, informationData } = useSale();
+
+  // Verifica se o produto foi adicionado
+  const isProductAdded = productData.productResponses.length > 0;
+
+  // Verifica se o cliente foi adicionado
+  const isClientAdded = !!informationData.customerCpf;
+
   return (
     <PageContainer>
       <div className="container mx-auto px-4 py-8">
@@ -36,16 +46,26 @@ export default function RegisterSale(tabsValue: string) {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <Tabs defaultValue="product" className="w-full">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="product">Produtos</TabsTrigger>
-                  <TabsTrigger value="client">Cliente</TabsTrigger>
-                  <TabsTrigger value="overview">Resumo</TabsTrigger>
+                  <TabsTrigger value="product" disabled={false}>
+                    Produtos
+                  </TabsTrigger>
+                  <TabsTrigger value="information" disabled={!isProductAdded}>
+                    Informações
+                  </TabsTrigger>
+                  <TabsTrigger value="overview" disabled={!isClientAdded}>
+                    Resumo
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="product">
                   <AddProduct />
                 </TabsContent>
-                <TabsContent value="client">
+                <TabsContent value="information">
                   <AddClient />
                 </TabsContent>
                 <TabsContent value="overview">

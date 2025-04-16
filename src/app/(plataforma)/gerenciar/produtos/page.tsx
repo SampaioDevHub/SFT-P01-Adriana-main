@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import PageContainer from '@/_components/layout/page-container';
-import { ProductForm } from './_components/productForm';
-import { ProductTable } from './_components/_table/productTable';
+import { ProductForm } from './components/productForm';
+import { ProductTable } from './components/table/productTable';
 import { Button } from '@/_components/ui/button';
 
 export default function RegisterProduct() {

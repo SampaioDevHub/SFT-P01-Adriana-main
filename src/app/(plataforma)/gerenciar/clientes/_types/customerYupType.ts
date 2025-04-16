@@ -1,7 +1,7 @@
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import * as yup from 'yup';
 
-export const formSchema = yup.object({
+export const formSchemaCustomer = yup.object({
   name: yup
     .string()
     .max(60, 'Você só pode inserir até 60 caracteres')
@@ -78,4 +78,4 @@ export const formSchema = yup.object({
   ),
 });
 
-export type FormSchema = yup.InferType<typeof formSchema>;
+export type FormSchemaCustomer = yup.InferType<typeof formSchemaCustomer>;

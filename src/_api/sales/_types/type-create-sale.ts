@@ -1,18 +1,17 @@
 export interface CreateSaleBody {
   customerCpf: string;
-  discountPercentage?: number;
+  discountPercentage?: number | null;
   totalItems: number;
   priceWithDiscount?: number;
   totalPrice: number;
-  productResponses: [
+  productResponses:
     {
-      code: string;
+      code?: string;
       name: string;
       unitPrice: number;
       totalPrice: number;
       amount: number;
-    }
-  ];
+    }[];
   status: "FINALIZADO" | "PENDENTE";
-  paymentMethod?: "CREDIT" | "DEBIT" | "PIX"
+  paymentMethod?: string
 }

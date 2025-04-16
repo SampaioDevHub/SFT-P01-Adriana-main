@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const formSchema = (isSizeNotRequired: boolean) =>
+export const formSchemaProduct = (isSizeNotRequired: boolean) =>
   yup.object({
     code: yup.string().max(50, 'Você só pode inserir até 50 caracteres'),
     name: yup
@@ -41,4 +41,4 @@ export const formSchema = (isSizeNotRequired: boolean) =>
       .required('Informe uma SubCategoria'),
   });
 
-export type FormSchema = yup.InferType<ReturnType<typeof formSchema>>;
+export type FormSchemaProduct = yup.InferType<ReturnType<typeof formSchemaProduct>>;
