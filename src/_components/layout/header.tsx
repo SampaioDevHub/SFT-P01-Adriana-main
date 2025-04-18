@@ -31,7 +31,7 @@ export default function Header() {
     async function fetchNotifications() {
       try {
         const res = await fetch(
-          'http://localhost:8080/manage_store/v1/notifications'
+          `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/notifications`
         );
         if (!res.ok) throw new Error('Erro ao buscar notificações');
         const data = await res.json();

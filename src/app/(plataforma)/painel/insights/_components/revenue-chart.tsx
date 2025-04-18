@@ -25,7 +25,7 @@ export function GraficoArea() {
     async function fetchRevenue() {
       try {
         const res = await fetch(
-          'http://206.42.51.75:8081/manage_store/v1/products/find-all'
+           `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/products/find-all`
         );
         const json = await res.json();
         setData(json);

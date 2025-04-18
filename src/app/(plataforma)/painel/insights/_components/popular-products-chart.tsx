@@ -25,7 +25,7 @@ export function GraficoBarra() {
     async function fetchPopularProducts() {
       try {
         const res = await fetch(
-          'http://localhost:8080/manage_store/v1/products'
+           `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/products`
         );
         const json = await res.json();
         setData(json);

@@ -13,7 +13,7 @@ export function MonthOrdersAmountCard() {
     async function fetchOrders() {
       try {
         const res = await fetch(
-          'http://localhost:8080/manage_store/v1/orders/count/month'
+          `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/orders/count/month`
         );
         const json = await res.json();
         setOrdersCount(json.total);

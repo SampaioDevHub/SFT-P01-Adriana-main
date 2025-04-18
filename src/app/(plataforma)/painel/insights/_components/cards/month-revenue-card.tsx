@@ -13,7 +13,8 @@ export function MonthRevenueCard() {
     async function fetchRevenue() {
       try {
         const res = await fetch(
-          'http://localhost:8080/manage_store/v1/revenue/monthly-total'
+          `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/revenue/monthly-total`
+          
         );
         const json = await res.json();
         setRevenue(json.total);

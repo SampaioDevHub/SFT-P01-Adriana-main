@@ -13,7 +13,7 @@ export function ActiveCustomersCard() {
     async function fetchCustomers() {
       try {
         const res = await fetch(
-          'http://206.42.51.75:8081/manage_store/v1/customers/find-all'
+          `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/customers/find-all`
         );
         const json = await res.json();
         setActiveCustomers(json.totalElements);
