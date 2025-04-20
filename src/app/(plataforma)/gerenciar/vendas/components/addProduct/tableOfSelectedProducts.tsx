@@ -15,7 +15,7 @@ import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { useSale } from '@/_components/providers/saleContext';
 import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
-import { ListProductType } from '../../types/listProductsType';
+import { ListProductType } from '../../_types/listProductsType';
 import { DeleteSelectedProductModal } from './deleteSelectedProductModal';
 
 export function TableOfSelectedProducts({
@@ -36,9 +36,9 @@ export function TableOfSelectedProducts({
     try {
       setIsLoading(true);
       setProductData({
-        productResponses: products,
+        products: products,
         totalItems: products.reduce((acc, product) => acc + product.amount, 0),
-        totalPrice: products.reduce(
+        subtotal: products.reduce(
           (acc, product) => acc + product.totalPrice,
           0
         ),

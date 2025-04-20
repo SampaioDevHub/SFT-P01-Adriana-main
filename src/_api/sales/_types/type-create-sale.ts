@@ -2,9 +2,9 @@ export interface CreateSaleBody {
   customerCpf: string;
   discountPercentage?: number | null;
   totalItems: number;
-  priceWithDiscount?: number;
+  subtotal: number;
   totalPrice: number;
-  productResponses:
+  products:
     {
       code?: string;
       name: string;
@@ -13,5 +13,5 @@ export interface CreateSaleBody {
       amount: number;
     }[];
   status: "FINALIZADO" | "PENDENTE";
-  paymentMethod?: string
+  paymentMethod: string
 }

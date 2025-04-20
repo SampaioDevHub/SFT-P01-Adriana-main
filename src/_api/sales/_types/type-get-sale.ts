@@ -3,9 +3,9 @@ export interface GetSaleContent {
   customerCpf: string;
   discountPercentage?: number;
   totalItems: number;
-  priceWithDiscount?: number;
+  subtotal: number;
   totalPrice: number;
-  productResponses: [
+  products: [
     {
       id: string;
       code: string;
@@ -15,7 +15,8 @@ export interface GetSaleContent {
       amount: number;
     }
   ];
-  status: "FINALIZADO" | "PENDENTE"
+  status: "FINALIZADO" | "PENDENTE",
+  paymentMethod: string
 }
 
 export interface GetSalesBody {

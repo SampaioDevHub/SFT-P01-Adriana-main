@@ -9,6 +9,10 @@ import {
   formSchemaSaleInformation,
   FormSchemaSaleInformation,
 } from '../../_types/saleInformationDataYupType';
+import {
+  SaleInformationData,
+  useSale,
+} from '@/_components/providers/saleContext';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -21,15 +25,12 @@ import { getCustomers } from '@/_api/customers/get-customers';
 import { useQuery } from '@tanstack/react-query';
 import { Command, CommandGroup, CommandItem } from '@/_components/ui/command';
 import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
-import {
-  SaleInformationData,
-  useSale,
-} from '@/_components/providers/saleContext';
 
 import { paymentLabels, paymentMethod } from '../../_constants/paymentMethod';
 
 export function AddClient() {
-  const { setActiveTab, productData, informationData, setInformationData } = useSale();
+  const { setActiveTab, productData, informationData, setInformationData } =
+    useSale();
   const [openCpf, setOpenCpf] = useState(false);
   const [openName, setOpenName] = useState(false);
   const {
@@ -43,9 +44,10 @@ export function AddClient() {
   } = useForm<FormSchemaSaleInformation>({
     resolver: yupResolver(formSchemaSaleInformation({ finishLater: false })),
     defaultValues: {
+      customerName: '',
       customerCpf: informationData.customerCpf ?? '',
       discountPercentage: informationData.discountPercentage ?? 0,
-      paymentMethod: informationData.paymentMethod ?? ""
+      paymentMethod: informationData.paymentMethod ?? '',
     },
   });
 
@@ -65,7 +67,7 @@ export function AddClient() {
     enabled: debouncedSearch.length >= 2,
   });
 
-  const [nameSearch, setNameSearch] = useState('');
+  const nameSearch = watch('customerCpf');
   const [debouncedName, setDebouncedName] = useState('');
 
   useEffect(() => {
@@ -83,7 +85,7 @@ export function AddClient() {
 
   async function handleAddclient(data: FormSchemaSaleInformation) {
     try {
-      const customerData = await getCustomers({ nameFilter: data.customerCpf });
+      const customerData = await getCustomers({ cpfFilter: data.customerCpf });
 
       if (!customerData?.content?.length) {
         setError('customerCpf', {
@@ -95,14 +97,16 @@ export function AddClient() {
 
       const selected = customerData.content[0];
       const discount = data.discountPercentage ?? 0;
-      const discountAmount = (productData.totalPrice * discount) / 100;
-      const priceWithDiscount = productData.totalPrice - discountAmount;
+      const discountAmount = (productData.subtotal * discount) / 100;
+      const totalPrice = productData.subtotal - discountAmount;
+
+      console.log(data.paymentMethod)
 
       setInformationData({
-        customerCpf: "040.808.701-32",
+        customerCpf: selected.cpf,
         discountPercentage: data.discountPercentage,
-        priceWithDiscount,
-        paymentMethod: data.paymentMethod
+        totalPrice,
+        paymentMethod: data.paymentMethod,
       });
 
       setActiveTab('overview');
@@ -155,6 +159,7 @@ export function AddClient() {
                                   value={customer.name}
                                   onSelect={() => {
                                     setValue('customerCpf', customer.cpf);
+                                    setValue('customerName', customer.name);
                                     setOpenCpf(false);
                                   }}
                                 >
@@ -193,51 +198,58 @@ export function AddClient() {
                 Nome do cliente{' '}
                 <span className="text-muted-foreground">(Pesquise)</span>
               </Label>
-              <Input
-                id="search-name"
-                autoComplete="off"
-                value={nameSearch}
-                onChange={(e) => setNameSearch(e.target.value)}
-                onFocus={() => setOpenName(true)}
-                onBlur={() => setTimeout(() => setOpenName(false), 200)}
-              />
-              {openName && (
-                <div className="absolute z-50 w-full border rounded-md shadow-md mt-1">
-                  <Command>
-                    <CommandGroup
-                      className="max-h-[30vh] overflow-auto"
-                      heading="Resultados"
-                    >
-                      {customersByName?.content?.length ? (
-                        customersByName.content.map((customer) => (
-                          <CommandItem
-                            key={customer.id}
-                            value={customer.name}
-                            onSelect={() => {
-                              setValue('customerCpf', customer.cpf);
-                              setNameSearch(customer.name);
-                              setOpenName(false);
-                            }}
+              <Controller
+                name="customerName"
+                control={control}
+                render={({ field }) => (
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="search-name"
+                      autoComplete="off"
+                      onFocus={() => setOpenName(true)}
+                      onBlur={() => setTimeout(() => setOpenName(false), 200)}
+                    />
+                    {openName && (
+                      <div className="absolute z-50 w-full border rounded-md shadow-md mt-1">
+                        <Command>
+                          <CommandGroup
+                            className="max-h-[30vh] overflow-auto"
+                            heading="Resultados"
                           >
-                            <div className="flex flex-col">
-                              <span className="font-medium">
-                                {customer.name}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                CPF: {customer.cpf}
-                              </span>
-                            </div>
-                          </CommandItem>
-                        ))
-                      ) : (
-                        <div className="text-muted-foreground p-2">
-                          Nenhum cliente encontrado
-                        </div>
-                      )}
-                    </CommandGroup>
-                  </Command>
-                </div>
-              )}
+                            {customersByName?.content?.length ? (
+                              customersByName.content.map((customer) => (
+                                <CommandItem
+                                  key={customer.id}
+                                  value={customer.name}
+                                  onSelect={() => {
+                                    setValue('customerCpf', customer.cpf);
+                                    setValue('customerName', customer.cpf);
+                                    setOpenName(false);
+                                  }}
+                                >
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">
+                                      {customer.name}
+                                    </span>
+                                    <span className="text-sm text-muted-foreground">
+                                      CPF: {customer.cpf}
+                                    </span>
+                                  </div>
+                                </CommandItem>
+                              ))
+                            ) : (
+                              <div className="text-muted-foreground p-2">
+                                Nenhum cliente encontrado
+                              </div>
+                            )}
+                          </CommandGroup>
+                        </Command>
+                      </div>
+                    )}
+                  </div>
+                )}
+              />
             </div>
 
             <div className="space-y-2">

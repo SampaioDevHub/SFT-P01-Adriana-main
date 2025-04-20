@@ -39,6 +39,7 @@ export function AddProduct() {
     register,
     watch,
     setError,
+    reset,
     control,
     setValue,
     formState: { errors, isSubmitting },
@@ -93,6 +94,7 @@ export function AddProduct() {
       };
 
       setListProducts((prev) => [...prev, product]);
+      reset()
     } catch (error) {
       setError('root', {
         type: 'manual',

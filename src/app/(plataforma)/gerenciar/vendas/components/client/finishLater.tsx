@@ -6,11 +6,12 @@ import { Checkbox } from '@/_components/ui/checkbox';
 import { Label } from '@/_components/ui/label';
 import { Input } from '@/_components/ui/input';
 
-import { FormSchemaSaleClient }
+import { FormSchemaSaleInformation } from '../../_types/saleInformationDataYupType';
+
 
 interface FinishLaterProps {
-  register: UseFormRegister<FormSchemaSaleClient>;
-  errors: FieldErrors<FormSchemaSaleClient>;
+  register: UseFormRegister<FormSchemaSaleInformation>;
+  errors: FieldErrors<FormSchemaSaleInformation>;
   finishLater: boolean;
   setFinishLater: (value: boolean) => void; // Nova prop para atualizar o estado no SaleForm
 }

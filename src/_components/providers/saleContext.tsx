@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useMutation } from '@tanstack/react-query';
 import { CreateSaleBody } from '@/_api/sales/_types/type-create-sale';
 import { createSale } from '@/_api/sales/create-sale';
 
@@ -18,14 +18,14 @@ export interface SaleInformationData {
   startDate?: Date;
   endDate?: Date;
   discountPercentage?: number | null;
-  priceWithDiscount?: number;
-  paymentMethod?: string;
+  totalPrice: number;
+  paymentMethod: string;
 }
 
 export interface SaleProductData {
-  productResponses: SaleProduct[];
+  products: SaleProduct[];
   totalItems: number;
-  totalPrice: number;
+  subtotal: number;
 }
 
 interface SaleContextType {
@@ -37,6 +37,7 @@ interface SaleContextType {
   isCreatingSale: boolean;
   activeTab: string;
   setActiveTab: (index: string) => void;
+  resetSaleData: () => void;
 }
 
 export const SaleContext = createContext({} as SaleContextType);
@@ -45,40 +46,60 @@ export function SaleProvider({ children }: { children: ReactNode }) {
   const [informationData, setInformationData] = useState<SaleInformationData>({
     customerCpf: '',
     discountPercentage: 0,
-    priceWithDiscount: 0,
+    totalPrice: 0,
+    paymentMethod: '',
   });
 
   const [productData, setProductData] = useState<SaleProductData>({
-    productResponses: [],
+    products: [],
     totalItems: 0,
-    totalPrice: 0,
+    subtotal: 0,
   });
 
-  console.log(productData)
+  const [activeTab, setActiveTab] = useState('product');
 
-  const [activeTab, setActiveTab] = useState('product'); // 👈 estado da tab ativa
+  const queryClient = useQueryClient();
 
   const { mutateAsync: sendSale, isPending } = useMutation({
     mutationFn: createSale,
-    onSuccess: () => toast.success('Venda cadastrada com sucesso!'),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success('Venda cadastrada com sucesso!');
+    },
     onError: () => toast.error('Erro ao cadastrar venda.'),
   });
 
-   const handlecreateSale = async () => {
+  const handlecreateSale = async () => {
     const discount = informationData.discountPercentage ?? 0;
-    const discountAmount = (productData.totalPrice * discount) / 100;
-    const priceWithDiscount = productData.totalPrice - discountAmount;
-
-    console.log("shdjshdjshdjsd")
+    const discountAmount = (productData.subtotal * discount) / 100;
+    const totalPrice = productData.subtotal - discountAmount;
 
     const payload: CreateSaleBody = {
       ...informationData,
       ...productData,
       status: 'PENDENTE',
-      priceWithDiscount,
+      totalPrice,
     };
 
+    console.log(payload);
+
     return sendSale(payload);
+  };
+
+  const resetSaleData = () => {
+    setInformationData({
+      customerCpf: '',
+      discountPercentage: 0,
+      totalPrice: 0,
+      paymentMethod: '',
+    });
+
+    setProductData({
+      products: [],
+      totalItems: 0,
+      subtotal: 0,
+    });
   };
 
   return (
@@ -91,7 +112,8 @@ export function SaleProvider({ children }: { children: ReactNode }) {
         handlecreateSale,
         isCreatingSale: isPending,
         activeTab,
-        setActiveTab, // 👈 função de troca de tab disponível no contexto
+        setActiveTab,
+        resetSaleData,
       }}
     >
       {children}

@@ -7,8 +7,9 @@ export async function createSale({
   status,
   totalItems,
   customerCpf,
-  productResponses,
-  priceWithDiscount,
+  paymentMethod,
+  products,
+  subtotal,
   totalPrice,
 }: CreateSaleBody) {
   await api.post('/sales/create', {
@@ -16,8 +17,9 @@ export async function createSale({
     status,
     totalItems,
     customerCpf,
-    productResponses,
-    priceWithDiscount,
+    products,
+    paymentMethod,
+    subtotal,
     totalPrice,
   });
 }

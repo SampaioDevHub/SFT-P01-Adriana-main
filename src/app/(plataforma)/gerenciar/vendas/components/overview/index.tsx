@@ -22,7 +22,7 @@ import { useSale } from '@/_components/providers/saleContext';
 import { AlertError } from '@/_components/alert/alert-error';
 
 export function Overview() {
-  const { productData, informationData, handlecreateSale, isCreatingSale } =
+  const { productData, informationData, handlecreateSale, isCreatingSale, setActiveTab, resetSaleData } =
     useSale();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -32,7 +32,9 @@ export function Overview() {
 
   async function handleCreateSale() {
     try {
-      await handlecreateSale(); // <- AQUI é o essencial
+      await handlecreateSale(); 
+      resetSaleData()
+      setActiveTab("product")
     } catch (error) {
       const err = error as AxiosError;
 
@@ -84,7 +86,7 @@ export function Overview() {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between p-2.5 rounded-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatForReals(productData.totalPrice)}</span>
+                  <span>{formatForReals(productData.subtotal)}</span>
                 </div>
               </div>
               <div className="flex flex-col">
@@ -95,7 +97,7 @@ export function Overview() {
                   <span>
                     {informationData.discountPercentage
                       ? formatForReals(
-                          (productData.totalPrice *
+                          (productData.subtotal *
                             informationData.discountPercentage) /
                             100
                         )
@@ -112,22 +114,22 @@ export function Overview() {
                     style={{ textDecoration: 'line-through' }}
                     className="text-xs text-muted-foreground className='whitespace-nowrap'"
                   >
-                    {formatForReals(productData.totalPrice)}
+                    {formatForReals(productData.subtotal)}
                   </span>
                   <h1 className="text-green-500 text-lg">
                     {informationData.discountPercentage
                       ? formatForReals(
-                          productData.totalPrice -
-                            (productData.totalPrice *
+                          productData.subtotal -
+                            (productData.subtotal *
                               informationData.discountPercentage) /
                               100
                         )
-                      : productData.totalPrice}
+                      : productData.subtotal}
                   </h1>
                 </div>
               ) : (
                 <h1 className="text-green-500 text-lg">
-                  {formatForReals(productData.totalPrice)}
+                  {formatForReals(informationData.totalPrice)}
                 </h1>
               )}
             </div>
@@ -141,7 +143,7 @@ export function Overview() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {productData.productResponses.map((product) => {
+                {productData.products.map((product) => {
                   return (
                     <TableRow key={product.name}>
                       <TableCell className="w-[80%]">{product.name}</TableCell>
