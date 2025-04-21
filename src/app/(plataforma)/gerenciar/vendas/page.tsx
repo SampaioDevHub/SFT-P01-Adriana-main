@@ -16,7 +16,7 @@ import PageContainer from '@/_components/layout/page-container';
 
 import { SaleTable } from './components/table/saleTable';
 import { AddProduct } from './components/addProduct';
-import { AddClient } from './components/client';
+import { Information } from './components/information';
 import { Overview } from './components/overview';
 
 
@@ -67,7 +67,7 @@ export default function RegisterSale() {
                   <AddProduct />
                 </TabsContent>
                 <TabsContent value="information">
-                  <AddClient />
+                  <Information />
                 </TabsContent>
                 <TabsContent value="overview">
                   <Overview />

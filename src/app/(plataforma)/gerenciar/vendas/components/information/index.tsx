@@ -28,7 +28,7 @@ import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
 import { paymentLabels, paymentMethod } from '../../_constants/paymentMethod';
 
-export function AddClient() {
+export function Information() {
   const { setActiveTab, productData, informationData, setInformationData } =
   useSale();
 const [openCpf, setOpenCpf] = useState(false);
@@ -98,7 +98,7 @@ const { data: customersByName, isLoading: loadingByName } = useQuery({
 });
 
 // ✅ Atualizado com salvamento no localStorage
-async function handleAddclient(data: FormSchemaSaleInformation) {
+async function handleAddInformations(data: FormSchemaSaleInformation) {
   try {
     const customerData = await getCustomers({ cpfFilter: data.customerCpf });
 
@@ -144,7 +144,7 @@ async function handleAddclient(data: FormSchemaSaleInformation) {
         <CardDescription>Adicione as informações necessárias</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(handleAddclient)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleAddInformations)} className="space-y-4">
           <div className="grid w-full grid-cols-2 gap-4">
             <div className="space-y-2 relative">
               <Label htmlFor="cpf">
