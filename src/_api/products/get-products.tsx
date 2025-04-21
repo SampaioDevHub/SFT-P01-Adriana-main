@@ -6,6 +6,7 @@ export interface GetProductsQuery {
   nameFilter?: string | null;
   quantityInStockFilter?: string | null;
   categoryFilter?: string | null;
+  pageSize?: number | null;
 }
 
 export async function getProducts({
@@ -13,9 +14,10 @@ export async function getProducts({
   nameFilter,
   quantityInStockFilter,
   categoryFilter,
+  pageSize
 }: GetProductsQuery) {
   const response = await api.get<GetProductsBody>(
-    `/products/find-all?size=10&page=${pageIndex ?? ''}&name=${nameFilter ?? ''}&quantityInStock=${quantityInStockFilter ?? ''}&category=${categoryFilter ?? ''}`
+    `/products/find-all?size=${pageSize ?? '10'}&page=${pageIndex ?? ''}&name=${nameFilter ?? ''}&quantityInStock=${quantityInStockFilter ?? ''}&category=${categoryFilter ?? ''}`
   );
 
   return response.data;

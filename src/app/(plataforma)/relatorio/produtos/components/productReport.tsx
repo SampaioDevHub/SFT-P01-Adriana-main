@@ -27,27 +27,39 @@ import {
 } from '@/_components/ui/table';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 
-import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/_api/products/get-products';
 import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 import { ScrollArea } from '@/_components/ui/scroll-area';
 import { Separator } from '@/_components/ui/separator';
+import { GetProductsBody } from '@/_api/products/_types/type-get-product';
 
 export function ProductReport () {
   const [search, setSearch] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const {
-    data: productsData,
-  } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => getProducts({}),
-    staleTime: Infinity,
-  });
+  const [productsData, setProductsData] = useState<GetProductsBody | null>(null);
+
+useEffect(() => {
+  const fetchAllProducts = async () => {
+    try {
+      // 1. Requisição inicial para saber o total
+      const firstResponse = await getProducts({ pageSize: 1, pageIndex: 0 });
+      const total = firstResponse.totalElements;
+
+      // 2. Requisição com pageSize = total
+      const fullData = await getProducts({ pageSize: total, pageIndex: 0 });
+      setProductsData(fullData);
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+    }
+  };
+
+  fetchAllProducts();
+}, []);
 
   const products = useMemo(() => {
     if (!productsData) return [];

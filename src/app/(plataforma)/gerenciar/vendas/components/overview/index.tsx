@@ -20,6 +20,7 @@ import { Button } from '@/_components/ui/button';
 import { TabsList, TabsTrigger } from '@/_components/ui/tabs';
 import { useSale } from '@/_components/providers/saleContext';
 import { AlertError } from '@/_components/alert/alert-error';
+
 import { paymentLabels } from '../../_constants/paymentMethod';
 
 export function Overview() {
@@ -40,6 +41,11 @@ export function Overview() {
   async function handleCreateSale() {
     try {
       await handlecreateSale();
+
+      // ✅ Limpa dados do localStorage após venda finalizada
+      localStorage.removeItem('saleInformation');
+      localStorage.removeItem('products');
+
       resetSaleData();
       setActiveTab('product');
     } catch (error) {
@@ -75,9 +81,7 @@ export function Overview() {
                   <span className="text-muted-foreground">
                     Método de Pagamento
                   </span>
-                  <span>
-                    {paymentLabels[informationData.paymentMethod]}
-                  </span>
+                  <span>{paymentLabels[informationData.paymentMethod]}</span>
                 </div>
               </div>
               <div className="flex flex-col">
@@ -152,13 +156,11 @@ export function Overview() {
                 {productData.products.map((product, index) => {
                   return (
                     <TableRow key={index}>
-                      <TableCell className='w-1/3'>{product.name}</TableCell>
-                      <TableCell>
-                        {product.amount}
-                      </TableCell>
-                      <TableCell className='w-1/3'>
+                      <TableCell className="w-1/3">{product.name}</TableCell>
+                      <TableCell>{product.amount}</TableCell>
+                      <TableCell className="w-1/3">
                         {' '}
-                        {product.priceWithDiscount ? (
+                        {Number(product.priceWithDiscount) > 0 ? (
                           <div className="space-x-1 flex flex-wrap">
                             <span
                               style={{ textDecoration: 'line-through' }}

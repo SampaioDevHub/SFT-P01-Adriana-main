@@ -23,45 +23,63 @@ import {
 } from '@/_components/ui/table';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 
-import { useQuery } from '@tanstack/react-query';
 import { getSales } from '@/_api/sales/get-sales';
 import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 import { ScrollArea } from '@/_components/ui/scroll-area';
 import { Separator } from '@/_components/ui/separator';
+import { paymentLabels } from '@/app/(plataforma)/gerenciar/vendas/_constants/paymentMethod';
+import { statusLabels } from '@/app/(plataforma)/gerenciar/vendas/_constants/saleStatus';
+import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
 
 export function SalesReport() {
   const [search, setSearch] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [sales, setSales] = useState<GetSaleContent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data: salesData } = useQuery({
-    queryKey: ['sales'],
-    queryFn: () => getSales({ pageIndex: 0 }),
-    staleTime: Infinity,
-  });
+  useEffect(() => {
+    async function fetchAllSales() {
+      setIsLoading(true);
 
-  const sales = useMemo(() => {
-    if (!salesData) return [];
-    return salesData.content.filter(
+      // Primeiro, pega a primeira página para descobrir o total de vendas
+      const firstPage = await getSales({ pageIndex: 0 });
+      const totalElements = firstPage.totalElements;
+
+      // Agora busca tudo de uma vez
+      const allSales = await getSales({
+        pageIndex: 0,
+        pageSize: totalElements,
+      });
+
+      setSales(allSales.content);
+      setIsLoading(false);
+    }
+
+    fetchAllSales();
+  }, []);
+
+  const filteredSales = useMemo(() => {
+    return sales.filter(
       (s) =>
         s.customerCpf.toLowerCase().includes(search.toLowerCase()) ||
         s.status.toLowerCase().includes(search.toLowerCase())
     );
-  }, [salesData, search]);
+  }, [sales, search]);
 
   const totalRevenue = useMemo(() => {
-    return sales.reduce((acc, sale) => acc + sale.totalPrice, 0);
-  }, [sales]);
+    return filteredSales.reduce((acc, sale) => acc + sale.totalPrice, 0);
+  }, [filteredSales]);
 
   const totalProductsSold = useMemo(() => {
-    return sales.reduce((acc, sale) => {
+    return filteredSales.reduce((acc, sale) => {
       const totalInSale = sale.products.reduce((a, p) => a + p.amount, 0);
       return acc + totalInSale;
     }, 0);
-  }, [sales]);
+  }, [filteredSales]);
 
   const generatePDF = () => {
     setIsGenerating(true);
@@ -69,7 +87,7 @@ export function SalesReport() {
     doc.setFontSize(22);
     doc.text('Relatório de Vendas', 14, 20);
     doc.setFontSize(12);
-    doc.text(`Número de Vendas: ${String(sales.length)}`, 14, 30);
+    doc.text(`Número de Vendas: ${String(filteredSales.length)}`, 14, 30);
     doc.text(`Valor Total: R$ ${totalRevenue.toFixed(2)}`, 14, 38);
 
     let y = 50;
@@ -82,12 +100,12 @@ export function SalesReport() {
     doc.line(14, y + 2, 200, y + 2);
     y += 10;
 
-    sales.forEach((sale) => {
+    filteredSales.forEach((sale) => {
       doc.text(String(sale.customerCpf), 14, y);
-      doc.text(String(sale.status), 60, y);
+      doc.text(String(statusLabels[sale.status]), 60, y);
       doc.text(String(sale.totalPrice.toFixed(2)), 105, y);
       doc.text(String(sale.totalItems), 150, y);
-      doc.text(String(sale.paymentMethod), 180, y);
+      doc.text(String(paymentLabels[sale.paymentMethod]), 180, y);
       y += 7;
       if (y > 270) {
         doc.addPage();
@@ -100,7 +118,7 @@ export function SalesReport() {
   };
 
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(sales);
+    const worksheet = XLSX.utils.json_to_sheet(filteredSales);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendas');
     const excelBuffer = XLSX.write(workbook, {
@@ -120,7 +138,7 @@ export function SalesReport() {
             <CardTitle>Total de Vendas</CardTitle>
             <ShoppingCart className="h-5 w-5 text-blue-500" />
           </CardHeader>
-          <CardContent>{sales.length}</CardContent>
+          <CardContent>{filteredSales.length}</CardContent>
         </Card>
         <Card>
           <CardHeader className="flex items-center justify-between">
@@ -169,7 +187,11 @@ export function SalesReport() {
         <Separator />
         <CardContent>
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
-            {sales.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12 text-muted-foreground">
+                Carregando...
+              </div>
+            ) : filteredSales.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -181,13 +203,15 @@ export function SalesReport() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sales.map((sale) => (
+                  {filteredSales.map((sale) => (
                     <TableRow key={sale.id}>
                       <TableCell>{sale.customerCpf}</TableCell>
-                      <TableCell>{sale.status}</TableCell>
+                      <TableCell>{statusLabels[sale.status]}</TableCell>
                       <TableCell>R$ {sale.totalPrice.toFixed(2)}</TableCell>
                       <TableCell>{sale.totalItems}</TableCell>
-                      <TableCell>{sale.paymentMethod}</TableCell>
+                      <TableCell>
+                        {paymentLabels[sale.paymentMethod]}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

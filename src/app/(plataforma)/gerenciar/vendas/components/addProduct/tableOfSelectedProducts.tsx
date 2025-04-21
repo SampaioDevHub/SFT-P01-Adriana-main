@@ -8,12 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { useSale } from '@/_components/providers/saleContext';
-import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
 import { ListProductType } from '../../_types/listProductsType';
 import { DeleteSelectedProductModal } from './deleteSelectedProductModal';
@@ -37,27 +36,27 @@ export function TableOfSelectedProducts({
     null
   );
 
+  const [displayedProducts, setDisplayedProducts] = useState<ListProductType[]>(
+    []
+  );
+
   const { setProductData, setActiveTab } = useSale();
 
   function handleAddProductsInContext() {
     try {
       setIsLoading(true);
       setProductData({
-        products: products,
-        totalItems: products.reduce((acc, product) => acc + product.amount, 0),
-        subtotal: products.reduce(
-          (acc, product) =>
-            acc +
-            (product.priceWithDiscount
-              ? Number(product.priceWithDiscount)
-              : product.totalPrice),
-          0
-        ),
+        products: displayedProducts,
+        totalItems: displayedProducts.reduce((acc, product) => acc + product.amount, 0),
+        subtotal: displayedProducts.reduce((acc, product) => {
+          const discount = Number(product.priceWithDiscount);
+          const totalPrice = Number(product.totalPrice);
+          const validValue = !isNaN(discount) && discount > 0 ? discount : totalPrice;
+          return acc + validValue;
+        }, 0),
       });
-      setIsLoading(false);
       setActiveTab('information');
     } catch (error) {
-      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -66,6 +65,32 @@ export function TableOfSelectedProducts({
   function formatForReals(valor: number) {
     return `R$ ${valor.toFixed(2).replace('.', ',')}`;
   }
+
+  useEffect(() => {
+    const storedProducts = localStorage.getItem('products');
+    let initialProducts = products;
+
+    if (storedProducts) {
+      try {
+        const parsed = JSON.parse(storedProducts) as ListProductType[];
+        // Mescla os produtos do localStorage com os novos, evitando duplicatas
+        const merged = [...parsed];
+
+        products.forEach((newProduct) => {
+          const exists = parsed.find((p) => p.id === newProduct.id);
+          if (!exists) {
+            merged.push(newProduct);
+          }
+        });
+
+        initialProducts = merged;
+      } catch (e) {
+        console.error('Erro ao carregar produtos do localStorage', e);
+      }
+    }
+
+    setDisplayedProducts(initialProducts);
+  }, [products]);
 
   return (
     <div className="space-y-4">
@@ -78,75 +103,73 @@ export function TableOfSelectedProducts({
               <TableHead>Quantidade</TableHead>
               <TableHead>Produtos(Promoção)</TableHead>
               <TableHead>Preço Total</TableHead>
+              <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
-            {products.length === 0 ? (
+            {displayedProducts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center p-4">
+                <TableCell colSpan={5} className="text-center p-4">
                   <span>Nenhum produto na lista</span>
                 </TableCell>
               </TableRow>
             ) : (
-              products.map((product, index) => {
-                return (
-                  <TableRow key={index}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.amount}</TableCell>
-                    <TableCell>{product.discountPercentage}%</TableCell>
-                    <TableCell>
-                      {' '}
-                      {product.discountPercentage &&
-                      product.priceWithDiscount ? (
-                        <div className="space-x-1 flex flex-wrap">
-                          <span
-                            style={{ textDecoration: 'line-through' }}
-                            className="text-xs text-muted-foreground className='whitespace-nowrap'"
-                          >
-                            {formatForReals(product.totalPrice)}
-                          </span>
-                          <span className="whitespace-nowrap">
-                            {formatForReals(Number(product.priceWithDiscount))}
-                          </span>
-                        </div>
-                      ) : (
-                        <p>{formatForReals(product.totalPrice)}</p>
-                      )}
-                    </TableCell>
-                    <TableCell className="w-[10rem]">
-                      <Dialog
-                        open={isDeleteSelectedProductModalOpen}
-                        onOpenChange={setIsDeleteSelectedProductModalOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => {
-                              setProductIdToDelete(product.id);
-                              setIsDeleteSelectedProductModalOpen(true);
-                            }}
-                            variant="destructive"
-                            size="sm"
-                            className="mr-2"
-                          >
-                            Remover
-                          </Button>
-                        </DialogTrigger>
-                        <DeleteSelectedProductModal
-                          setIsOpen={setIsDeleteSelectedProductModalOpen}
-                          productId={productIdToDelete}
-                          onConfirmDelete={removeProduct}
-                        />
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
+              displayedProducts.map((product, index) => (
+                <TableRow key={index}>
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell>{product.amount}</TableCell>
+                  <TableCell>{product.discountPercentage}%</TableCell>
+                  <TableCell>
+                    {product.discountPercentage &&
+                    product.priceWithDiscount ? (
+                      <div className="space-x-1 flex flex-wrap">
+                        <span
+                          style={{ textDecoration: 'line-through' }}
+                          className="text-xs text-muted-foreground"
+                        >
+                          {formatForReals(product.totalPrice)}
+                        </span>
+                        <span className="whitespace-nowrap">
+                          {formatForReals(Number(product.priceWithDiscount))}
+                        </span>
+                      </div>
+                    ) : (
+                      <p>{formatForReals(product.totalPrice)}</p>
+                    )}
+                  </TableCell>
+                  <TableCell className="w-[10rem]">
+                    <Dialog
+                      open={isDeleteSelectedProductModalOpen}
+                      onOpenChange={setIsDeleteSelectedProductModalOpen}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={() => {
+                            setProductIdToDelete(product.id);
+                            setIsDeleteSelectedProductModalOpen(true);
+                          }}
+                          variant="destructive"
+                          size="sm"
+                          className="mr-2"
+                        >
+                          Remover
+                        </Button>
+                      </DialogTrigger>
+                      <DeleteSelectedProductModal
+                        setIsOpen={setIsDeleteSelectedProductModalOpen}
+                        productId={productIdToDelete}
+                        onConfirmDelete={removeProduct}
+                      />
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
       </div>
       <Button
-        disabled={products.length === 0 ? true : isLoading}
+        disabled={displayedProducts.length === 0 || isLoading}
         onClick={handleAddProductsInContext}
         className="disabled:cursor-not-allowed disabled:opacity-70 bg-green-500 text-background col-span-1 font-bold hover:bg-green-600"
       >

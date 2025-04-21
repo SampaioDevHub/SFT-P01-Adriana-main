@@ -1,30 +1,57 @@
-import React, { useMemo, useState } from 'react';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
 import { User, Tags, Calendar } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/_components/ui/card';
+import { FileDown, FileSpreadsheet } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import * as XLSX from 'xlsx';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/_components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { getCustomers } from '@/_api/customers/get-customers'; // Supondo que tenha essa API
 import { Input } from '@/_components/ui/input';
 import { Button } from '@/_components/ui/button';
-import { FileDown, FileSpreadsheet } from 'lucide-react';
-import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { ScrollArea } from '@/_components/ui/scroll-area';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/_components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/_components/ui/table';
 import { profileLabels } from '@/app/(plataforma)/gerenciar/clientes/_constants/customerProfile';
+import { GetCustomersBody } from '@/_api/customers/_types/type-get-custumer';
 
 export function CustomerReport() {
   const [search, setSearch] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const {
-    data: customersData,
-  } = useQuery({
-    queryKey: ['customers'],
-    queryFn: () => getCustomers({}),
-    staleTime: Infinity,
-  });
+  const [customersData, setCustomersData] = useState<GetCustomersBody | null>(null);
+
+  useEffect(() => {
+    const fetchAllCustomers = async () => {
+      try {
+        // 1. Primeira chamada só pra pegar o total de elementos
+        const firstResponse = await getCustomers({ pageSize: 1, pageIndex: 0 });
+        const total = firstResponse.totalElements;
+
+        // 2. Segunda chamada com pageSize = total
+        const fullData = await getCustomers({ pageSize: total, pageIndex: 0 });
+
+        setCustomersData(fullData);
+      } catch (error) {
+        console.error('Erro ao buscar clientes:', error);
+      }
+    };
+
+    fetchAllCustomers();
+  }, []);
 
   const customers = useMemo(() => {
     if (!customersData) return [];
@@ -39,7 +66,8 @@ export function CustomerReport() {
   const averageAge = useMemo(() => {
     const totalAge = customers.reduce((acc, customer) => {
       if (customer.dateBirth) {
-        const age = new Date().getFullYear() - new Date(customer.dateBirth).getFullYear();
+        const age =
+          new Date().getFullYear() - new Date(customer.dateBirth).getFullYear();
         return acc + age;
       }
       return acc;
@@ -49,11 +77,14 @@ export function CustomerReport() {
 
   // Contagem de clientes por perfil
   const profileCount = useMemo(() => {
-    return customers.reduce((acc, customer) => {
-      const profile = customer.profile || 'BOM';
-      acc[profile] = (acc[profile] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    return customers.reduce(
+      (acc, customer) => {
+        const profile = customer.profile || 'BOM';
+        acc[profile] = (acc[profile] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
   }, [customers]);
 
   const generatePDF = () => {
@@ -79,7 +110,7 @@ export function CustomerReport() {
       doc.text(String(customer.cpf), 60, y);
       doc.text(String(customer.phone), 105, y);
       doc.text(String(customer.email || '-'), 150, y);
-      doc.text(String(customer.profile), 180, y);
+      doc.text(String(profileLabels[customer.profile]), 180, y);
       y += 7;
       if (y > 270) {
         doc.addPage();
@@ -189,7 +220,7 @@ export function CustomerReport() {
                       <TableCell>{customer.cpf}</TableCell>
                       <TableCell>{customer.phone}</TableCell>
                       <TableCell>{customer.email}</TableCell>
-                      <TableCell>{profileLabels[customer.profile ?? 'BOM']}</TableCell>
+                      <TableCell>{profileLabels[customer.profile]}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -197,9 +228,7 @@ export function CustomerReport() {
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
                 <User className="h-16 w-16 mb-4 text-gray-300" />
-                <p className="text-lg font-medium">
-                  Nenhum cliente encontrado
-                </p>
+                <p className="text-lg font-medium">Nenhum cliente encontrado</p>
                 <p className="text-sm">
                   Cadastre um cliente, ou coloque um filtro válido.
                 </p>

@@ -6,6 +6,7 @@ export interface GetSalesQuery {
   cpfFilter?: string | null;
   statusFilter?: string | null;
   priceFilter?: string | null;
+  pageSize?: number | null;
 }
 
 export async function getSales({
@@ -13,10 +14,11 @@ export async function getSales({
   cpfFilter,
   statusFilter,
   priceFilter,
+  pageSize,
 }: GetSalesQuery) {
   console.log(statusFilter)
   const response = await api.get<GetSalesBody>(
-    `/sales/find-all?size=10&page=${pageIndex ?? ''}&customerCpf=${cpfFilter ?? ''}&status=${statusFilter ?? ''}&totalPrice=${priceFilter ?? ''}`
+    `/sales/find-all?size=${pageSize ?? '10'}&page=${pageIndex ?? ''}&customerCpf=${cpfFilter ?? ''}&status=${statusFilter ?? ''}&totalPrice=${priceFilter ?? ''}`
   );
 
   return response.data;

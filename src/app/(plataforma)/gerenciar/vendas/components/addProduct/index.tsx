@@ -29,9 +29,14 @@ import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/_api/products/get-products';
 import { TableOfSelectedProducts } from './tableOfSelectedProducts';
 import { ListProductType } from '../../_types/listProductsType';
+import { UpdateStockModal } from '../updateStockModal';
 
 export function AddProduct() {
   const [listProducts, setListProducts] = useState<ListProductType[]>([]);
+
+  const [showUpdateStockModal, setShowUpdateStockModal] = useState(false);
+  const [stockProductName, setStockProductName] = useState('');
+  const [stockQuantity, setStockQuantity] = useState(0);
 
   const [open, setOpen] = useState(false);
   const {
@@ -68,8 +73,10 @@ export function AddProduct() {
   });
 
   function handleRemoveProduct (productId: string) {
-    const products = listProducts.filter(product => product.id !== productId)
-    setListProducts(products)
+    const updatedList = listProducts.filter(product => product.id !== productId);
+    setListProducts(updatedList);
+    // Atualizar no localStorage
+    localStorage.setItem('products', JSON.stringify(updatedList));
   }
 
   async function handleAddProductInList(data: FormSchemaSaleProduct) {
@@ -85,6 +92,17 @@ export function AddProduct() {
       }
 
       const selected = productData.content[0];
+
+       // ✅ Validação de estoque
+       if (selected.quantityInStock < data.amount) {
+        setStockProductName(selected.name);
+        setStockQuantity(selected.quantityInStock);
+        setShowUpdateStockModal(true);
+        return;
+      }
+
+      console.log(productData)
+
       const unitPrice = selected.priceWithDiscount ? Number(selected.priceWithDiscount) : Number(selected.price);
       const totalPrice = Number(selected.price) * data.amount;
       const priceWithDiscount = Number(selected.priceWithDiscount) * data.amount
@@ -100,7 +118,11 @@ export function AddProduct() {
         totalPrice,
       };
 
-      setListProducts((prev) => [...prev, product]);
+      const updatedList = [...listProducts, product];
+      setListProducts(updatedList);
+      // Salvar no localStorage
+      localStorage.setItem('products', JSON.stringify(updatedList));
+
       reset()
     } catch (error) {
       setError('root', {
@@ -213,6 +235,12 @@ export function AddProduct() {
           </form>
         </CardContent>
       </Card>
+      <UpdateStockModal
+        open={showUpdateStockModal}
+        onClose={() => setShowUpdateStockModal(false)}
+        productName={stockProductName}
+        currentStock={stockQuantity}
+      />
     </div>
   );
 }

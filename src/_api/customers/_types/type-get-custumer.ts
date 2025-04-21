@@ -4,7 +4,7 @@ export interface GetCustomerContent {
   cpf: string;
   maritalStatus?: string;
   email?: string | null;
-  profile?: string;
+  profile: string;
   phone?: string;
   enterprise?: string;
   businessPhone?: string;

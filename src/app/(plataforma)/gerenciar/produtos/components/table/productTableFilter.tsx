@@ -58,12 +58,9 @@ export function ProductTableFilter() {
     }
 
     if (data.quantityInStock) {
-      newParams.set(
-        '.quantityInStock',
-        (data.quantityInStock ?? '').toString()
-      );
+      newParams.set('quantity', (data.quantityInStock ?? '').toString());
     } else {
-      newParams.delete('.quantityInStock');
+      newParams.delete('quantity');
     }
 
     if (data.category) {
@@ -83,7 +80,7 @@ export function ProductTableFilter() {
   function handleClearFilters() {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete('name');
-    newParams.delete('code');
+    newParams.delete('quantity');
     newParams.delete('category');
     newParams.set('page', '1');
     router.push(`${pathname}?${newParams.toString()}`);
