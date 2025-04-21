@@ -1,15 +1,21 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Suspense, useState } from 'react';
+
+import { Button } from '@/_components/ui/button';
 import PageContainer from '@/_components/layout/page-container';
-import { CustomerForm } from './components/customerForm';
+
 import { CustomerTable } from './components/table/customerTable';
-import { Button } from '@/_components/ui/button'
+import { CustomerForm } from './components/customerForm';
+import { CustomerSkeleton } from './components/skeleton/customerSkeleton';
+
+<Suspense fallback={<CustomerSkeleton />}>
+  <CustomerSkeleton />
+</Suspense>;
 
 export default function CustomersPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);
-
   return (
     <PageContainer>
       <div className="container mx-auto px-4 py-8">
@@ -37,4 +43,3 @@ export default function CustomersPage() {
     </PageContainer>
   );
 }
-

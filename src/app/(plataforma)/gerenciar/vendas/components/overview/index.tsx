@@ -20,10 +20,17 @@ import { Button } from '@/_components/ui/button';
 import { TabsList, TabsTrigger } from '@/_components/ui/tabs';
 import { useSale } from '@/_components/providers/saleContext';
 import { AlertError } from '@/_components/alert/alert-error';
+import { paymentLabels } from '../../_constants/paymentMethod';
 
 export function Overview() {
-  const { productData, informationData, handlecreateSale, isCreatingSale, setActiveTab, resetSaleData } =
-    useSale();
+  const {
+    productData,
+    informationData,
+    handlecreateSale,
+    isCreatingSale,
+    setActiveTab,
+    resetSaleData,
+  } = useSale();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   function formatForReals(valor: number) {
@@ -32,9 +39,9 @@ export function Overview() {
 
   async function handleCreateSale() {
     try {
-      await handlecreateSale(); 
-      resetSaleData()
-      setActiveTab("product")
+      await handlecreateSale();
+      resetSaleData();
+      setActiveTab('product');
     } catch (error) {
       const err = error as AxiosError;
 
@@ -69,9 +76,7 @@ export function Overview() {
                     Método de Pagamento
                   </span>
                   <span>
-                    {informationData.paymentMethod === ''
-                      ? 'Não Informado'
-                      : informationData.paymentMethod}
+                    {paymentLabels[informationData.paymentMethod]}
                   </span>
                 </div>
               </div>
@@ -140,15 +145,36 @@ export function Overview() {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Quantidade</TableHead>
+                  <TableHead>Valor</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {productData.products.map((product) => {
+                {productData.products.map((product, index) => {
                   return (
-                    <TableRow key={product.name}>
-                      <TableCell className="w-[80%]">{product.name}</TableCell>
-                      <TableCell className="text-center">
+                    <TableRow key={index}>
+                      <TableCell className='w-1/3'>{product.name}</TableCell>
+                      <TableCell>
                         {product.amount}
+                      </TableCell>
+                      <TableCell className='w-1/3'>
+                        {' '}
+                        {product.priceWithDiscount ? (
+                          <div className="space-x-1 flex flex-wrap">
+                            <span
+                              style={{ textDecoration: 'line-through' }}
+                              className="text-xs text-muted-foreground className='whitespace-nowrap'"
+                            >
+                              {formatForReals(product.totalPrice)}
+                            </span>
+                            <span className="whitespace-nowrap">
+                              {formatForReals(
+                                Number(product.priceWithDiscount)
+                              )}
+                            </span>
+                          </div>
+                        ) : (
+                          <p>{formatForReals(product.totalPrice)}</p>
+                        )}
                       </TableCell>
                     </TableRow>
                   );

@@ -67,6 +67,11 @@ export function AddProduct() {
     enabled: debouncedSearch.length >= 2,
   });
 
+  function handleRemoveProduct (productId: string) {
+    const products = listProducts.filter(product => product.id !== productId)
+    setListProducts(products)
+  }
+
   async function handleAddProductInList(data: FormSchemaSaleProduct) {
     try {
       const productData = await getProducts({ nameFilter: data.name });
@@ -80,15 +85,17 @@ export function AddProduct() {
       }
 
       const selected = productData.content[0];
-      const unitPrice = Number(selected.price);
-      const totalPrice = unitPrice * data.amount;
+      const unitPrice = selected.priceWithDiscount ? Number(selected.priceWithDiscount) : Number(selected.price);
+      const totalPrice = Number(selected.price) * data.amount;
+      const priceWithDiscount = Number(selected.priceWithDiscount) * data.amount
 
       const product: ListProductType = {
+        id: selected.id,
         code: selected.code,
         name: selected.name,
         unitPrice,
         amount: data.amount,
-        priceWithDiscount: selected.priceWithDiscount,
+        priceWithDiscount: String(priceWithDiscount),
         discountPercentage: selected.discountPercentage,
         totalPrice,
       };
@@ -202,7 +209,7 @@ export function AddProduct() {
               {isSubmitting ? 'Adicionando...' : 'Adicionar Produto'}
             </Button>
 
-            <TableOfSelectedProducts products={listProducts} />
+            <TableOfSelectedProducts removeProduct={handleRemoveProduct} products={listProducts} />
           </form>
         </CardContent>
       </Card>

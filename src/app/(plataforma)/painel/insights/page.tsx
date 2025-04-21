@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -28,7 +27,7 @@ export default function FinanceDashboard() {
     async function fetchProdutos() {
       try {
         const res = await fetch(
-          'http://localhost:8080/manage_store/v1/products/find-all'
+          `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/find-all`
         );
         const data = await res.json();
         setProdutos(data);

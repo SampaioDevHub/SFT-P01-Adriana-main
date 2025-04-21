@@ -1,9 +1,15 @@
-
 'use client';
 
-import { SaleProvider } from '@/_components/providers/saleContext';
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 
-export default function VendasLayout({ children }: { children: ReactNode }) {
-  return <SaleProvider>{children}</SaleProvider>;
+import { SaleProvider } from '@/_components/providers/saleContext';
+
+import { SaleSkeleton } from './components/skeleton/saleSkeleton';
+
+export default function SalesLayout({ children }: { children: ReactNode }) {
+  return (
+    <SaleProvider>
+      <Suspense fallback={<SaleSkeleton />}>{children}</Suspense>
+    </SaleProvider>
+  );
 }

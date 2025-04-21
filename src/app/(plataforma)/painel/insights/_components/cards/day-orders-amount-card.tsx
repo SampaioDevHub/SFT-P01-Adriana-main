@@ -13,7 +13,7 @@ export function ActiveCustomersCard() {
     async function fetchCustomers() {
       try {
         const res = await fetch(
-          'http://206.42.51.75:8081/manage_store/v1/customers/find-all'
+          `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/customers/find-all`
         );
         const json = await res.json();
         setActiveCustomers(json.totalElements);
@@ -29,7 +29,7 @@ export function ActiveCustomersCard() {
   }, []);
 
   return (
-    <Card className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border backdrop-blur-md">
+    <Card className="rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-md">
       <CardContent className="p-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-muted-foreground">

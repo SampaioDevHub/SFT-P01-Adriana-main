@@ -67,7 +67,7 @@ export function AddClient() {
     enabled: debouncedSearch.length >= 2,
   });
 
-  const nameSearch = watch('customerCpf');
+  const nameSearch = watch('customerName');
   const [debouncedName, setDebouncedName] = useState('');
 
   useEffect(() => {
@@ -100,8 +100,6 @@ export function AddClient() {
       const discountAmount = (productData.subtotal * discount) / 100;
       const totalPrice = productData.subtotal - discountAmount;
 
-      console.log(data.paymentMethod)
-
       setInformationData({
         customerCpf: selected.cpf,
         discountPercentage: data.discountPercentage,
@@ -113,7 +111,7 @@ export function AddClient() {
     } catch (error) {
       setError('root', {
         type: 'manual',
-        message: 'Erro ao buscar client. Tente novamente.',
+        message: 'Erro ao buscar cliente. Tente novamente.',
       });
     }
   }
@@ -224,7 +222,7 @@ export function AddClient() {
                                   value={customer.name}
                                   onSelect={() => {
                                     setValue('customerCpf', customer.cpf);
-                                    setValue('customerName', customer.cpf);
+                                    setValue('customerName', customer.name);
                                     setOpenName(false);
                                   }}
                                 >

@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
 import PageContainer from '@/_components/layout/page-container';
 import { ProductForm } from './components/productForm';
 import { ProductTable } from './components/table/productTable';
 import { Button } from '@/_components/ui/button';
+import { ProductSkeleton } from './components/skeleton/productSkeleton';
+
+<Suspense fallback={<ProductSkeleton />}>
+  <RegisterProduct />
+</Suspense>
 
 export default function RegisterProduct() {
   const [isFormVisible, setIsFormVisible] = useState(false);

@@ -25,7 +25,10 @@ import { AlertError } from '@/_components/alert/alert-error';
 
 import { customerProfile, profileLabels } from '../_constants/customerProfile';
 import { customerStatus } from '../_constants/customerStatus';
-import { formSchemaCustomer, FormSchemaCustomer } from '../_types/customerYupType';
+import {
+  formSchemaCustomer,
+  FormSchemaCustomer,
+} from '../_types/customerYupType';
 
 export function CustomerForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -155,6 +158,7 @@ export function CustomerForm() {
   });
 
   async function handleCreateCustomer(data: FormSchemaCustomer) {
+    console.log(data.profile)
     try {
       await createCustomerFn({
         name: data.name,
@@ -257,15 +261,14 @@ export function CustomerForm() {
                 )}
               </div>
               <div className="space-y-2">
-              <Label htmlFor="profile">Perfil</Label>
+                <Label className="gap-1" htmlFor="name">
+                  Perfil{' '}
+                  <span className="text-muted-foreground">(Obrigatório)</span>
+                </Label>
                 <select
-                  defaultValue="all"
                   className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   {...register('profile')}
                 >
-                  <option value="all" disabled hidden>
-                    Como é seu cliente?
-                  </option>
                   {customerProfile?.map((profile, index) => (
                     <option
                       className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"

@@ -9,6 +9,7 @@ export interface SaleProduct {
   code?: string;
   name: string;
   unitPrice: number;
+  priceWithDiscount?: string;
   totalPrice: number;
   amount: number;
 }

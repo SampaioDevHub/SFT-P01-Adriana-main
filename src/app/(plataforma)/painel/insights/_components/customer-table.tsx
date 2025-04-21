@@ -27,7 +27,7 @@ export function ClientesTable() {
     async function fetchCustomers() {
       try {
         const res = await fetch(
-          'http://localhost:8080/manage_store/v1/customers/recent'
+           `${process.env.NEXT_PUBLIC_API_URL}/manage_store/v1/customers/recent`
         );
         if (!res.ok) throw new Error('Erro na resposta da API');
         const data = await res.json();

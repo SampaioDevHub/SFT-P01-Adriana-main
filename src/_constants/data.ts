@@ -29,15 +29,15 @@ export const navItems: NavItem[] = [
       {
         title: 'Clientes',
         url: '/gerenciar/clientes',
-        shortcut: ['p', 'p'],
+        shortcut: ['c', 'c'],
         isActive: true,
       },
       {
-        title: 'vendas',
+        title: 'Vendas',
         url: '/gerenciar/vendas',
-        shortcut: ['p', 'p'],
+        shortcut: ['v', 'v'],
         isActive: true,
-      },
+      }
     ],
   },
   {
@@ -47,17 +47,23 @@ export const navItems: NavItem[] = [
     isActive: true,
     items: [
       {
-        title: 'Produto',
-        url: '/relatorio/produto',
-        shortcut: ['p', 'p'],
+        title: 'Produtos',
+        url: '/relatorio/produtos',
+        shortcut: ['r', 'p'],
         isActive: true,
       },
       {
-        title: 'Financeiro',
-        url: '/relatorio/financeiro',
-        shortcut: ['p', 'p'],
+        title: 'Clientes',
+        url: '/relatorio/clientes',
+        shortcut: ['r', 'f'],
         isActive: true,
       },
-    ],
-  },
-];
+      {
+        title: 'Vendas',
+        url: '/relatorio/vendas',
+        shortcut: ['r', 'v'],
+        isActive: true,
+      }
+    ]
+  }
+]  

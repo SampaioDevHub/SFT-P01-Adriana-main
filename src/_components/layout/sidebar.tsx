@@ -27,6 +27,7 @@ import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { UserButton } from '@clerk/nextjs';
+import { UserNav } from './user-nav';
 
 export const company = {
   name: 'Adriana ShowRoom',
@@ -123,13 +124,11 @@ export default function AppSidebar() {
 
       {/* Footer */}
       <SidebarFooter className="border-t border-zinc-200 dark:border-zinc-800 px-4 py-4 bg-white/40 dark:bg-zinc-900/30 backdrop-blur-md shadow-inner rounded-t-xl">
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex items-center justify-between gap-3 text-sm">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-pink-600 text-white shadow-lg border border-white/10">
             <company.logo className="size-4" />
           </div>
-          <div className="flex flex-col leading-tight">
-            <UserButton />
-          </div>
+            <UserNav/>
         </div>
       </SidebarFooter>
 

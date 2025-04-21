@@ -1,5 +1,6 @@
 
 export interface ListProductType {
+  id: string;
   code?: string;
   name: string;
   discountPercentage?: number | null;

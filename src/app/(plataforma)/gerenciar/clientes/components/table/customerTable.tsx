@@ -72,18 +72,19 @@ export function CustomerTable() {
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
-            {isLoadingCustomers && <CustomerTableSkeleton />}
-            {customers
-              ? customers.content?.map((customer) => {
-                  return <CustomerTableRow key={customer.id} {...customer} />;
-                })
-              : !isLoadingCustomers && (
-                  <TableRow className="w-full">
-                    <TableCell colSpan={5} className="text-center w-full p-4">
-                      <span>Nenhum cliente encontrado</span>
-                    </TableCell>
-                  </TableRow>
-                )}
+            {isLoadingCustomers ? (
+              <CustomerTableSkeleton />
+            ) : customers && customers.content.length > 0 ? (
+              customers.content.map((sale) => (
+                <CustomerTableRow key={sale.id} {...sale} />
+              ))
+            ) : (
+              <TableRow className="w-full">
+                <TableCell colSpan={5} className="text-center w-full p-4">
+                  <span>Nenhum cliente encontrado</span>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

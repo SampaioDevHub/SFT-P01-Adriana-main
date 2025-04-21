@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { z } from 'zod';
 
 import { useQuery } from '@tanstack/react-query';
@@ -17,8 +18,6 @@ import { SaleTableSkeleton } from '../skeleton/saleTableSkeleton';
 import { Pagination } from './pagination';
 import { SaleTableFilter } from './saleTableFilter';
 import { SaleTableRow } from './saleTableRow';
-
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 export function SaleTable() {
   const searchParams = useSearchParams();
@@ -30,7 +29,7 @@ export function SaleTable() {
   const statusFilter = searchParams.get('status') ?? '';
   const priceFilter = searchParams.get('price') ?? '';
 
-  console.log(cpfFilter, statusFilter, priceFilter)
+  console.log(cpfFilter, statusFilter, priceFilter);
 
   const pageIndex = z.coerce
     .number()
@@ -73,19 +72,19 @@ export function SaleTable() {
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
-            {isLoadingSales && <SaleTableSkeleton />}
-            {sales ?
-              sales.content?.map((sale) => {
-                return <SaleTableRow key={sale.id} {...sale} />;
-              })
-              :
-              !isLoadingSales && 
-              <TableRow className='w-full'>
+            {isLoadingSales ? (
+              <SaleTableSkeleton />
+            ) : sales && sales.content.length > 0 ? (
+              sales.content.map((sale) => (
+                <SaleTableRow key={sale.id} {...sale} />
+              ))
+            ) : (
+              <TableRow className="w-full">
                 <TableCell colSpan={5} className="text-center w-full p-4">
                   <span>Nenhuma venda encontrada</span>
                 </TableCell>
               </TableRow>
-            } 
+            )}
           </TableBody>
         </Table>
       </div>

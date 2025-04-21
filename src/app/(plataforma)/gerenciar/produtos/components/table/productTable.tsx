@@ -35,7 +35,13 @@ export function ProductTable() {
     .parse(page);
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ['products', pageIndex, nameFilter, quantityInStockFilter, categoryFilter],
+    queryKey: [
+      'products',
+      pageIndex,
+      nameFilter,
+      quantityInStockFilter,
+      categoryFilter,
+    ],
     queryFn: () =>
       getProducts({
         pageIndex,
@@ -72,18 +78,19 @@ export function ProductTable() {
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
-            {isLoadingProducts && <ProductTableSkeleton />}
-            {products
-              ? products.content?.map((product) => {
-                  return <ProductTableRow key={product.id} {...product} />;
-                })
-              : !isLoadingProducts && (
-                  <TableRow className="w-full">
-                    <TableCell colSpan={5} className="text-center w-full p-4">
-                      <span>Nenhum produto encontrado</span>
-                    </TableCell>
-                  </TableRow>
-                )}
+            {isLoadingProducts ? (
+              <ProductTableSkeleton />
+            ) : products && products.content.length > 0 ? (
+              products.content.map((sale) => (
+                <ProductTableRow key={sale.id} {...sale} />
+              ))
+            ) : (
+              <TableRow className="w-full">
+                <TableCell colSpan={5} className="text-center w-full p-4">
+                  <span>Nenhum produto encontrado</span>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

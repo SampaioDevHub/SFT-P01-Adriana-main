@@ -19,6 +19,7 @@ import { AddProduct } from './components/addProduct';
 import { AddClient } from './components/client';
 import { Overview } from './components/overview';
 
+
 export default function RegisterSale() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const { activeTab, setActiveTab, productData, informationData } = useSale();

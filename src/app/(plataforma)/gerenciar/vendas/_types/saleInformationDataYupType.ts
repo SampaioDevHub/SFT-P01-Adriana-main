@@ -28,10 +28,12 @@ export const formSchemaSaleInformation = ({
       }),
     customerCpf: yup
       .string()
-      .required('O campo "CPF do informatione" é obrigatório.')
+      .required('O campo "CPF do cliente" é obrigatório.')
       .min(14, 'O minimo é 14 caracteres')
       .max(14, 'Você só pode inserir até 14 caracteres'),
-    customerName: yup.string().optional(),
+    customerName: yup
+      .string()
+      .required('O campo "Nome do cliente" é obrigatório.'),
     discountPercentage: yup
       .number()
       .nullable()
@@ -41,7 +43,9 @@ export const formSchemaSaleInformation = ({
       .min(0, 'O campo "Disconto(%)" não pode ser negativo.')
       .max(100, 'O campo "Disconto(%)" não pode exceder 100.')
       .optional(),
-    paymentMethod: yup.string() .required('O campo "Método de Pagamento" é obrigatório.'),
+    paymentMethod: yup
+      .string()
+      .required('O campo "Método de Pagamento" é obrigatório.'),
   });
 };
 

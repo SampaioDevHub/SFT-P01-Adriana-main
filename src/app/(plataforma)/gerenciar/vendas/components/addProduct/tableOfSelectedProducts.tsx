@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
@@ -18,17 +18,24 @@ import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import { ListProductType } from '../../_types/listProductsType';
 import { DeleteSelectedProductModal } from './deleteSelectedProductModal';
 
+interface TableOfSelectedProducts {
+  products: ListProductType[];
+  removeProduct: (id: string) => void;
+}
+
 export function TableOfSelectedProducts({
   products,
-}: {
-  products: ListProductType[];
-}) {
+  removeProduct,
+}: TableOfSelectedProducts) {
   const [
     isDeleteSelectedProductModalOpen,
     setIsDeleteSelectedProductModalOpen,
   ] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
+    null
+  );
 
   const { setProductData, setActiveTab } = useSale();
 
@@ -39,7 +46,11 @@ export function TableOfSelectedProducts({
         products: products,
         totalItems: products.reduce((acc, product) => acc + product.amount, 0),
         subtotal: products.reduce(
-          (acc, product) => acc + product.totalPrice,
+          (acc, product) =>
+            acc +
+            (product.priceWithDiscount
+              ? Number(product.priceWithDiscount)
+              : product.totalPrice),
           0
         ),
       });
@@ -109,6 +120,10 @@ export function TableOfSelectedProducts({
                       >
                         <DialogTrigger asChild>
                           <Button
+                            onClick={() => {
+                              setProductIdToDelete(product.id);
+                              setIsDeleteSelectedProductModalOpen(true);
+                            }}
                             variant="destructive"
                             size="sm"
                             className="mr-2"
@@ -118,6 +133,8 @@ export function TableOfSelectedProducts({
                         </DialogTrigger>
                         <DeleteSelectedProductModal
                           setIsOpen={setIsDeleteSelectedProductModalOpen}
+                          productId={productIdToDelete}
+                          onConfirmDelete={removeProduct}
                         />
                       </Dialog>
                     </TableCell>

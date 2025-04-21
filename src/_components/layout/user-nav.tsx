@@ -4,9 +4,10 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/_components/ui/dropdown-menu';
+import { useTheme } from 'next-themes';
+
 import { SignUpButton, UserButton } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
-import { useTheme } from 'next-themes';
 
 export function UserNav() {
   const { theme } = useTheme();
@@ -15,6 +16,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <SignUpButton forceRedirectUrl="/sign-in">
           <UserButton
+            showName
             appearance={{ baseTheme: theme === 'dark' ? dark : undefined }}
           />
         </SignUpButton>
