@@ -12,7 +12,7 @@ export function SaleTableRow({
   customerCpf,
   totalItems,
   totalPrice,
-  priceWithDiscount,
+  subtotal,
   discountPercentage,
   status,
 }: GetSaleContent) {
@@ -23,16 +23,16 @@ export function SaleTableRow({
       <TableCell>{customerCpf}</TableCell>
       <TableCell>{totalItems}</TableCell>
       <TableCell>
-        {discountPercentage && priceWithDiscount ? (
+        {discountPercentage  ? (
           <div className="space-x-1 flex flex-wrap">
             <span
               style={{ textDecoration: 'line-through' }}
               className="text-xs text-muted-foreground className='whitespace-nowrap'"
             >
-              R$ {totalPrice.toString().replace('.', ',')}
+              R$ {subtotal.toString().replace('.', ',')}
             </span>
             <span className="whitespace-nowrap">
-              R$ {priceWithDiscount.toString().replace('.', ',')}
+              R$ {totalPrice.toString().replace('.', ',')}
             </span>
           </div>
         ) : (
