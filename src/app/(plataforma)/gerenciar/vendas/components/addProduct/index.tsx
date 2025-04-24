@@ -168,7 +168,7 @@ export function AddProduct() {
           <CardDescription>Adicione os produtos cadastrados</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(handleAddProductInList)} className="space-y-4">
+          <form id='myForm' onSubmit={handleSubmit(handleAddProductInList)} className="space-y-4">
             <div className="grid w-full grid-cols-2 gap-4">
               <div className="space-y-2 relative">
                 <Label htmlFor="name">
@@ -229,6 +229,7 @@ export function AddProduct() {
             </div>
 
             <Button
+              form='myForm'
               disabled={isSubmitting}
               variant="secondary"
               className="disabled:cursor-not-allowed disabled:opacity-70"

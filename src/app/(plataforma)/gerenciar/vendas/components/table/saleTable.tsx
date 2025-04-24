@@ -65,7 +65,7 @@ export function SaleTable() {
           <TableHeader>
             <TableRow>
               <TableHead>CPF</TableHead>
-              <TableHead>Quantidade</TableHead>
+              <TableHead>Produtos(Qtd)</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Status</TableHead>
               <TableHead></TableHead>
