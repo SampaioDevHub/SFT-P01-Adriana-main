@@ -1,8 +1,8 @@
-export const paymentMethod = ["CREDIT", "DEBIT", "DINHERO", "PIX"]
+export const paymentMethod = ["CREDIT", "DEBIT", "MONEY", "PIX"]
 
 export const paymentLabels: Record<string, string> = {
     CREDIT: 'Cartão de Crédito',
     DEBIT: 'Cartão de Débito',
-    DINHERO: "Dinhero",
+    MONEY: "Dinhero",
     PIX: 'Pix',
   };

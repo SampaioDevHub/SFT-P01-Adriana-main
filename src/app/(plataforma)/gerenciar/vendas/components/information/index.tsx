@@ -9,10 +9,10 @@ import {
   formSchemaSaleInformation,
   FormSchemaSaleInformation,
 } from '../../_types/saleInformationDataYupType';
-import { SaleInformationData, useSale } from '@/_providers/saleContext';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
+import { SaleInformationData, useSale } from '@/_providers/saleContext';
 import { Button } from '@/_components/ui/button';
 import { Label } from '@/_components/ui/label';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,9 +23,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Command, CommandGroup, CommandItem } from '@/_components/ui/command';
 import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
+import { profileLabels } from '../../../clientes/_constants/customerProfile';
 import { paymentLabels, paymentMethod } from '../../_constants/paymentMethod';
 
 export function Information() {
+  const [customerProfile, setCustomerProfile] = useState('');
   const { setActiveTab, productData, informationData, setInformationData } =
     useSale();
   const [openCpf, setOpenCpf] = useState(false);
@@ -58,6 +60,7 @@ export function Information() {
       if (parsed.discountPercentage)
         setValue('discountPercentage', parsed.discountPercentage);
       if (parsed.paymentMethod) setValue('paymentMethod', parsed.paymentMethod);
+      if (parsed.profile) setCustomerProfile(parsed.profile);
     }
   }, [setValue]);
 
@@ -118,6 +121,7 @@ export function Information() {
         totalPrice,
         paymentMethod: data.paymentMethod,
         numberInstallments: 0,
+        profile: customerProfile
       };
 
       setInformationData(infoToSave);
@@ -179,6 +183,7 @@ export function Information() {
                                   onSelect={() => {
                                     setValue('customerCpf', customer.cpf);
                                     setValue('customerName', customer.name);
+                                    setCustomerProfile(customer.profile);
                                     setOpenCpf(false);
                                   }}
                                 >
@@ -213,9 +218,19 @@ export function Information() {
             </div>
 
             <div className="space-y-2 relative">
-              <Label htmlFor="search-name">
-                Nome do cliente{' '}
-                <span className="text-muted-foreground">(Pesquise)</span>
+              <Label
+                htmlFor="search-name"
+                className="flex items-center justify-between w-full"
+              >
+                <div>
+                  Nome do cliente{' '}
+                  <span className="text-muted-foreground">(Pesquise)</span>
+                </div>
+                <span
+                  className={`${customerProfile === 'BOM' ? 'text-green-500' : customerProfile === 'MEDIO' ? 'text-yellow-500' : 'text-destructive'}`}
+                >
+                  {profileLabels[customerProfile]}
+                </span>
               </Label>
               <Controller
                 name="customerName"
@@ -244,6 +259,7 @@ export function Information() {
                                   onSelect={() => {
                                     setValue('customerCpf', customer.cpf);
                                     setValue('customerName', customer.name);
+                                    setCustomerProfile(customer.profile);
                                     setOpenName(false);
                                   }}
                                 >
@@ -272,20 +288,6 @@ export function Information() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="discountPercentage">Desconto (%)</Label>
-              <Input
-                type="number"
-                id="discountPercentage"
-                {...register('discountPercentage')}
-              />
-              {errors.discountPercentage?.message && (
-                <p className="text-sm text-destructive">
-                  {errors.discountPercentage.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="edit-category">Método de Pagamento</Label>
               <select
                 className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
@@ -307,6 +309,20 @@ export function Information() {
               {errors.paymentMethod?.message && (
                 <p className={`text-sm text-destructive`}>
                   {errors.paymentMethod?.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="discountPercentage">Desconto (%)</Label>
+              <Input
+                type="number"
+                id="discountPercentage"
+                {...register('discountPercentage')}
+              />
+              {errors.discountPercentage?.message && (
+                <p className="text-sm text-destructive">
+                  {errors.discountPercentage.message}
                 </p>
               )}
             </div>

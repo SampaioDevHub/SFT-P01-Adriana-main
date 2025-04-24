@@ -37,6 +37,7 @@ import {
   Tags,
   Box,
 } from 'lucide-react';
+import { formatForReals } from '@/_utils/formatForReals';
 
 export function ProductReport() {
   const [search, setSearch] = useState('');
@@ -77,9 +78,9 @@ export function ProductReport() {
 
   const totalValue = useMemo(() => {
     const total = products.reduce((acc, cur) => {
-      return acc + (typeof cur.price === 'number' ? cur.price : 0);
+      return acc + (cur.price);
     }, 0);
-    return total.toFixed(2);
+    return total
   }, [products]);
 
   const lowStockCount = useMemo(() => {
@@ -146,14 +147,6 @@ export function ProductReport() {
     saveAs(data, 'Relatorio_Produtos.xlsx');
   };
 
-  if (isLoading) {
-    return <div className="text-center py-10">Carregando produtos...</div>;
-  }
-
-  if (isError) {
-    return <div className="text-center py-10 text-red-500">Erro ao carregar produtos.</div>;
-  }
-
   return (
     <div className="container space-y-8 py-8">
       {/* Estatísticas */}
@@ -170,7 +163,7 @@ export function ProductReport() {
             <CardTitle>Valor Total</CardTitle>
             <Tags className="h-5 w-5 text-green-500" />
           </CardHeader>
-          <CardContent>R$ {totalValue}</CardContent>
+          <CardContent>{formatForReals(totalValue)}</CardContent>
         </Card>
         <Card>
           <CardHeader className="flex items-center justify-between">

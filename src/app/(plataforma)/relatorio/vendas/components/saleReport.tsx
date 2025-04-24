@@ -34,6 +34,7 @@ import { Separator } from '@/_components/ui/separator';
 import { paymentLabels } from '@/app/(plataforma)/gerenciar/vendas/_constants/paymentMethod';
 import { statusLabels } from '@/app/(plataforma)/gerenciar/vendas/_constants/saleStatus';
 import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
+import { formatForReals } from '@/_utils/formatForReals';
 
 export function SalesReport() {
   const [search, setSearch] = useState('');
@@ -154,7 +155,7 @@ export function SalesReport() {
             <CardTitle>Valor Total</CardTitle>
             <Tags className="h-5 w-5 text-green-500" />
           </CardHeader>
-          <CardContent>R$ {totalRevenue.toFixed(2)}</CardContent>
+          <CardContent>{formatForReals(totalRevenue)}</CardContent>
         </Card>
         <Card>
           <CardHeader className="flex items-center justify-between">
@@ -193,20 +194,25 @@ export function SalesReport() {
             Vendas Realizadas
           </CardTitle>
         </CardHeader>
-        <Separator />
         <CardContent>
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
                 <ShoppingCart className="h-16 w-16 mb-4 text-gray-300" />
                 <p className="text-lg font-medium">Carregando vendas...</p>
-                <p className="text-sm">Aguarde um momento enquanto buscamos os dados.</p>
+                <p className="text-sm">
+                  Aguarde um momento enquanto buscamos os dados.
+                </p>
               </div>
             ) : isError ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-red-500">
                 <ShoppingCart className="h-16 w-16 mb-4 text-red-300" />
-                <p className="text-lg font-medium">Erro ao carregar as vendas</p>
-                <p className="text-sm text-red-400">Tente novamente mais tarde.</p>
+                <p className="text-lg font-medium">
+                  Erro ao carregar as vendas
+                </p>
+                <p className="text-sm text-red-400">
+                  Tente novamente mais tarde.
+                </p>
               </div>
             ) : filteredSales.length > 0 ? (
               <Table>
@@ -214,7 +220,7 @@ export function SalesReport() {
                   <TableRow>
                     <TableHead>CPF do Cliente</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Total</TableHead>
+                    <TableHead>Valor</TableHead>
                     <TableHead>Qtd. Itens</TableHead>
                     <TableHead>Método</TableHead>
                   </TableRow>
@@ -224,7 +230,23 @@ export function SalesReport() {
                     <TableRow key={sale.id}>
                       <TableCell>{sale.customerCpf}</TableCell>
                       <TableCell>{statusLabels[sale.status]}</TableCell>
-                      <TableCell>R$ {sale.totalPrice.toFixed(2)}</TableCell>
+                      <TableCell>
+                        {sale.discountPercentage ? (
+                          <div className="space-x-1 flex flex-wrap">
+                            <span
+                              style={{ textDecoration: 'line-through' }}
+                              className="text-xs text-muted-foreground className='whitespace-nowrap'"
+                            >
+                              {formatForReals(sale.subtotal)}
+                            </span>
+                            <span className="whitespace-nowrap">
+                              {formatForReals(sale.totalPrice)}
+                            </span>
+                          </div>
+                        ) : (
+                          <p>{formatForReals(sale.totalPrice)}</p>
+                        )}
+                      </TableCell>
                       <TableCell>{sale.totalItems}</TableCell>
                       <TableCell>{paymentLabels[sale.paymentMethod]}</TableCell>
                     </TableRow>
@@ -235,7 +257,9 @@ export function SalesReport() {
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
                 <ShoppingCart className="h-16 w-16 mb-4 text-gray-300" />
                 <p className="text-lg font-medium">Nenhuma venda encontrada</p>
-                <p className="text-sm">Cadastre uma venda, ou coloque um filtro válido.</p>
+                <p className="text-sm">
+                  Cadastre uma venda, ou coloque um filtro válido.
+                </p>
               </div>
             )}
           </ScrollArea>
