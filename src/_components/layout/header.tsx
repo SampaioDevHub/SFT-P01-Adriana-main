@@ -1,20 +1,22 @@
 /* eslint-disable no-console */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { SidebarTrigger } from '../ui/sidebar';
-import { Separator } from '../ui/separator';
-import { Breadcrumbs } from '../breadcrumbs';
-import SearchInput from '../kbar/search-input';
-import { ModeToggle } from './ModeToggle';
-import { Bell } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/_components/ui/dropdown-menu';
+import { Bell } from 'lucide-react';
+import { useState } from 'react';
+
 import { Button } from '@/_components/ui/button';
 import { Skeleton } from '@/_components/ui/skeleton';
+
+import { SearchInput } from '../kbar/search-input';
+import { Separator } from '../ui/separator';
+import { SidebarTrigger } from '../ui/sidebar';
+import { Breadcrumbs } from '../breadcrumbs';
+import { ModeToggle } from './ModeToggle';
 
 type Notification = {
   id: string;
@@ -23,7 +25,7 @@ type Notification = {
   date: string;
 };
 
-export default function Header() {
+export function Header() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 

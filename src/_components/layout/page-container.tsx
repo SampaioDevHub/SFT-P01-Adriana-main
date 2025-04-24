@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollArea } from '@/_components/ui/scroll-area';
 
-export default function PageContainer({
+export function PageContainer({
   children,
   scrollable = true,
 }: {

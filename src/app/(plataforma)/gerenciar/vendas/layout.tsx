@@ -2,7 +2,7 @@
 
 import { ReactNode, Suspense } from 'react';
 
-import { SaleProvider } from '@/_components/providers/saleContext';
+import { SaleProvider } from '@/_providers/saleContext';
 
 import { SaleSkeleton } from './components/skeleton/saleSkeleton';
 

@@ -4,14 +4,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/_components/ui/dialog';
 import { Button } from '@/_components/ui/button';
 
-interface UpdateStockModalProps {
+interface AlertStockModalProps {
   open: boolean;
   onClose: () => void;
   productName: string;
   currentStock: number;
 }
 
-export function UpdateStockModal({ open, onClose, productName, currentStock }: UpdateStockModalProps) {
+export function AlertStockModal({ open, onClose, productName, currentStock }: AlertStockModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>

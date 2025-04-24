@@ -1,9 +1,4 @@
-import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
-import { User, Tags, Calendar } from 'lucide-react';
-import { FileDown, FileSpreadsheet } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
-import * as XLSX from 'xlsx';
+'use client';
 
 import {
   Card,
@@ -11,12 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import { useQuery } from '@tanstack/react-query';
-import { getCustomers } from '@/_api/customers/get-customers'; // Supondo que tenha essa API
-import { Input } from '@/_components/ui/input';
-import { Button } from '@/_components/ui/button';
-import { Separator } from '@radix-ui/react-dropdown-menu';
-import { ScrollArea } from '@/_components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -25,6 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import { User, Tags, Calendar, FileDown, FileSpreadsheet } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import * as XLSX from 'xlsx';
+
+import { Input } from '@/_components/ui/input';
+import { Button } from '@/_components/ui/button';
+import { ScrollArea } from '@/_components/ui/scroll-area';
+import { useQuery } from '@tanstack/react-query';
+import { getCustomers } from '@/_api/customers/get-customers';
 import { profileLabels } from '@/app/(plataforma)/gerenciar/clientes/_constants/customerProfile';
 import { GetCustomersBody } from '@/_api/customers/_types/type-get-custumer';
 
@@ -32,29 +32,33 @@ export function CustomerReport() {
   const [search, setSearch] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const [customersData, setCustomersData] = useState<GetCustomersBody | null>(null);
-
-  useEffect(() => {
-    const fetchAllCustomers = async () => {
+  // Ajuste na consulta para garantir que o total de clientes seja obtido corretamente
+  const {
+    data: customersData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['customers'],
+    queryFn: async () => {
       try {
-        // 1. Primeira chamada só pra pegar o total de elementos
-        const firstResponse = await getCustomers({ pageSize: 1, pageIndex: 0 });
-        const total = firstResponse.totalElements;
-
-        // 2. Segunda chamada com pageSize = total
-        const fullData = await getCustomers({ pageSize: total, pageIndex: 0 });
-
-        setCustomersData(fullData);
+        const firstPage = await getCustomers({ pageSize: 1 });
+        const total = firstPage.totalElements;
+        // Verifique se a resposta é válida antes de fazer outra chamada
+        if (total) {
+          return await getCustomers({ pageSize: total });
+        }
+        return { content: [], totalElements: 0 }; // Retorna uma resposta vazia se não houver dados
       } catch (error) {
         console.error('Erro ao buscar clientes:', error);
+        return { content: [], totalElements: 0 };
       }
-    };
-
-    fetchAllCustomers();
-  }, []);
+    },
+    // Use a configuração staleTime para cache mais eficiente
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 
   const customers = useMemo(() => {
-    if (!customersData) return [];
+    if (!customersData || !customersData.content) return [];
     return customersData.content.filter(
       (c) =>
         c.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -62,7 +66,6 @@ export function CustomerReport() {
     );
   }, [customersData, search]);
 
-  // Calcular a média de idade dos clientes
   const averageAge = useMemo(() => {
     const totalAge = customers.reduce((acc, customer) => {
       if (customer.dateBirth) {
@@ -75,7 +78,6 @@ export function CustomerReport() {
     return customers.length > 0 ? (totalAge / customers.length).toFixed(1) : 0;
   }, [customers]);
 
-  // Contagem de clientes por perfil
   const profileCount = useMemo(() => {
     return customers.reduce(
       (acc, customer) => {
@@ -199,10 +201,25 @@ export function CustomerReport() {
           </div>
         </CardHeader>
 
-        <Separator />
         <CardContent>
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
-            {customers.length > 0 ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
+                <User className="h-16 w-16 mb-4 text-gray-300" />
+                <p className="text-lg font-medium">Carregando clientes...</p>
+                <p className="text-sm">
+                  Aguarde um momento enquanto buscamos os dados.
+                </p>
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center text-red-500">
+                <User className="h-16 w-16 mb-4 text-red-300" />
+                <p className="text-lg font-medium">Erro ao carregar os dados</p>
+                <p className="text-sm text-red-400">
+                  Tente novamente mais tarde.
+                </p>
+              </div>
+            ) : customers.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>

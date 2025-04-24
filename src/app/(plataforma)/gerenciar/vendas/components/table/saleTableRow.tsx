@@ -4,6 +4,7 @@ import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
 import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
+import { formatForReals } from '@/_utils/formatForReals';
 
 import { DeleteModal } from '../deleteModal';
 
@@ -23,20 +24,20 @@ export function SaleTableRow({
       <TableCell>{customerCpf}</TableCell>
       <TableCell>{totalItems}</TableCell>
       <TableCell>
-        {discountPercentage  ? (
+        {discountPercentage ? (
           <div className="space-x-1 flex flex-wrap">
             <span
               style={{ textDecoration: 'line-through' }}
               className="text-xs text-muted-foreground className='whitespace-nowrap'"
             >
-              R$ {subtotal.toString().replace('.', ',')}
+              {formatForReals(subtotal)}
             </span>
             <span className="whitespace-nowrap">
-              R$ {totalPrice.toString().replace('.', ',')}
+              {formatForReals(totalPrice)}
             </span>
           </div>
         ) : (
-          <p>R$ {totalPrice.toString().replace('.', ',')}</p>
+          <p>{formatForReals(totalPrice)}</p>
         )}
       </TableCell>
       <TableCell>

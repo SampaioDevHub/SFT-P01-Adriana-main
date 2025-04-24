@@ -9,10 +9,7 @@ import {
   formSchemaSaleInformation,
   FormSchemaSaleInformation,
 } from '../../_types/saleInformationDataYupType';
-import {
-  SaleInformationData,
-  useSale,
-} from '@/_components/providers/saleContext';
+import { SaleInformationData, useSale } from '@/_providers/saleContext';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -30,112 +27,112 @@ import { paymentLabels, paymentMethod } from '../../_constants/paymentMethod';
 
 export function Information() {
   const { setActiveTab, productData, informationData, setInformationData } =
-  useSale();
-const [openCpf, setOpenCpf] = useState(false);
-const [openName, setOpenName] = useState(false);
-const {
-  handleSubmit,
-  register,
-  watch,
-  setError,
-  setValue,
-  control,
-  formState: { errors, isSubmitting },
-} = useForm<FormSchemaSaleInformation>({
-  resolver: yupResolver(formSchemaSaleInformation({ finishLater: false })),
-  defaultValues: {
-    customerName: '',
-    customerCpf: informationData.customerCpf ?? '',
-    discountPercentage: informationData.discountPercentage ?? 0,
-    paymentMethod: informationData.paymentMethod ?? '',
-  },
-});
+    useSale();
+  const [openCpf, setOpenCpf] = useState(false);
+  const [openName, setOpenName] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    watch,
+    setError,
+    setValue,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<FormSchemaSaleInformation>({
+    resolver: yupResolver(formSchemaSaleInformation({ finishLater: false })),
+    defaultValues: {
+      customerName: '',
+      customerCpf: informationData.customerCpf ?? '',
+      discountPercentage: informationData.discountPercentage ?? 0,
+      paymentMethod: informationData.paymentMethod ?? '',
+    },
+  });
 
-// 🔁 Carregar dados do localStorage ao montar o componente
-useEffect(() => {
-  const savedData = localStorage.getItem('saleInformation');
-  if (savedData) {
-    const parsed = JSON.parse(savedData);
-    if (parsed.customerCpf) setValue('customerCpf', parsed.customerCpf);
-    if (parsed.customerName) setValue('customerName', parsed.customerName);
-    if (parsed.discountPercentage)
-      setValue('discountPercentage', parsed.discountPercentage);
-    if (parsed.paymentMethod)
-      setValue('paymentMethod', parsed.paymentMethod);
-  }
-}, [setValue]);
-
-const cpf = watch('customerCpf');
-const [debouncedSearch, setDebouncedSearch] = useState('');
-
-useEffect(() => {
-  const handler = setTimeout(() => {
-    setDebouncedSearch(cpf || '');
-  }, 300);
-  return () => clearTimeout(handler);
-}, [cpf]);
-
-const { data: customers, isLoading } = useQuery({
-  queryKey: ['customers', debouncedSearch],
-  queryFn: () => getCustomers({ cpfFilter: debouncedSearch }),
-  enabled: debouncedSearch.length >= 2,
-});
-
-const nameSearch = watch('customerName');
-const [debouncedName, setDebouncedName] = useState('');
-
-useEffect(() => {
-  const handler = setTimeout(() => {
-    setDebouncedName(nameSearch);
-  }, 300);
-  return () => clearTimeout(handler);
-}, [nameSearch]);
-
-const { data: customersByName, isLoading: loadingByName } = useQuery({
-  queryKey: ['customersByName', debouncedName],
-  queryFn: () => getCustomers({ nameFilter: debouncedName }),
-  enabled: debouncedName.length >= 2,
-});
-
-// ✅ Atualizado com salvamento no localStorage
-async function handleAddInformations(data: FormSchemaSaleInformation) {
-  try {
-    const customerData = await getCustomers({ cpfFilter: data.customerCpf });
-
-    if (!customerData?.content?.length) {
-      setError('customerCpf', {
-        type: 'manual',
-        message: 'Cliente não encontrado.',
-      });
-      return;
+  // 🔁 Carregar dados do localStorage ao montar o componente
+  useEffect(() => {
+    const savedData = localStorage.getItem('saleInformation');
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      if (parsed.customerCpf) setValue('customerCpf', parsed.customerCpf);
+      if (parsed.customerName) setValue('customerName', parsed.customerName);
+      if (parsed.discountPercentage)
+        setValue('discountPercentage', parsed.discountPercentage);
+      if (parsed.paymentMethod) setValue('paymentMethod', parsed.paymentMethod);
     }
+  }, [setValue]);
 
-    const selected = customerData.content[0];
-    const discount = data.discountPercentage ?? 0;
-    const discountAmount = (productData.subtotal * discount) / 100;
-    const totalPrice = productData.subtotal - discountAmount;
+  const cpf = watch('customerCpf');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
-    const infoToSave = {
-      customerCpf: selected.cpf,
-      customerName: selected.name,
-      discountPercentage: data.discountPercentage,
-      totalPrice,
-      paymentMethod: data.paymentMethod,
-    };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(cpf || '');
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [cpf]);
 
-    setInformationData(infoToSave);
+  const { data: customers, isLoading } = useQuery({
+    queryKey: ['customers', debouncedSearch],
+    queryFn: () => getCustomers({ cpfFilter: debouncedSearch }),
+    enabled: debouncedSearch.length >= 2,
+  });
 
-    // ✅ Salvar no localStorage
-    localStorage.setItem('saleInformation', JSON.stringify(infoToSave));
+  const nameSearch = watch('customerName');
+  const [debouncedName, setDebouncedName] = useState('');
 
-    setActiveTab('overview');
-  } catch (error) {
-    setError('root', {
-      type: 'manual',
-      message: 'Erro ao buscar cliente. Tente novamente.',
-    });
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedName(nameSearch);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [nameSearch]);
+
+  const { data: customersByName, isLoading: loadingByName } = useQuery({
+    queryKey: ['customersByName', debouncedName],
+    queryFn: () => getCustomers({ nameFilter: debouncedName }),
+    enabled: debouncedName.length >= 2,
+  });
+
+  // ✅ Atualizado com salvamento no localStorage
+  async function handleAddInformations(data: FormSchemaSaleInformation) {
+    try {
+      const customerData = await getCustomers({ cpfFilter: data.customerCpf });
+
+      if (!customerData?.content?.length) {
+        setError('customerCpf', {
+          type: 'manual',
+          message: 'Cliente não encontrado.',
+        });
+        return;
+      }
+
+      const selected = customerData.content[0];
+      const discount = data.discountPercentage ?? 0;
+      const discountAmount = (productData.subtotal * discount) / 100;
+      const totalPrice = productData.subtotal - discountAmount;
+
+      const infoToSave = {
+        customerCpf: selected.cpf,
+        customerName: selected.name,
+        discountPercentage: data.discountPercentage,
+        totalPrice,
+        paymentMethod: data.paymentMethod,
+        numberInstallments: 0,
+      };
+
+      setInformationData(infoToSave);
+
+      // ✅ Salvar no localStorage
+      localStorage.setItem('saleInformation', JSON.stringify(infoToSave));
+
+      setActiveTab('overview');
+    } catch (error) {
+      setError('root', {
+        type: 'manual',
+        message: 'Erro ao buscar cliente. Tente novamente.',
+      });
+    }
   }
-}
 
   return (
     <Card>
@@ -144,7 +141,10 @@ async function handleAddInformations(data: FormSchemaSaleInformation) {
         <CardDescription>Adicione as informações necessárias</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(handleAddInformations)} className="space-y-4">
+        <form
+          onSubmit={handleSubmit(handleAddInformations)}
+          className="space-y-4"
+        >
           <div className="grid w-full grid-cols-2 gap-4">
             <div className="space-y-2 relative">
               <Label htmlFor="cpf">

@@ -9,23 +9,31 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import { useEffect, useState } from 'react';
+import { UseFormSetError } from 'react-hook-form';
 
 import { Button } from '@/_components/ui/button';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
-import { useSale } from '@/_components/providers/saleContext';
+import { useSale } from '@/_providers/saleContext';
 
 import { ListProductType } from '../../_types/listProductsType';
 import { DeleteSelectedProductModal } from './deleteSelectedProductModal';
+import { formatForReals } from '@/_utils/formatForReals';
 
-interface TableOfSelectedProducts {
+type TableOfSelectedProductsProps = {
   products: ListProductType[];
-  removeProduct: (id: string) => void;
-}
+  removeProduct: (productId: string) => void;
+  name: string; // Recebe o valor de 'name' de AddProduct
+  setError: UseFormSetError<{
+    name: string;
+  }>;
+};
 
 export function TableOfSelectedProducts({
   products,
   removeProduct,
-}: TableOfSelectedProducts) {
+  name,
+  setError,
+}: TableOfSelectedProductsProps) {
   const [
     isDeleteSelectedProductModalOpen,
     setIsDeleteSelectedProductModalOpen,
@@ -43,15 +51,26 @@ export function TableOfSelectedProducts({
   const { setProductData, setActiveTab } = useSale();
 
   function handleAddProductsInContext() {
+    if (name) {
+      setError('name', {
+        type: 'manual',
+        message: 'Por favor, adicione o produto antes de continuar.',
+      });
+      return;
+    }
     try {
       setIsLoading(true);
       setProductData({
         products: displayedProducts,
-        totalItems: displayedProducts.reduce((acc, product) => acc + product.amount, 0),
+        totalItems: displayedProducts.reduce(
+          (acc, product) => acc + product.amount,
+          0
+        ),
         subtotal: displayedProducts.reduce((acc, product) => {
           const discount = Number(product.priceWithDiscount);
           const totalPrice = Number(product.totalPrice);
-          const validValue = !isNaN(discount) && discount > 0 ? discount : totalPrice;
+          const validValue =
+            !isNaN(discount) && discount > 0 ? discount : totalPrice;
           return acc + validValue;
         }, 0),
       });
@@ -62,34 +81,31 @@ export function TableOfSelectedProducts({
     }
   }
 
-  function formatForReals(valor: number) {
-    return `R$ ${valor.toFixed(2).replace('.', ',')}`;
-  }
-
   useEffect(() => {
     const storedProducts = localStorage.getItem('products');
-    let initialProducts = products;
+    let existingProducts: ListProductType[] = [];
 
     if (storedProducts) {
       try {
-        const parsed = JSON.parse(storedProducts) as ListProductType[];
-        // Mescla os produtos do localStorage com os novos, evitando duplicatas
-        const merged = [...parsed];
-
-        products.forEach((newProduct) => {
-          const exists = parsed.find((p) => p.id === newProduct.id);
-          if (!exists) {
-            merged.push(newProduct);
-          }
-        });
-
-        initialProducts = merged;
+        existingProducts = JSON.parse(storedProducts);
       } catch (e) {
         console.error('Erro ao carregar produtos do localStorage', e);
       }
     }
 
-    setDisplayedProducts(initialProducts);
+    // Mescla os produtos novos com os que já existem no localStorage
+    const mergedProducts = [...existingProducts];
+
+    products.forEach((newProduct) => {
+      const exists = mergedProducts.find((p) => p.id === newProduct.id);
+      if (!exists) {
+        mergedProducts.push(newProduct);
+      }
+    });
+
+    // Atualiza o estado e o localStorage
+    setDisplayedProducts(mergedProducts);
+    localStorage.setItem('products', JSON.stringify(mergedProducts));
   }, [products]);
 
   return (
@@ -120,8 +136,7 @@ export function TableOfSelectedProducts({
                   <TableCell>{product.amount}</TableCell>
                   <TableCell>{product.discountPercentage}%</TableCell>
                   <TableCell>
-                    {product.discountPercentage &&
-                    product.priceWithDiscount ? (
+                    {product.discountPercentage && product.priceWithDiscount ? (
                       <div className="space-x-1 flex flex-wrap">
                         <span
                           style={{ textDecoration: 'line-through' }}
@@ -169,6 +184,7 @@ export function TableOfSelectedProducts({
         </Table>
       </div>
       <Button
+        type="button"
         disabled={displayedProducts.length === 0 || isLoading}
         onClick={handleAddProductsInContext}
         className="disabled:cursor-not-allowed disabled:opacity-70 bg-green-500 text-background col-span-1 font-bold hover:bg-green-600"

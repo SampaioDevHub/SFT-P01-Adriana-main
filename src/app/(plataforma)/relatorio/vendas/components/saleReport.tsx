@@ -40,23 +40,32 @@ export function SalesReport() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [sales, setSales] = useState<GetSaleContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     async function fetchAllSales() {
       setIsLoading(true);
+      setIsError(false);
 
-      // Primeiro, pega a primeira página para descobrir o total de vendas
-      const firstPage = await getSales({ pageIndex: 0 });
-      const totalElements = firstPage.totalElements;
+      try {
+        const firstPage = await getSales({});
+        const totalElements = firstPage.totalElements;
 
-      // Agora busca tudo de uma vez
-      const allSales = await getSales({
-        pageIndex: 0,
-        pageSize: totalElements,
-      });
-
-      setSales(allSales.content);
-      setIsLoading(false);
+        if (totalElements > 0) {
+          const allSales = await getSales({
+            pageIndex: 0,
+            pageSize: totalElements,
+          });
+          setSales(allSales.content);
+        } else {
+          setSales([]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar vendas:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchAllSales();
@@ -178,7 +187,7 @@ export function SalesReport() {
 
       {/* Tabela */}
       <Card className="w-full bg-muted/30">
-        <CardHeader>
+        <CardHeader className="flex items-center justify-between space-y-2">
           <CardTitle className="flex items-center gap-2">
             <ShoppingCart className="h-6 w-6 text-primary" />
             Vendas Realizadas
@@ -188,8 +197,16 @@ export function SalesReport() {
         <CardContent>
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
             {isLoading ? (
-              <div className="text-center py-12 text-muted-foreground">
-                Carregando...
+              <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
+                <ShoppingCart className="h-16 w-16 mb-4 text-gray-300" />
+                <p className="text-lg font-medium">Carregando vendas...</p>
+                <p className="text-sm">Aguarde um momento enquanto buscamos os dados.</p>
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center text-red-500">
+                <ShoppingCart className="h-16 w-16 mb-4 text-red-300" />
+                <p className="text-lg font-medium">Erro ao carregar as vendas</p>
+                <p className="text-sm text-red-400">Tente novamente mais tarde.</p>
               </div>
             ) : filteredSales.length > 0 ? (
               <Table>
@@ -209,16 +226,16 @@ export function SalesReport() {
                       <TableCell>{statusLabels[sale.status]}</TableCell>
                       <TableCell>R$ {sale.totalPrice.toFixed(2)}</TableCell>
                       <TableCell>{sale.totalItems}</TableCell>
-                      <TableCell>
-                        {paymentLabels[sale.paymentMethod]}
-                      </TableCell>
+                      <TableCell>{paymentLabels[sale.paymentMethod]}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                Nenhuma venda encontrada
+              <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+                <ShoppingCart className="h-16 w-16 mb-4 text-gray-300" />
+                <p className="text-lg font-medium">Nenhuma venda encontrada</p>
+                <p className="text-sm">Cadastre uma venda, ou coloque um filtro válido.</p>
               </div>
             )}
           </ScrollArea>

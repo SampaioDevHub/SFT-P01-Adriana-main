@@ -34,7 +34,7 @@ export const company = {
   logo: GalleryVerticalEnd,
 };
 
-export default function AppSidebar() {
+export function AppSidebar() {
   const pathname = usePathname();
 
   return (

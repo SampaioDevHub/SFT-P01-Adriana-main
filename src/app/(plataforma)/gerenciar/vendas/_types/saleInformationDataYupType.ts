@@ -36,7 +36,6 @@ export const formSchemaSaleInformation = ({
       .required('O campo "Nome do cliente" é obrigatório.'),
     discountPercentage: yup
       .number()
-      .nullable()
       .transform((value, originalValue) =>
         originalValue === '' ? undefined : value
       ) // Permite campo vazio

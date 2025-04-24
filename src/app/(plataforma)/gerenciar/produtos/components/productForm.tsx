@@ -32,6 +32,7 @@ import { MoneyInput } from '@/_components/Inputs/moneyInput';
 
 import { availableSizes } from '../_constants/availableSizes';
 import { FormSchemaProduct, formSchemaProduct } from '../_types/productYupType';
+import { v4 as uuidV4 } from 'uuid';
 
 export function ProductForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,7 +52,7 @@ export function ProductForm() {
     defaultValues: {
       category: '',
       size: '',
-      price: '',
+      code: uuidV4()
     },
   });
 
@@ -228,7 +229,7 @@ export function ProductForm() {
             <Controller
               name="price" // Nome do campo no formulário
               control={control}
-              render={({ field }) => <MoneyInput {...field} />}
+              render={({ field }) => <MoneyInput {...field} value={String(field.value || '')} />}
             />
             {errors.price?.message && (
               <p className={`text-sm text-destructive`}>

@@ -10,16 +10,15 @@ import {
 import {
   Command,
   CommandGroup,
-  CommandInput,
   CommandItem,
 } from '@/_components/ui/command';
 import {
   formSchemaSaleProduct,
   FormSchemaSaleProduct,
 } from '../../_types/saleProductYupType';
-import { Search } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/_components/ui/input';
@@ -27,12 +26,20 @@ import { Label } from '@/_components/ui/label';
 import { Button } from '@/_components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/_api/products/get-products';
-import { TableOfSelectedProducts } from './tableOfSelectedProducts';
+
 import { ListProductType } from '../../_types/listProductsType';
-import { UpdateStockModal } from '../updateStockModal';
+import { AlertStockModal } from '../alertStockModal';
+import { TableOfSelectedProducts } from './tableOfSelectedProducts';
 
 export function AddProduct() {
   const [listProducts, setListProducts] = useState<ListProductType[]>([]);
+
+  useEffect(() => {
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      setListProducts(JSON.parse(storedProducts));
+    }
+  }, []);
 
   const [showUpdateStockModal, setShowUpdateStockModal] = useState(false);
   const [stockProductName, setStockProductName] = useState('');
@@ -72,7 +79,7 @@ export function AddProduct() {
     enabled: debouncedSearch.length >= 2,
   });
 
-  function handleRemoveProduct (productId: string) {
+  function handleRemoveProduct(productId: string) {
     const updatedList = listProducts.filter(product => product.id !== productId);
     setListProducts(updatedList);
     // Atualizar no localStorage
@@ -82,7 +89,7 @@ export function AddProduct() {
   async function handleAddProductInList(data: FormSchemaSaleProduct) {
     try {
       const productData = await getProducts({ nameFilter: data.name });
-
+  
       if (!productData?.content?.length) {
         setError('name', {
           type: 'manual',
@@ -90,40 +97,61 @@ export function AddProduct() {
         });
         return;
       }
-
+  
       const selected = productData.content[0];
-
-       // ✅ Validação de estoque
-       if (selected.quantityInStock < data.amount) {
-        setStockProductName(selected.name);
-        setStockQuantity(selected.quantityInStock);
-        setShowUpdateStockModal(true);
-        return;
+  
+      // Verificar estoque disponível
+      const totalRequestedAmount = data.amount;
+      const existingProduct = listProducts.find(p => p.id === selected.id);
+  
+      if (existingProduct) {
+        const newAmount = existingProduct.amount + totalRequestedAmount;
+  
+        if (newAmount > selected.quantityInStock) {
+          setStockProductName(selected.name);
+          setStockQuantity(selected.quantityInStock);
+          setShowUpdateStockModal(true);
+          return;
+        }
+  
+        // Atualizar quantidade do produto existente
+        const updatedList = listProducts.map(product => 
+          product.id === selected.id 
+            ? { ...product, amount: newAmount } 
+            : product
+        );
+  
+        setListProducts(updatedList);
+        localStorage.setItem('products', JSON.stringify(updatedList));
+      } else {
+        if (totalRequestedAmount > selected.quantityInStock) {
+          setStockProductName(selected.name);
+          setStockQuantity(selected.quantityInStock);
+          setShowUpdateStockModal(true);
+          return;
+        }
+  
+        const unitPrice = selected.priceWithDiscount ? selected.priceWithDiscount : selected.price;
+        const priceWithDiscount = selected.priceWithDiscount || 0 * data.amount;
+        const totalPrice = selected.price * data.amount;
+  
+        const product: ListProductType = {
+          id: selected.id,
+          code: selected.code,
+          name: selected.name,
+          unitPrice,
+          amount: data.amount,
+          priceWithDiscount: priceWithDiscount,
+          discountPercentage: selected.discountPercentage,
+          totalPrice,
+        };
+  
+        const updatedList = [...listProducts, product];
+        setListProducts(updatedList);
+        localStorage.setItem('products', JSON.stringify(updatedList));
       }
-
-      console.log(productData)
-
-      const unitPrice = selected.priceWithDiscount ? Number(selected.priceWithDiscount) : Number(selected.price);
-      const totalPrice = Number(selected.price) * data.amount;
-      const priceWithDiscount = Number(selected.priceWithDiscount) * data.amount
-
-      const product: ListProductType = {
-        id: selected.id,
-        code: selected.code,
-        name: selected.name,
-        unitPrice,
-        amount: data.amount,
-        priceWithDiscount: String(priceWithDiscount),
-        discountPercentage: selected.discountPercentage,
-        totalPrice,
-      };
-
-      const updatedList = [...listProducts, product];
-      setListProducts(updatedList);
-      // Salvar no localStorage
-      localStorage.setItem('products', JSON.stringify(updatedList));
-
-      reset()
+  
+      reset();
     } catch (error) {
       setError('root', {
         type: 'manual',
@@ -140,10 +168,7 @@ export function AddProduct() {
           <CardDescription>Adicione os produtos cadastrados</CardDescription>
         </CardHeader>
         <CardContent>
-          <form
-            onSubmit={handleSubmit(handleAddProductInList)}
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmit(handleAddProductInList)} className="space-y-4">
             <div className="grid w-full grid-cols-2 gap-4">
               <div className="space-y-2 relative">
                 <Label htmlFor="name">
@@ -163,14 +188,10 @@ export function AddProduct() {
                         onFocus={() => setOpen(true)}
                         onBlur={() => setTimeout(() => setOpen(false), 200)}
                       />
-
                       {open && (
                         <div className="absolute z-50 w-full border rounded-md shadow-md mt-1">
                           <Command>
-                            <CommandGroup
-                              className="max-h-[30vh] overflow-auto"
-                              heading="Resultados"
-                            >
+                            <CommandGroup className="max-h-[30vh] overflow-auto" heading="Resultados">
                               {products?.content?.length ? (
                                 products.content.map((product) => (
                                   <CommandItem
@@ -182,19 +203,13 @@ export function AddProduct() {
                                     }}
                                   >
                                     <div className="flex flex-col">
-                                      <span className="font-medium">
-                                        {product.name}
-                                      </span>
-                                      <span className="text-sm text-muted-foreground">
-                                        Categoria: {product.category}
-                                      </span>
+                                      <span className="font-medium">{product.name}</span>
+                                      <span className="text-sm text-muted-foreground">Categoria: {product.category}</span>
                                     </div>
                                   </CommandItem>
                                 ))
                               ) : (
-                                <div className="text-muted-foreground p-2">
-                                  Nenhum produto encontrado
-                                </div>
+                                <div className="text-muted-foreground p-2">Nenhum produto encontrado</div>
                               )}
                             </CommandGroup>
                           </Command>
@@ -203,22 +218,13 @@ export function AddProduct() {
                     </div>
                   )}
                 />
-
-                {errors.name?.message && (
-                  <p className="text-sm text-destructive">
-                    {errors.name?.message}
-                  </p>
-                )}
+                {errors.name?.message && <p className="text-sm text-destructive">{errors.name?.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="amount">Quantidade</Label>
-                <Input id="amount" type="number" {...register(`amount`)} />
-                {errors.amount?.message && (
-                  <p className="text-sm text-destructive">
-                    {errors.amount?.message}
-                  </p>
-                )}
+                <Input min={1} id="amount" type="number" {...register('amount')} />
+                {errors.amount?.message && <p className="text-sm text-destructive">{errors.amount?.message}</p>}
               </div>
             </div>
 
@@ -231,11 +237,16 @@ export function AddProduct() {
               {isSubmitting ? 'Adicionando...' : 'Adicionar Produto'}
             </Button>
 
-            <TableOfSelectedProducts removeProduct={handleRemoveProduct} products={listProducts} />
+            <TableOfSelectedProducts
+              removeProduct={handleRemoveProduct}
+              products={listProducts}
+              name={name} // Passando o valor de 'name'
+              setError={setError} // Para disparar um erro no AddProduct
+            />
           </form>
         </CardContent>
       </Card>
-      <UpdateStockModal
+      <AlertStockModal
         open={showUpdateStockModal}
         onClose={() => setShowUpdateStockModal(false)}
         productName={stockProductName}
@@ -244,3 +255,4 @@ export function AddProduct() {
     </div>
   );
 }
+

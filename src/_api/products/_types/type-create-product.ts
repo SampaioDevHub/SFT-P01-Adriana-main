@@ -1,8 +1,8 @@
 export interface CreateProductBody {
-  code?: string;
+  code: string;
   name: string;
-  discountPercentage?: number | null;
-  price: string;
+  discountPercentage?: number;
+  price: number;
   quantityInStock: number;
   size?: string;
   category: string;

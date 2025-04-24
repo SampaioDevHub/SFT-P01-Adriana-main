@@ -6,10 +6,10 @@ import { CreateSaleBody } from '@/_api/sales/_types/type-create-sale';
 import { createSale } from '@/_api/sales/create-sale';
 
 export interface SaleProduct {
-  code?: string;
+  code: string;
   name: string;
   unitPrice: number;
-  priceWithDiscount?: string;
+  priceWithDiscount?: number;
   totalPrice: number;
   amount: number;
 }
@@ -18,9 +18,10 @@ export interface SaleInformationData {
   customerCpf: string;
   startDate?: Date;
   endDate?: Date;
-  discountPercentage?: number | null;
+  discountPercentage?: number;
   totalPrice: number;
   paymentMethod: string;
+  numberInstallments: number
 }
 
 export interface SaleProductData {
@@ -49,6 +50,7 @@ export function SaleProvider({ children }: { children: ReactNode }) {
     discountPercentage: 0,
     totalPrice: 0,
     paymentMethod: '',
+    numberInstallments: 0
   });
 
   const [productData, setProductData] = useState<SaleProductData>({
@@ -81,6 +83,7 @@ export function SaleProvider({ children }: { children: ReactNode }) {
       ...productData,
       status: 'PENDENTE',
       totalPrice,
+      numberInstallments: 0,
     };
 
     console.log(payload);
@@ -94,6 +97,7 @@ export function SaleProvider({ children }: { children: ReactNode }) {
       discountPercentage: 0,
       totalPrice: 0,
       paymentMethod: '',
+      numberInstallments: 0
     });
 
     setProductData({

@@ -8,17 +8,16 @@ import {
   TabsTrigger,
 } from '@/_components/ui/tabs';
 import { motion } from 'framer-motion';
+import { useSale } from '@/_providers/saleContext';
 import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
-import { useSale } from '@/_components/providers/saleContext';
-import PageContainer from '@/_components/layout/page-container';
+import { PageContainer } from '@/_components/layout/page-container';
 
 import { SaleTable } from './components/table/saleTable';
 import { AddProduct } from './components/addProduct';
 import { Information } from './components/information';
 import { Overview } from './components/overview';
-
 
 export default function RegisterSale() {
   const [isFormVisible, setIsFormVisible] = useState(false);

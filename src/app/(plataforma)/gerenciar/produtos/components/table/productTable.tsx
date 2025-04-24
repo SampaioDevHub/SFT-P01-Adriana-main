@@ -86,7 +86,7 @@ export function ProductTable() {
               ))
             ) : (
               <TableRow className="w-full">
-                <TableCell colSpan={5} className="text-center w-full p-4">
+                <TableCell colSpan={7} className="text-center w-full p-4">
                   <span>Nenhum produto encontrado</span>
                 </TableCell>
               </TableRow>

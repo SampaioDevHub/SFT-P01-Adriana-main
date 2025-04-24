@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 import { Suspense, useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
-import PageContainer from '@/_components/layout/page-container';
+import { PageContainer } from '@/_components/layout/page-container';
 
+import { CustomerSkeleton } from './components/skeleton/customerSkeleton';
 import { CustomerTable } from './components/table/customerTable';
 import { CustomerForm } from './components/customerForm';
-import { CustomerSkeleton } from './components/skeleton/customerSkeleton';
 
 <Suspense fallback={<CustomerSkeleton />}>
   <CustomerSkeleton />

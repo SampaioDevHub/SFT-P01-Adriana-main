@@ -1,9 +1,10 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { useUser } from '@clerk/nextjs';
-import PageContainer from '@/_components/layout/page-container';
+
+import { PageContainer } from '@/_components/layout/page-container';
 
 import { ActiveCustomersCard } from './_components/cards/day-orders-amount-card';
 import { MonthOrdersAmountCard } from './_components/cards/month-orders-amount-card';

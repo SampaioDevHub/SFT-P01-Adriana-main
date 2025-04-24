@@ -1,16 +1,18 @@
 'use client';
 
-import { Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
-import PageContainer from '@/_components/layout/page-container';
-import { ProductForm } from './components/productForm';
-import { ProductTable } from './components/table/productTable';
+import { Suspense, useState } from 'react';
+
 import { Button } from '@/_components/ui/button';
+import { PageContainer } from '@/_components/layout/page-container';
+
 import { ProductSkeleton } from './components/skeleton/productSkeleton';
+import { ProductTable } from './components/table/productTable';
+import { ProductForm } from './components/productForm';
 
 <Suspense fallback={<ProductSkeleton />}>
   <RegisterProduct />
-</Suspense>
+</Suspense>;
 
 export default function RegisterProduct() {
   const [isFormVisible, setIsFormVisible] = useState(false);

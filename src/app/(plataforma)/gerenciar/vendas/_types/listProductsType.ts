@@ -1,10 +1,10 @@
 
 export interface ListProductType {
   id: string;
-  code?: string;
+  code: string;
   name: string;
-  discountPercentage?: number | null;
-  priceWithDiscount?: string
+  discountPercentage?: number;
+  priceWithDiscount?: number;
   unitPrice: number;
   totalPrice: number;
   amount: number;

@@ -18,10 +18,11 @@ import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { TabsList, TabsTrigger } from '@/_components/ui/tabs';
-import { useSale } from '@/_components/providers/saleContext';
+import { useSale } from '@/_providers/saleContext';
 import { AlertError } from '@/_components/alert/alert-error';
 
 import { paymentLabels } from '../../_constants/paymentMethod';
+import { formatForReals } from '@/_utils/formatForReals';
 
 export function Overview() {
   const {
@@ -33,10 +34,6 @@ export function Overview() {
     resetSaleData,
   } = useSale();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  function formatForReals(valor: number) {
-    return `R$ ${valor.toFixed(2).replace('.', ',')}`;
-  }
 
   async function handleCreateSale() {
     try {
@@ -110,7 +107,7 @@ export function Overview() {
                             informationData.discountPercentage) /
                             100
                         )
-                      : 'não teve desconto'}
+                      : 'Não teve desconto'}
                   </span>
                 </div>
               </div>

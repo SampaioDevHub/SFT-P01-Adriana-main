@@ -1,12 +1,12 @@
 // layout.tsx
-import KBar from '@/_components/kbar';
-import AppSidebar from '@/_components/layout/sidebar';
-import Header from '@/_components/layout/header';
-import { SidebarInset, SidebarProvider } from '@/_components/ui/sidebar';
-
-import { cookies } from 'next/headers';
 import { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
+
+import { SidebarInset, SidebarProvider } from '@/_components/ui/sidebar';
+import { AppSidebar } from '@/_components/layout/sidebar';
+import { Header } from '@/_components/layout/header';
+import { KBar } from '@/_components/kbar';
 
 export const metadata: Metadata = {
   title: 'Painel Principal',
@@ -37,9 +37,7 @@ export default async function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <Header />
-          <main className="flex flex-col flex-1">
-            {children}
-          </main>
+          <main className="flex flex-col flex-1">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </KBar>
