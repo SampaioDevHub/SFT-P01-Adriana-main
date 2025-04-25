@@ -6,13 +6,9 @@ import { Suspense, useState } from 'react';
 import { Button } from '@/_components/ui/button';
 import { PageContainer } from '@/_components/layout/page-container';
 
-import { CustomerSkeleton } from './components/skeleton/customerSkeleton';
 import { CustomerTable } from './components/table/customerTable';
 import { CustomerForm } from './components/customerForm';
 
-<Suspense fallback={<CustomerSkeleton />}>
-  <CustomerSkeleton />
-</Suspense>;
 
 export default function CustomersPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);
