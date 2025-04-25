@@ -86,7 +86,6 @@ export function SaleProvider({ children }: { children: ReactNode }) {
       numberInstallments: 0,
     };
 
-    console.log(payload);
 
     return sendSale(payload);
   };

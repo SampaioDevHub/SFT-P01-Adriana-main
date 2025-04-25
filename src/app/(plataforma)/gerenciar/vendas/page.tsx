@@ -24,10 +24,10 @@ export default function RegisterSale() {
   const { activeTab, setActiveTab, productData, informationData } = useSale();
 
   // Verifica se o produto foi adicionado
-  const isProductAdded = productData.products.length > 0;
+  const isProductAdded = productData?.products?.length > 0;
 
   // Verifica se o cliente foi adicionado
-  const isClientAdded = !!informationData.customerCpf;
+  const isClientAdded = !!informationData?.customerCpf;
 
   return (
     <PageContainer>

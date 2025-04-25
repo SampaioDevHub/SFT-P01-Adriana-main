@@ -158,7 +158,6 @@ export function CustomerForm() {
   });
 
   async function handleCreateCustomer(data: FormSchemaCustomer) {
-    console.log(data.profile)
     try {
       await createCustomerFn({
         name: data.name,

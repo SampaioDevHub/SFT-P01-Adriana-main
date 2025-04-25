@@ -29,8 +29,6 @@ export function SaleTable() {
   const statusFilter = searchParams.get('status') ?? '';
   const priceFilter = searchParams.get('price') ?? '';
 
-  console.log(cpfFilter, statusFilter, priceFilter);
-
   const pageIndex = z.coerce
     .number()
     .transform((page) => page - 1)

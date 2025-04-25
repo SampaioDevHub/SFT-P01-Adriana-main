@@ -13,17 +13,6 @@ export async function createSale({
   totalPrice,
   numberInstallments,
 }: CreateSaleBody) {
-  console.log(
-    discountPercentage,
-    status,
-    totalItems,
-    customerCpf,
-    products,
-    paymentMethod,
-    subtotal,
-    totalPrice,
-    numberInstallments
-  );
   await api.post('/sales/create', {
     discountPercentage,
     status,
