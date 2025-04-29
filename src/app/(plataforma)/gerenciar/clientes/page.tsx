@@ -8,11 +8,7 @@ import PageContainer from '@/_components/layout/page-container';
 
 import { CustomerTable } from './components/table/customerTable';
 import { CustomerForm } from './components/customerForm';
-import { CustomerSkeleton } from './components/skeleton/customerSkeleton';
 
-<Suspense fallback={<CustomerSkeleton />}>
-  <CustomerSkeleton />
-</Suspense>;
 
 export default function CustomersPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);
