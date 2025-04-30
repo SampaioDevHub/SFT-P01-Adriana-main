@@ -6,6 +6,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from '@/_components/ui/card';
 import {
   DialogContent,
@@ -19,11 +20,15 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/_components/ui/tabs';
+import {
+  FormSchemaCustomer,
+  formSchemaCustomer,
+} from '../_types/customerYupType';
 import { AxiosError } from 'axios';
 import { format, parseISO } from 'date-fns';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -38,10 +43,9 @@ import { PhoneInput } from '@/_components/Inputs/phoneInput';
 import { CepInput } from '@/_components/Inputs/cepInput';
 import { AlertError } from '@/_components/alert/alert-error';
 
-import { customerStatus } from '../_constants/customerStatus';
-import { FormSchemaCustomer, formSchemaCustomer } from '../_types/customerYupType';
-import { EditCustomerContentSkeleton } from './skeleton/editCustomerContentSkeleton';
 import { customerProfile, profileLabels } from '../_constants/customerProfile';
+import { customerStatus } from '../_constants/customerStatus';
+import { EditCustomerContentSkeleton } from './skeleton/editCustomerContentSkeleton';
 
 interface ModalProps {
   customerId: string;
@@ -215,8 +219,34 @@ export function EditCustomerModalContent({
         key: 'affiliation',
         error: 'affiliation',
       });
+    } else if (errors.father || errors.mother) {
+      setActiveTab({
+        key: 'references',
+        error: 'references',
+      });
     }
   }, [errorFields.length, errors]);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'referencias',
+  });
+
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+
+  const handleEdit = (index: number) => {
+    setEditIndex(index); // Marca o índice da referência que está sendo editada
+  };
+
+  const handleDelete = (index: number) => {
+    // Remove a referência do estado local
+    remove(index);
+  };
+
+  const handleSave = (index: number) => {
+    // Salva as alterações no campo atual
+    setEditIndex(null); // Fecha o card de edição
+  };
 
   async function handleUpdatedCustomer(data: FormSchemaCustomer) {
     try {
@@ -251,6 +281,7 @@ export function EditCustomerModalContent({
         agency: data.agency,
         father: data.father,
         mother: data.mother,
+        referenceEntityList: data.referencias, // Referências atualizadas
       });
       reset();
       setIsOpen(false);
@@ -351,10 +382,10 @@ export function EditCustomerModalContent({
                   Afiliação
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="affiliation">
+              <TabsTrigger value="references">
                 <span
                   className={
-                    activeTab.error === 'affiliation' ? 'text-destructive' : ''
+                    activeTab.error === 'references' ? 'text-destructive' : ''
                   }
                 >
                   Referências
@@ -742,6 +773,126 @@ export function EditCustomerModalContent({
                       </p>
                     )}
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="references">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Referências</CardTitle>
+                  <CardDescription>
+                    Edite as referências pessoais do cliente.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="space-y-4">
+                      {/* Card para a referência */}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Referência {index + 1}</CardTitle>
+                          <CardDescription>
+                            {editIndex === index
+                              ? 'Editar referência'
+                              : 'Visualizar referência'}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          {/* Se estiver editando a referência, exibe os inputs */}
+                          {editIndex === index ? (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                  <Label htmlFor={`referencias.${index}.name`}>
+                                    Nome
+                                  </Label>
+                                  <Input
+                                    {...register(`referencias.${index}.name`)}
+                                    defaultValue={field.name}
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor={`referencias.${index}.phone`}>
+                                    Telefone
+                                  </Label>
+                                  <Controller
+                                    control={control}
+                                    name={`referencias.${index}.phone`}
+                                    render={({ field }) => (
+                                      <PhoneInput {...field} />
+                                    )}
+                                    defaultValue={field.phone}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Outros campos de endereço */}
+                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                {/* CEP, Endereço, Cidade, etc... */}
+                              </div>
+
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => handleSave(index)} // Salvar as alterações do card
+                              >
+                                Salvar
+                              </Button>
+                            </div>
+                          ) : (
+                            <div>
+                              <p>
+                                <strong>Nome:</strong> {field.name}
+                              </p>
+                              <p>
+                                <strong>Telefone:</strong> {field.phone}
+                              </p>
+                              {/* Exibir outros campos aqui */}
+                            </div>
+                          )}
+                        </CardContent>
+                        <CardFooter>
+                          {/* Botões Editar e Excluir */}
+                          <Button
+                            type="button"
+                            onClick={() => handleEdit(index)}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => handleDelete(index)}
+                          >
+                            Excluir
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  ))}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() =>
+                      append({
+                        name: '',
+                        phone: '',
+                        addressData: {
+                          address: '',
+                          zipCode: '',
+                          city: '',
+                          state: '',
+                          referencePoint: '',
+                          number: '',
+                          complement: '',
+                        },
+                      })
+                    }
+                  >
+                    Adicionar nova referência
+                  </Button>
                 </CardContent>
               </Card>
             </TabsContent>
