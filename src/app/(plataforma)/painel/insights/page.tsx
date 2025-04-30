@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -22,7 +23,7 @@ type Produto = {
 
 export default function FinanceDashboard() {
   const { user } = useUser();
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [, setProdutos] = useState<Produto[]>([]);
 
   useEffect(() => {
     async function fetchProdutos() {
@@ -33,6 +34,8 @@ export default function FinanceDashboard() {
         const data = await res.json();
         setProdutos(data);
       } catch (error) {
+       
+        // eslint-disable-next-line no-console
         console.error('Erro ao buscar produtos:', error);
       }
     }

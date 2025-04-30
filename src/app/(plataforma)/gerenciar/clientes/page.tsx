@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { PageContainer } from '@/_components/layout/page-container';
