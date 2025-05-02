@@ -53,7 +53,7 @@ export const formSchemaCustomer = yup.object({
   agency: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
   father: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
   mother: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
-  referencias: yup.array().of(
+  references: yup.array().of(
     yup.object().shape({
       name: yup
         .string()

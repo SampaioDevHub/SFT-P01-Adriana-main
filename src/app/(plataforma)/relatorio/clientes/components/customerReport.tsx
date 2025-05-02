@@ -26,7 +26,7 @@ import { ScrollArea } from '@/_components/ui/scroll-area';
 import { useQuery } from '@tanstack/react-query';
 import { getCustomers } from '@/_api/customers/get-customers';
 import { profileLabels } from '@/app/(plataforma)/gerenciar/clientes/_constants/customerProfile';
-import { GetCustomersBody } from '@/_api/customers/_types/type-get-custumer';
+import { format } from 'date-fns';
 
 export function CustomerReport() {
   const [search, setSearch] = useState('');
@@ -62,7 +62,7 @@ export function CustomerReport() {
     return customersData.content.filter(
       (c) =>
         c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.profile?.toLowerCase().includes(search.toLowerCase())
+        c.cpf?.toLowerCase().includes(search.toLowerCase())
     );
   }, [customersData, search]);
 
@@ -100,18 +100,16 @@ export function CustomerReport() {
     let y = 50;
     doc.setFontSize(10);
     doc.text('Nome', 14, y);
-    doc.text('CPF', 60, y);
-    doc.text('Telefone', 105, y);
-    doc.text('Email', 150, y);
+    doc.text('CPF', 100, y);
+    doc.text('Telefone', 140, y);
     doc.text('Perfil', 180, y);
     doc.line(14, y + 2, 200, y + 2);
     y += 10;
 
     customers.forEach((customer) => {
       doc.text(String(customer.name), 14, y);
-      doc.text(String(customer.cpf), 60, y);
-      doc.text(String(customer.phone), 105, y);
-      doc.text(String(customer.email || '-'), 150, y);
+      doc.text(String(customer.cpf), 100, y);
+      doc.text(String(customer.phone), 140, y);
       doc.text(String(profileLabels[customer.profile]), 180, y);
       y += 7;
       if (y > 270) {
@@ -125,7 +123,37 @@ export function CustomerReport() {
   };
 
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(customers);
+    const formattedCustomers = customers.map((c) => ({
+      'Nome': c.name,
+      'CPF': c.cpf,
+      'Telefone': c.phone,
+      'Data de Nascimento':c.dateBirth ? format(new Date(c.dateBirth), 'dd/MM/yyyy') : '',
+      'Perfil': profileLabels[c.profile],
+      'Estado Civil': c.maritalStatus,
+      'Empresa': c.enterprise,
+      'Pai': c.father,
+      'Mãe': c.mother,
+      'Referência': c.referenceEntityList?.[0]?.name || '',
+      'Numero da Referência': c.referenceEntityList?.[0]?.phone || '',
+      'Criado em': c.createAt ? format(new Date(c.createAt), 'dd/MM/yyyy') : '',
+    }));
+  
+    const worksheet = XLSX.utils.json_to_sheet(formattedCustomers);
+    worksheet['!cols'] = [
+      { wch: 35 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 15 },
+      { wch: 10 },
+      { wch: 15 },
+      { wch: 35 },
+      { wch: 35 },
+      { wch: 35 },
+      { wch: 30 },
+      { wch: 18 },
+      { wch: 20 },
+    ];
+  
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Clientes');
     const excelBuffer = XLSX.write(workbook, {
@@ -173,7 +201,7 @@ export function CustomerReport() {
       {/* Ações */}
       <div className="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between">
         <Input
-          placeholder="Buscar por nome ou perfil..."
+          placeholder="Buscar por nome ou CPF..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full lg:w-1/3"
@@ -226,7 +254,6 @@ export function CustomerReport() {
                     <TableHead>Nome</TableHead>
                     <TableHead>CPF</TableHead>
                     <TableHead>Telefone</TableHead>
-                    <TableHead>Email</TableHead>
                     <TableHead>Perfil</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -236,7 +263,6 @@ export function CustomerReport() {
                       <TableCell>{customer.name}</TableCell>
                       <TableCell>{customer.cpf}</TableCell>
                       <TableCell>{customer.phone}</TableCell>
-                      <TableCell>{customer.email}</TableCell>
                       <TableCell>{profileLabels[customer.profile]}</TableCell>
                     </TableRow>
                   ))}

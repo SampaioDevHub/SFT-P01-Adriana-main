@@ -41,7 +41,8 @@ export interface GetCustomerContent {
       city?: string;
       state?: string;
     };
-  }[];
+  }[],
+  createAt?: Date
 }
 
 export interface GetCustomersBody {

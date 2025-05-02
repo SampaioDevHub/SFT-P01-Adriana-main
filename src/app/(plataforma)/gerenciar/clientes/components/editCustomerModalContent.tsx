@@ -115,6 +115,7 @@ export function EditCustomerModalContent({
       agency: customer?.agency ?? '',
       father: customer?.father ?? '',
       mother: customer?.mother ?? '',
+      references: customer?.referenceEntityList || []
     },
   });
 
@@ -227,11 +228,17 @@ export function EditCustomerModalContent({
     }
   }, [errorFields.length, errors]);
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'referencias',
-  });
+  useEffect(() => {
+    if (customer?.referenceEntityList?.length) {
+      setValue('references', customer.referenceEntityList);
+    }
+  }, [customer, setValue]);
 
+  const { fields, append, remove, insert } = useFieldArray({
+    control,
+    name: 'references',
+  });
+  
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
   const handleEdit = (index: number) => {
@@ -239,13 +246,11 @@ export function EditCustomerModalContent({
   };
 
   const handleDelete = (index: number) => {
-    // Remove a referência do estado local
     remove(index);
   };
 
   const handleSave = (index: number) => {
-    // Salva as alterações no campo atual
-    setEditIndex(null); // Fecha o card de edição
+    setEditIndex(null);
   };
 
   async function handleUpdatedCustomer(data: FormSchemaCustomer) {
@@ -281,7 +286,7 @@ export function EditCustomerModalContent({
         agency: data.agency,
         father: data.father,
         mother: data.mother,
-        referenceEntityList: data.referencias, // Referências atualizadas
+        referenceEntityList: fields,
       });
       reset();
       setIsOpen(false);
@@ -788,7 +793,7 @@ export function EditCustomerModalContent({
                 <CardContent className="space-y-6">
                   {fields.map((field, index) => (
                     <div key={field.id} className="space-y-4">
-                      {/* Card para a referência */}
+                      <div>{field.name}</div>
                       <Card>
                         <CardHeader>
                           <CardTitle>Referência {index + 1}</CardTitle>
@@ -804,21 +809,21 @@ export function EditCustomerModalContent({
                             <div className="space-y-4">
                               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                  <Label htmlFor={`referencias.${index}.name`}>
+                                  <Label htmlFor={`references.${index}.name`}>
                                     Nome
                                   </Label>
                                   <Input
-                                    {...register(`referencias.${index}.name`)}
+                                    {...register(`references.${index}.name`)}
                                     defaultValue={field.name}
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label htmlFor={`referencias.${index}.phone`}>
+                                  <Label htmlFor={`references.${index}.phone`}>
                                     Telefone
                                   </Label>
                                   <Controller
                                     control={control}
-                                    name={`referencias.${index}.phone`}
+                                    name={`references.${index}.phone`}
                                     render={({ field }) => (
                                       <PhoneInput {...field} />
                                     )}
