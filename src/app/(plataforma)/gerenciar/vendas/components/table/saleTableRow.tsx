@@ -7,6 +7,7 @@ import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
 import { formatForReals } from '@/_utils/formatForReals';
 
 import { DeleteModal } from '../deleteModal';
+import { OverviewModal } from '../overviewModal';
 
 export function SaleTableRow({
   id,
@@ -18,6 +19,7 @@ export function SaleTableRow({
   status,
 }: GetSaleContent) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isOverviewModalOpen, setIsOverviewModalOpen] = useState(false);
 
   return (
     <TableRow key={id}>
@@ -45,7 +47,20 @@ export function SaleTableRow({
           ? 'Finalizado'
           : status === 'PENDENTE' && 'Pendente'}
       </TableCell>
-      <TableCell className="w-[5rem]">
+      <TableCell className="flex w-[11rem]">
+      <Dialog open={isOverviewModalOpen} onOpenChange={setIsOverviewModalOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="mr-2">
+              Visualizar
+            </Button>
+          </DialogTrigger>
+          <OverviewModal
+            title="Visualizar Venda"
+            subTitle="Visualize os detalhes da sua venda"
+            setIsOpen={setIsOverviewModalOpen}
+            id={id}
+          />
+        </Dialog>
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
           <DialogTrigger asChild>
             <Button variant="destructive" size="sm">

@@ -66,7 +66,7 @@ export function SaleTable() {
               <TableHead>Produtos(Qtd)</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead></TableHead>
+              <TableHead className='w-[11rem]'></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">

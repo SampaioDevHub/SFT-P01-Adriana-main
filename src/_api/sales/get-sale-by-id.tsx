@@ -6,7 +6,7 @@ interface GetSalesByIdProps {
   saleId: string;
 }
 
-export async function getSalesById({ saleId }: GetSalesByIdProps) {
+export async function getSaleById({ saleId }: GetSalesByIdProps) {
   const response = await api.get<GetSaleContent>(
     `/sales/find/${saleId}`
   );
