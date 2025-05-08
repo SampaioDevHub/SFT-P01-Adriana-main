@@ -213,7 +213,7 @@ export function ProductReport() {
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
           {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
-                <Package className="h-16 w-16 mb-4 text-gray-300" />
+                <Package className="h-16 w-16 mb-4 text-muted-foreground" />
                 <p className="text-lg font-medium">Carregando clientes...</p>
                 <p className="text-sm">
                   Aguarde um momento enquanto buscamos os dados.
@@ -270,7 +270,7 @@ export function ProductReport() {
               </Table>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
-                <Package className="h-16 w-16 mb-4 text-gray-300" />
+                <Package className="h-16 w-16 mb-4 text-muted-foreground" />
                 <p className="text-lg font-medium">Nenhum produto encontrado</p>
                 <p className="text-sm">
                   Cadastre um produto ou aplique um filtro válido.

@@ -198,7 +198,7 @@ export function SalesReport() {
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
-                <ShoppingCart className="h-16 w-16 mb-4 text-gray-300" />
+                <ShoppingCart className="h-16 w-16 mb-4 text-muted-foreground" />
                 <p className="text-lg font-medium">Carregando vendas...</p>
                 <p className="text-sm">
                   Aguarde um momento enquanto buscamos os dados.
@@ -255,7 +255,7 @@ export function SalesReport() {
               </Table>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
-                <ShoppingCart className="h-16 w-16 mb-4 text-gray-300" />
+                <ShoppingCart className="h-16 w-16 mb-4 text-muted-foreground" />
                 <p className="text-lg font-medium">Nenhuma venda encontrada</p>
                 <p className="text-sm">
                   Cadastre uma venda, ou coloque um filtro válido.

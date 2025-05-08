@@ -25,8 +25,8 @@ import {
   formSchemaCustomer,
 } from '../_types/customerYupType';
 import { AxiosError } from 'axios';
-import { format, parseISO } from 'date-fns';
-import { X } from 'lucide-react';
+import { format, parseISO, set } from 'date-fns';
+import { Pencil, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -115,7 +115,7 @@ export function EditCustomerModalContent({
       agency: customer?.agency ?? '',
       father: customer?.father ?? '',
       mother: customer?.mother ?? '',
-      references: customer?.referenceEntityList || []
+      references: customer?.referenceEntityList || [],
     },
   });
 
@@ -220,11 +220,17 @@ export function EditCustomerModalContent({
         key: 'affiliation',
         error: 'affiliation',
       });
-    } else if (errors.father || errors.mother) {
+    } else if (Array.isArray(errors.references)) {
+      const indexComErro = errors.references.findIndex(
+        (ref) => ref?.nome || ref?.telefone
+      );
+    
       setActiveTab({
         key: 'references',
         error: 'references',
       });
+    
+        setIndexEdit(indexComErro + 1);
     }
   }, [errorFields.length, errors]);
 
@@ -238,19 +244,22 @@ export function EditCustomerModalContent({
     control,
     name: 'references',
   });
-  
-  const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  const handleEdit = (index: number) => {
-    setEditIndex(index); // Marca o índice da referência que está sendo editada
-  };
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [indexEdit, setIndexEdit] = useState<number | null>(null);
+
+  console.log(indexEdit)
+
+  function handleIsOpenEditReference (index: number) {
+    if(indexEdit === null) {
+      setIndexEdit(index)
+    }else {
+      setIndexEdit(null)
+    }
+  }
 
   const handleDelete = (index: number) => {
     remove(index);
-  };
-
-  const handleSave = (index: number) => {
-    setEditIndex(null);
   };
 
   async function handleUpdatedCustomer(data: FormSchemaCustomer) {
@@ -286,7 +295,7 @@ export function EditCustomerModalContent({
         agency: data.agency,
         father: data.father,
         mother: data.mother,
-        referenceEntityList: fields,
+        referenceEntityList: data.references,
       });
       reset();
       setIsOpen(false);
@@ -782,7 +791,7 @@ export function EditCustomerModalContent({
               </Card>
             </TabsContent>
 
-            <TabsContent value="references">
+            <TabsContent className='max-h-[70vh] overflow-auto' value="references">
               <Card>
                 <CardHeader>
                   <CardTitle>Referências</CardTitle>
@@ -793,19 +802,43 @@ export function EditCustomerModalContent({
                 <CardContent className="space-y-6">
                   {fields.map((field, index) => (
                     <div key={field.id} className="space-y-4">
-                      <div>{field.name}</div>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Referência {index + 1}</CardTitle>
-                          <CardDescription>
-                            {editIndex === index
-                              ? 'Editar referência'
-                              : 'Visualizar referência'}
-                          </CardDescription>
+                      <Card className="space-y-4">
+                        <CardHeader
+                          className={`p-0 flex-row ${indexEdit === index && 'border-b'} items-center justify-between w-full gap-2`}
+                        >
+                          <div
+                            className={`bg-background border-r ${indexEdit === index && 'rounded-bl-none'} px-6 py-4 rounded-lg flex items-center gap-2 w-full justify-start`}
+                          >
+                            <User className="h-12 w-12 text-muted-foreground" />
+                            <div className="flex flex-col gap-1">
+                              <h1 className="text-base">{field.name}</h1>
+                              <span className="text-muted-foreground">
+                                {field.phone}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex p-4 items-center justify-between gap-2">
+                            <Button
+                              onClick={() => {handleIsOpenEditReference(index)}}
+                              size="icon"
+                              variant="outline"
+                              type="button"
+                            >
+                              <Pencil className="text-muted-foreground" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDelete(index)}
+                            >
+                              <X className="text-muted-foreground" />
+                            </Button>
+                          </div>
                         </CardHeader>
-                        <CardContent>
-                          {/* Se estiver editando a referência, exibe os inputs */}
-                          {editIndex === index ? (
+                        {/* Se estiver editando a referência, exibe os inputs */}
+                        {indexEdit === index && (
+                          <CardContent className="px-6 py-4 max-h-[25vh] overflow-auto">
                             <div className="space-y-4">
                               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
@@ -816,6 +849,15 @@ export function EditCustomerModalContent({
                                     {...register(`references.${index}.name`)}
                                     defaultValue={field.name}
                                   />
+                                  {errors.references?.[index]?.name
+                                    ?.message && (
+                                    <p className="text-sm text-destructive">
+                                      {
+                                        errors.references?.[index]?.name
+                                          ?.message
+                                      }
+                                    </p>
+                                  )}
                                 </div>
                                 <div className="space-y-2">
                                   <Label htmlFor={`references.${index}.phone`}>
@@ -829,50 +871,154 @@ export function EditCustomerModalContent({
                                     )}
                                     defaultValue={field.phone}
                                   />
+                                  {errors.references?.[index]?.phone
+                                    ?.message && (
+                                    <p className="text-sm text-destructive">
+                                      {
+                                        errors.references?.[index]?.phone
+                                          ?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+
+                                <div className="space-y-2">
+                                  <Label htmlFor="cep">CEP</Label>
+                                  <Controller
+                                    name={
+                                      `references.${index}.addressData.zipCode` as const
+                                    }
+                                    control={control}
+                                    render={({ field }) => (
+                                      <CepInput {...field} />
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData
+                                    ?.zipCode?.message && (
+                                    <p className="text-sm text-destructive">
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.zipCode?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="address">Endereço</Label>
+                                  <Input
+                                    id="address"
+                                    {...register(
+                                      `references.${index}.addressData.address` as const
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData
+                                    ?.address?.message && (
+                                    <p className={`text-sm text-destructive`}>
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.address?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="city">Cidade</Label>
+                                  <Input
+                                    id="city"
+                                    {...register(
+                                      `references.${index}.addressData.city` as const
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData?.city
+                                    ?.message && (
+                                    <p className={`text-sm text-destructive`}>
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.city?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="state">Estado</Label>
+                                  <Input
+                                    id="state"
+                                    {...register(
+                                      `references.${index}.addressData.state` as const
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData
+                                    ?.state?.message && (
+                                    <p className={`text-sm text-destructive`}>
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.state?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="referencePoint">
+                                    Ponto de referência
+                                  </Label>
+                                  <Input
+                                    id="referencePoint"
+                                    {...register(
+                                      `references.${index}.addressData.referencePoint` as const
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData
+                                    ?.referencePoint?.message && (
+                                    <p className={`text-sm text-destructive`}>
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.referencePoint?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="number">Numero da casa</Label>
+                                  <Input
+                                    id="number"
+                                    {...register(
+                                      `references.${index}.addressData.number` as const
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData
+                                    ?.number?.message && (
+                                    <p className={`text-sm text-destructive`}>
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.number?.message
+                                      }
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="complement">
+                                    Complemento
+                                  </Label>
+                                  <Input
+                                    id="complement"
+                                    {...register(
+                                      `references.${index}.addressData.complement` as const
+                                    )}
+                                  />
+                                  {errors.references?.[index]?.addressData
+                                    ?.complement?.message && (
+                                    <p className={`text-sm text-destructive`}>
+                                      {
+                                        errors.references?.[index]?.addressData
+                                          ?.complement?.message
+                                      }
+                                    </p>
+                                  )}
                                 </div>
                               </div>
-
-                              {/* Outros campos de endereço */}
-                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                {/* CEP, Endereço, Cidade, etc... */}
-                              </div>
-
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => handleSave(index)} // Salvar as alterações do card
-                              >
-                                Salvar
-                              </Button>
                             </div>
-                          ) : (
-                            <div>
-                              <p>
-                                <strong>Nome:</strong> {field.name}
-                              </p>
-                              <p>
-                                <strong>Telefone:</strong> {field.phone}
-                              </p>
-                              {/* Exibir outros campos aqui */}
-                            </div>
-                          )}
-                        </CardContent>
-                        <CardFooter>
-                          {/* Botões Editar e Excluir */}
-                          <Button
-                            type="button"
-                            onClick={() => handleEdit(index)}
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            onClick={() => handleDelete(index)}
-                          >
-                            Excluir
-                          </Button>
-                        </CardFooter>
+                          </CardContent>
+                        )}
                       </Card>
                     </div>
                   ))}

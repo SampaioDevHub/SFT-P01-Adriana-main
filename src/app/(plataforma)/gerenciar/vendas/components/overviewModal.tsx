@@ -60,7 +60,7 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
             <div className="flex flex-col">
               <div className="flex items-center justify-between p-2.5 rounded-sm">
                 <span className="text-muted-foreground">Total de Produtos</span>
-                <span></span>
+                <span>{sale?.products.length}</span>
               </div>
             </div>
             <div className="flex flex-col">
