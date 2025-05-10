@@ -35,10 +35,10 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
   });
 
   return (
-    <DialogContent>
+    <DialogContent className='max-h-[90vh] w-full overflow-auto '>
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
-        <p className="py-4">{subTitle}</p>
+        <p className="py-2">{subTitle}</p>
       </DialogHeader>
       <div className="flex flex-col items-center space-y-2">
         <div className="flex flex-col items-center bg-muted/40 rounded-md justify-between w-full">
@@ -46,7 +46,7 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
             <div className="flex flex-col">
               <div className="flex items-center justify-between p-2.5 rounded-sm">
                 <span className="text-muted-foreground">CPF</span>
-                <span></span>
+                <span>{sale?.customerCpf}</span>
               </div>
             </div>
             <div className="flex flex-col">
@@ -110,7 +110,7 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
             )}
           </div>
         </div>
-        <div className="max-h-[30vh] overflow-auto rounded-md border-t border-b border-muted">
+        <div className="max-h-[50vh] w-full overflow-auto rounded-md border-t border-b border-muted">
           <Table>
             <TableHeader className="border-b-2">
               <TableRow>

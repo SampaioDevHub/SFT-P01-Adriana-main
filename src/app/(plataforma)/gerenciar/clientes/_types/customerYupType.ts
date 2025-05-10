@@ -18,7 +18,10 @@ export const formSchemaCustomer = yup.object({
     .string()
     .max(60, 'Você só pode inserir até 60 caracteres')
     .nullable(),
-  profile: yup.string().max(20, 'Você só pode inserir até 20 caracteres').required("Informe o perfil do cliente"),
+  profile: yup
+    .string()
+    .max(20, 'Você só pode inserir até 20 caracteres')
+    .required('Informe o perfil do cliente'),
   address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
   number: yup.string().max(10, 'Você só pode inserir até 10 caracteres'),
   complement: yup.string().max(50, 'Você só pode inserir até 50 caracteres'),
@@ -59,7 +62,14 @@ export const formSchemaCustomer = yup.object({
         .string()
         .max(60, 'Você só pode inserir até 60 caracteres')
         .required('Informe o nome da referência'),
-      phone: yup.string().max(15, 'Você só pode inserir até 15 caracteres'),
+      phone: yup
+        .string()
+        .max(15, 'Você só pode inserir até 15 caracteres')
+        .test(
+          'valid-phone',
+          'Telefone inválido ou sem DDD',
+          (value) => !!value && isValidPhoneNumber(value)
+        ),
 
       addressData: yup.object().shape({
         address: yup.string().max(60, 'Você só pode inserir até 60 caracteres'),
