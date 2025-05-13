@@ -19,6 +19,7 @@ import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { v4 as uuidV4 } from 'uuid';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/_components/ui/button';
@@ -35,7 +36,6 @@ import { FormSchemaProduct, formSchemaProduct } from '../_types/productYupType';
 
 export function ProductForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [sizesArray, setSizesArray] = useState<string[]>([]); // Estado para armazenar os tamanhos
 
   const queryClient = useQueryClient();
 
@@ -47,11 +47,11 @@ export function ProductForm() {
     reset,
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaProduct>({
-    resolver: yupResolver(formSchemaProduct(false)),
+    resolver: yupResolver(formSchemaProduct()),
     defaultValues: {
       category: '',
       size: '',
-      price: '',
+      code: uuidV4(),
     },
   });
 
@@ -75,12 +75,11 @@ export function ProductForm() {
         discountPercentage: data.discountPercentage,
         price: data.price,
         quantityInStock: data.quantityInStock,
-        size: sizesString,
+        size: data.size,
         category: data.category,
         subCategory: data.subCategory,
       });
       reset();
-      setSizesArray([]);
       setErrorMessage(null);
       toast.success('Produto cadastrado com sucesso');
     } catch (error: unknown) {
@@ -101,17 +100,6 @@ export function ProductForm() {
   const category = watch('category');
   const isClothingCategory = category === 'Roupas';
 
-  // Observa o valor do campo 'size'
-  const selectedSize = watch('size');
-
-  // Adiciona o tamanho ao array sempre que o valor for alterado
-  useEffect(() => {
-    if (selectedSize && !sizesArray.includes(selectedSize)) {
-      setSizesArray((prev) => [...prev, selectedSize]);
-    }
-  }, [selectedSize, sizesArray]);
-
-  const sizesString = sizesArray.join(', ');
   return (
     <Card>
       <CardHeader>
@@ -228,7 +216,9 @@ export function ProductForm() {
             <Controller
               name="price" // Nome do campo no formulário
               control={control}
-              render={({ field }) => <MoneyInput {...field} />}
+              render={({ field }) => (
+                <MoneyInput {...field} value={String(field.value || '')} />
+              )}
             />
             {errors.price?.message && (
               <p className={`text-sm text-destructive`}>
@@ -252,34 +242,16 @@ export function ProductForm() {
           </div>
           {isClothingCategory && (
             <div className="space-y-2">
-              <Label htmlFor="sizes">Tamanhos Disponíveis</Label>
-              <Controller
-                name="size" // Nome do campo no formulário
-                control={control}
-                defaultValue="" // Valor inicial
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione os tamanhos" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableSizes.map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size} {sizesArray?.includes(size) && '✓'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <Label htmlFor="size">
+                Tamanhos Disponiveis{' '}
+                <span className="text-muted-foreground">(Opcional)</span>
+              </Label>
+              <Input id="size" {...register('size')} type="string" />
               {errors.size?.message && (
                 <p className={`text-sm text-destructive`}>
                   {errors.size?.message}
                 </p>
               )}
-              <div className="mt-2">
-                Tamanhos selecionados: {sizesArray.join(', ')}
-              </div>
             </div>
           )}
           {errorMessage && (

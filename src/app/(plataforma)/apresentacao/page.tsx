@@ -28,7 +28,7 @@ import Link from 'next/link';
 
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/_components/ui/button';
-import PageContainer from '@/_components/layout/page-container';
+import { PageContainer } from '@/_components/layout/page-container';
 
 export default function Presentation() {
   const { user } = useUser();

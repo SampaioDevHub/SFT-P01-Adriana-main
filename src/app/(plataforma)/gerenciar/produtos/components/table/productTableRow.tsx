@@ -7,6 +7,7 @@ import { GetProductContent } from '@/_api/products/_types/type-get-product';
 import { DeleteModal } from '../deleteModal';
 
 import { EditProductModalContent } from '../editProductModalContent';
+import { formatForReals } from '@/_utils/formatForReals';
 
 export function ProductTableRow({
   id,
@@ -34,14 +35,14 @@ export function ProductTableRow({
               style={{ textDecoration: 'line-through' }}
               className="text-xs text-muted-foreground className='whitespace-nowrap'"
             >
-              R$ {price.toString().replace('.', ',')}
+              {formatForReals(price)}
             </span>
             <span className="whitespace-nowrap">
-              R$ {priceWithDiscount.toString().replace('.', ',')}
+            {formatForReals(priceWithDiscount)}
             </span>
           </div>
         ) : (
-          <p>R$ {price.toString().replace('.', ',')}</p>
+          <p>{formatForReals(price)}</p>
         )}
       </TableCell>
       <TableCell className="md:text-left text-center flex-1">

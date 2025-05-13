@@ -11,6 +11,7 @@ import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/_components/ui/button';
@@ -58,20 +59,13 @@ export function EditProductModalContent({
   });
 
   const { data: product, isLoading: isLoadingGetProduct } = useQuery({
-    queryKey: ['product'],
+    queryKey: ['product', productId],
     queryFn: () => getProductsById({ productId }),
     enabled: open,
-    staleTime: 0, // Sempre buscar novos dados
-    gcTime: 0, // Remove do cache imediatamente
+    staleTime: 0,
+    gcTime: 0,
   });
 
-  useEffect(() => {
-    if (product?.size) {
-      setSizesArray(product.size.split(', '));
-    }
-  }, [product?.size]);
-
-  const sizesString = sizesArray.join(', ');
   const {
     handleSubmit,
     register,
@@ -80,62 +74,83 @@ export function EditProductModalContent({
     reset,
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaProduct>({
-    resolver: yupResolver(formSchemaProduct(sizesArray.length > 0)),
-    values: {
-      code: product?.code,
-      name: product?.name ?? '',
-      discountPercentage: product?.discountPercentage,
-      price: JSON.stringify(product?.price) ?? '',
-      quantityInStock: product?.quantityInStock ?? 0,
-      size: sizesString ?? '',
-      category: product?.category ?? 'Roupas',
-      subCategory: product?.subCategory ?? '',
+    resolver: yupResolver(formSchemaProduct()),
+    defaultValues: {
+      name: '',
+      discountPercentage: undefined,
+      price: 0,
+      quantityInStock: 0,
+      size: '',
+      category: 'Roupas',
+      subCategory: '',
     },
   });
+
+  useEffect(() => {
+    if (product && open) {
+      reset({
+        code: product.code,
+        name: product.name ?? '',
+        discountPercentage: product.discountPercentage,
+        price: product.price ?? '',
+        quantityInStock: product.quantityInStock ?? 0,
+        size: product.size,
+        category: product.category ?? 'Roupas',
+        subCategory: product.subCategory ?? '',
+      });
+    }
+  }, [product, open, reset]);
+
+  const category = watch('category');
+  const subCategory = watch('subCategory');
+
+  useEffect(() => {
+    const selectedCategory = categoriesArray?.find(
+      (c) => c.category === category
+    );
+    const isValidSub = selectedCategory?.subCategories.includes(subCategory);
+    if (!isValidSub) {
+      reset((formValues) => ({
+        ...formValues,
+        subCategory: '',
+      }));
+    }
+  }, [category, categoriesArray, subCategory, reset]);
 
   const { mutateAsync: updatedProductFn } = useMutation({
     mutationFn: updatedProduct,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product'] });
+      queryClient.invalidateQueries({ queryKey: ['product', productId] });
     },
   });
-  console.log(sizesString, sizesArray);
-  console.log(product?.size);
+
   async function handleUpdatedProduct(data: FormSchemaProduct) {
     try {
       await updatedProductFn({
         id: productId,
-        code: data.code,
+        code: uuidv4(),
         name: data.name,
         discountPercentage: data.discountPercentage,
-        price: data.price.replace(/[^\d.-]/g, ''),
+        price: data.price,
         quantityInStock: data.quantityInStock,
-        size: data.category === 'Roupas' ? sizesString : '',
+        size: data.category === 'Roupas' ? data.size : '',
         category: data.category,
         subCategory: data.subCategory,
       });
       reset();
-      setSizesArray(['']);
+      setSizesArray([]);
       setIsOpen(false);
       setErrorMessage(null);
       toast.success('Produto atualizado com sucesso');
     } catch (error: unknown) {
       const err = error as AxiosError;
-
-      if (err.response?.data) {
-        const errorData = err.response.data as { errors?: string[] };
-        const errorMessage =
-          errorData.errors?.[0] || 'Erro desconhecido do servidor';
-
-        setErrorMessage(errorMessage);
-      } else {
-        setErrorMessage(err.message || 'Erro inesperado');
-      }
+      const errorData = err.response?.data as { errors?: string[] };
+      const message =
+        errorData?.errors?.[0] || err.message || 'Erro desconhecido';
+      setErrorMessage(message);
     }
   }
-
-  const category = watch('category');
 
   return (
     <DialogContent>
@@ -147,42 +162,30 @@ export function EditProductModalContent({
         <form
           id="myForm"
           onSubmit={handleSubmit(handleUpdatedProduct)}
-          className="max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden pr-2"
+          className="max-h-[50vh] space-y-4 overflow-y-auto overflow-x-hidden py-1 px-2"
         >
-          {/* <div className="space-y-2">
-            <Label htmlFor="code">Código do Produto</Label>
-            <Input id="code" {...register('code')} />
-            {errors.code?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.code?.message}
-              </p>
-            )}
-          </div> */}
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Produto</Label>
             <Input id="name" {...register('name')} required />
             {errors.name?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.name?.message}
-              </p>
+              <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="name">Desconto(%)</Label>
+            <Label htmlFor="discountPercentage">Desconto(%)</Label>
             <Input
               id="discountPercentage"
               {...register('discountPercentage')}
             />
             {errors.discountPercentage?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.discountPercentage?.message}
+              <p className="text-sm text-destructive">
+                {errors.discountPercentage.message}
               </p>
             )}
           </div>
           <div className="flex flex-col space-y-2">
             <Label htmlFor="edit-category">Categoria</Label>
             <select
-              defaultValue=""
               className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register('category')}
             >
@@ -200,90 +203,73 @@ export function EditProductModalContent({
               ))}
             </select>
             {errors.category?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.category?.message}
+              <p className="text-sm text-destructive">
+                {errors.category.message}
               </p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="edit-subcategory">SubCategoria</Label>
             <select
-              defaultValue=""
               className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register('subCategory')}
             >
               <option value="" disabled hidden>
-                Selecione uma categoria
+                Selecione uma subcategoria
               </option>
-              {categoriesArray?.map((categories) => {
-                if (categories.category === category) {
-                  return categories.subCategories.map((subcat, index) => (
-                    <option
-                      className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
-                      key={index}
-                      value={subcat}
-                    >
-                      {subcat}
-                    </option>
-                  ));
-                }
-                return null;
-              })}
+              {categoriesArray
+                ?.find((c) => c.category === category)
+                ?.subCategories.map((subcat, index) => (
+                  <option
+                    className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
+                    key={index}
+                    value={subcat}
+                  >
+                    {subcat}
+                  </option>
+                ))}
             </select>
             {errors.subCategory?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.subCategory?.message}
+              <p className="text-sm text-destructive">
+                {errors.subCategory.message}
               </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label className="gap-1" htmlFor="price">
+            <Label htmlFor="price">
               Preço{' '}
               <span className="text-muted-foreground">(Sem desconto)</span>
             </Label>
             <Controller
-              name="price" // Nome do campo no formulário
+              name="price"
               control={control}
-              render={({ field }) => <MoneyInput {...field} />}
+              render={({ field }) => (
+                <MoneyInput {...field} value={String(field.value || '')} />
+              )}
             />
             {errors.price?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.price?.message}
-              </p>
+              <p className="text-sm text-destructive">{errors.price.message}</p>
             )}
           </div>
           <div className="space-y-2">
             <Label>Quantidade</Label>
             <Input {...register('quantityInStock')} type="number" required />
             {errors.quantityInStock?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.quantityInStock?.message}
+              <p className="text-sm text-destructive">
+                {errors.quantityInStock.message}
               </p>
             )}
           </div>
           {category === 'Roupas' && (
             <div className="space-y-2">
-              <Label>Tamanhos Disponíveis</Label>
-              <div className="flex flex-wrap gap-2">
-                {availableSizes.map((size) => (
-                  <div key={size} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`edit-size-${size}`}
-                      checked={sizesArray.includes(size)}
-                      onCheckedChange={() => toggleSize(size)}
-                    />
-                    <label
-                      htmlFor={`edit-size-${size}`}
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      {size}
-                    </label>
-                  </div>
-                ))}
-              </div>
+              <Label htmlFor="size">
+                Tamanhos Disponiveis{' '}
+                <span className="text-muted-foreground">(Opcional)</span>
+              </Label>
+              <Input {...register('size')} id='size' type="string" />
               {errors.size?.message && (
-                <p className={`text-sm text-destructive`}>
-                  {errors.size?.message}
+                <p className="text-sm text-destructive">
+                  {errors.size.message}
                 </p>
               )}
             </div>
@@ -301,7 +287,6 @@ export function EditProductModalContent({
           form="myForm"
           disabled={isSubmitting}
           className="disabled:cursor-not-allowed disabled:opacity-70"
-          type="submit"
         >
           {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
         </Button>

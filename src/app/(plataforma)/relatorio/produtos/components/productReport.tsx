@@ -1,16 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import {
-  MoreVertical,
-  FileDown,
-  FileSpreadsheet,
-  Package,
-  Layers,
-  AlertTriangle,
-  Tags,
-  Box,
-} from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -25,41 +14,56 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table';
+import {
+  MoreVertical,
+  FileDown,
+  FileSpreadsheet,
+  Package,
+  Layers,
+  AlertTriangle,
+  Tags,
+  Box,
+} from 'lucide-react';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 
+import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/_api/products/get-products';
+import { GetProductsBody } from '@/_api/products/_types/type-get-product';
 import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 import { ScrollArea } from '@/_components/ui/scroll-area';
-import { Separator } from '@/_components/ui/separator';
-import { GetProductsBody } from '@/_api/products/_types/type-get-product';
+import { formatForReals } from '@/_utils/formatForReals';
 
-export function ProductReport () {
+export function ProductReport() {
   const [search, setSearch] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const [productsData, setProductsData] = useState<GetProductsBody | null>(null);
-
-useEffect(() => {
-  const fetchAllProducts = async () => {
-    try {
-      // 1. Requisição inicial para saber o total
-      const firstResponse = await getProducts({ pageSize: 1, pageIndex: 0 });
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
+      // 1. Pega o total de elementos com uma requisição simples
+      const firstResponse = await getProducts({ pageSize: 1 });
       const total = firstResponse.totalElements;
 
-      // 2. Requisição com pageSize = total
-      const fullData = await getProducts({ pageSize: total, pageIndex: 0 });
-      setProductsData(fullData);
-    } catch (error) {
-      console.error('Erro ao buscar produtos:', error);
-    }
-  };
+      // 2. Se não tiver nenhum produto, retorna uma estrutura vazia
+      if (total === 0) {
+        return {
+          content: [],
+          totalElements: 0,
+        };
+      }
 
-  fetchAllProducts();
-}, []);
+      // 3. Caso contrário, busca todos
+      return await getProducts({ pageSize: total });
+    },
+  });
 
   const products = useMemo(() => {
     if (!productsData) return [];
@@ -70,54 +74,16 @@ useEffect(() => {
     );
   }, [productsData, search]);
 
-  const generatePDF = () => {
-    setIsGenerating(true);
-    const doc = new jsPDF('p', 'mm', 'a4');
-    doc.setFontSize(22);
-    doc.text('Relatório de Produtos', 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Número de Produtos: ${String(products.length)}`, 14, 30);
+  const totalValue = useMemo(() => {
+    const total = products.reduce((acc, cur) => {
+      return acc + cur.price;
+    }, 0);
+    return total;
+  }, [products]);
 
-    let y = 50;
-    doc.setFontSize(10);
-    doc.text('Nome', 14, y);
-    doc.text('Preço', 60, y);
-    doc.text('Categoria', 105, y);
-    doc.text('SubCategoria', 130, y);
-    doc.text('Tamanho', 160, y);
-    doc.text('Qtd.', 185, y);
-    doc.line(14, y + 2, 200, y + 2);
-    y += 10;
-
-    products.forEach((product) => {
-      doc.text(String(product.name), 14, y);
-      doc.text(`R$ ${String(product.price)}`, 60, y);
-      doc.text(String(product.category), 105, y);
-      doc.text(String(product.subCategory), 130, y);
-      doc.text(String(product.size || '-'), 160, y);
-      doc.text(String(product.quantityInStock), 185, y);
-      y += 7;
-      if (y > 270) {
-        doc.addPage();
-        y = 20;
-      }
-    });
-
-    doc.save('Relatorio_Produtos.pdf');
-    setIsGenerating(false);
-  };
-
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(products);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Produtos');
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'Relatorio_Produtos.xlsx');
-  };
+  const lowStockCount = useMemo(() => {
+    return products.filter((p) => p.quantityInStock < 5).length;
+  }, [products]);
 
   const chartData = useMemo(() => {
     const categoryCount: Record<string, number> = {};
@@ -130,15 +96,102 @@ useEffect(() => {
     }));
   }, [products]);
 
-  const totalValue = useMemo(() => {
-    return products
-      .reduce((acc, cur) => acc + parseFloat(cur.price || '0'), 0)
-      .toFixed(2);
-  }, [products]);
+  const generatePDF = () => {
+    setIsGenerating(true);
+    const doc = new jsPDF('p', 'mm', 'a4');
+    doc.setFontSize(22);
+    doc.text('Relatório de Produtos', 14, 20);
+    doc.setFontSize(12);
+    doc.text(`Número de Produtos: ${String(products.length)}`, 14, 30);
 
-  const lowStockCount = useMemo(() => {
-    return products.filter((p) => p.quantityInStock < 5).length;
-  }, [products]);
+    let y = 50;
+    doc.setFontSize(10);
+    doc.text('Nome', 14, y);
+    doc.text('Preço', 65, y);
+    doc.text('Categoria', 90, y);
+    doc.text('SubCategoria', 110, y);
+    doc.text('Tamanho', 135, y);
+    doc.text('Qtd.', 180, y);
+    doc.line(14, y + 2, 200, y + 2);
+    y += 10;
+
+    products.forEach((product) => {
+      doc.text(String(product.name), 14, y);
+      doc.text(formatForReals(product.price), 65, y);
+      doc.text(String(product.category), 90, y);
+      doc.text(String(product.subCategory), 110, y);
+      doc.text(String(product.size || '-'), 135, y);
+      doc.text(String(product.quantityInStock), 180, y);
+      y += 7;
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    doc.save('Relatorio_Produtos.pdf');
+    setIsGenerating(false);
+  };
+
+  const exportToExcel = () => {
+    const formattedData = products.map((product) => ({
+      Código: product.code || '-',
+      'Nome do Produto': product.name || '-',
+      'Desconto (%)':
+        product.discountPercentage !== undefined
+          ? `${product.discountPercentage}%`
+          : '-',
+      'Preço com Desconto':
+        product.priceWithDiscount !== undefined
+          ? `${formatForReals(product.priceWithDiscount)}`
+          : '-',
+      Preço: `${formatForReals(product.price)}`,
+      'Quantidade em Estoque': product.quantityInStock,
+      Tamanho: product.size || '-',
+      Categoria: product.category || '-',
+      Subcategoria: product.subCategory || '-',
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    worksheet['!cols'] = [
+      { wch: 35 },
+      { wch: 25 },
+      { wch: 12 },
+      { wch: 18 },
+      { wch: 12 },
+      { wch: 22 },
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 15 },
+    ];
+
+    // Alinhar à direita a coluna "Quantidade em Estoque"
+    const header = Object.keys(formattedData[0]);
+    const estoqueColIndex = header.indexOf('Quantidade em Estoque');
+
+    for (let i = 0; i < formattedData.length; i++) {
+      const cellAddress = XLSX.utils.encode_cell({
+        r: i + 1,
+        c: estoqueColIndex,
+      });
+      if (worksheet[cellAddress]) {
+        worksheet[cellAddress].s = {
+          alignment: { horizontal: 'right' },
+        };
+      }
+    }
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Produtos');
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'Relatorio_Produtos.xlsx');
+  };
 
   return (
     <div className="container space-y-8 py-8">
@@ -156,7 +209,7 @@ useEffect(() => {
             <CardTitle>Valor Total</CardTitle>
             <Tags className="h-5 w-5 text-green-500" />
           </CardHeader>
-          <CardContent>R$ {totalValue}</CardContent>
+          <CardContent>{formatForReals(totalValue)}</CardContent>
         </Card>
         <Card>
           <CardHeader className="flex items-center justify-between">
@@ -197,18 +250,30 @@ useEffect(() => {
       {/* Tabela */}
       <Card className="w-full bg-muted/30">
         <CardHeader className="flex items-center justify-between space-y-2">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-6 w-6 text-primary" />
-              Produtos Cadastrados
-            </CardTitle>
-          </div>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-6 w-6 text-primary" />
+            Produtos Cadastrados
+          </CardTitle>
         </CardHeader>
-
-        <Separator />
         <CardContent>
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
-            {products.length > 0 ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
+                <Package className="h-16 w-16 mb-4 text-muted-foreground" />
+                <p className="text-lg font-medium">Carregando clientes...</p>
+                <p className="text-sm">
+                  Aguarde um momento enquanto buscamos os dados.
+                </p>
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center text-red-500">
+                <Package className="h-16 w-16 mb-4 text-red-300" />
+                <p className="text-lg font-medium">Erro ao carregar os dados</p>
+                <p className="text-sm text-red-400">
+                  Tente novamente mais tarde.
+                </p>
+              </div>
+            ) : products.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -224,24 +289,41 @@ useEffect(() => {
                   {products.map((product, index) => (
                     <TableRow key={index}>
                       <TableCell>{product.name}</TableCell>
-                      <TableCell>{product.price}</TableCell>
+                      <TableCell>
+                        {product.discountPercentage &&
+                        product.priceWithDiscount ? (
+                          <div className="space-x-1 flex flex-wrap">
+                            <span
+                              style={{ textDecoration: 'line-through' }}
+                              className="text-xs text-muted-foreground whitespace-nowrap"
+                            >
+                              R$ {product.price.toString().replace('.', ',')}
+                            </span>
+                            <span className="whitespace-nowrap">
+                              R${' '}
+                              {product.priceWithDiscount
+                                .toString()
+                                .replace('.', ',')}
+                            </span>
+                          </div>
+                        ) : (
+                          <p>R$ {product.price.toString().replace('.', ',')}</p>
+                        )}
+                      </TableCell>
                       <TableCell>{product.category}</TableCell>
                       <TableCell>{product.subCategory}</TableCell>
                       <TableCell>{product.size || '-'}</TableCell>
                       <TableCell>{product.quantityInStock}</TableCell>
-                      <TableCell></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
-                <Package className="h-16 w-16 mb-4 text-gray-300" />
-                <p className="text-lg font-medium">
-                  Nenhum produto encontrado
-                </p>
+                <Package className="h-16 w-16 mb-4 text-muted-foreground" />
+                <p className="text-lg font-medium">Nenhum produto encontrado</p>
                 <p className="text-sm">
-                  Cadastre um produto, ou coloque um filtro valido.
+                  Cadastre um produto ou aplique um filtro válido.
                 </p>
               </div>
             )}

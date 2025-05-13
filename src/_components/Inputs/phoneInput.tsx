@@ -15,11 +15,13 @@ export function PhoneInput({ value = '', onChange }: PhoneInputProps) {
 
   return (
     <PhoneInputComponent
-      limitMaxLength
-      defaultCountry="BR"
-      inputComponent={Input}
-      value={value}
-      onChange={handlePhoneChange} // Passa a função de manipulação
+    limitMaxLength
+    defaultCountry="BR"
+    international={false}
+    displayInitialValueAsLocalNumber={true}
+    inputComponent={Input}
+    value={value}
+    onChange={handlePhoneChange} // Passa a função de manipulação
     />
   );
 }

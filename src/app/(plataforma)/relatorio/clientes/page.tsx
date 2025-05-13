@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomerReport } from "./components/customerReport ";
+import { CustomerReport } from "./components/customerReport";
 
 export default function ReportCustomerPage() {
   return (

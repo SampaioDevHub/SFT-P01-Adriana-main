@@ -1,12 +1,12 @@
 export interface GetProductContent {
   id: string;
-  code?: string;
+  code: string;
   name: string;
-  discountPercentage?: number | null;
-  priceWithDiscount?: string;
-  price: string;
+  discountPercentage?: number;
+  priceWithDiscount?: number;
+  price: number;
   quantityInStock: number;
-  size: string;
+  size?: string;
   category: string;
   subCategory: string;
 }

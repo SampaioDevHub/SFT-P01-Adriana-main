@@ -1,22 +1,21 @@
 import * as yup from 'yup';
 
-export const formSchemaProduct = (isSizeNotRequired: boolean) =>
+export const formSchemaProduct = () =>
   yup.object({
-    code: yup.string().max(50, 'Você só pode inserir até 50 caracteres'),
+    code: yup.string().required(),
     name: yup
       .string()
       .max(60, 'Você só pode inserir até 60 caracteres')
       .required('Informe o nome do produto'),
     discountPercentage: yup
       .number()
-      .nullable()
       .transform((value, originalValue) =>
         originalValue === '' ? undefined : value
       ) // Permite campo vazio
       .min(0, 'O campo "Disconto(%)" não pode ser negativo.')
       .max(100, 'O campo "Disconto(%)" não pode exceder 100.')
       .optional(),
-    price: yup.string().required('Informe o preço do produto'),
+    price: yup.number().required('Informe o preço do produto'),
     quantityInStock: yup
       .number()
       .integer()
@@ -24,13 +23,7 @@ export const formSchemaProduct = (isSizeNotRequired: boolean) =>
       .required('Informe a quantidade do produto'),
     size: yup
       .string()
-      .max(60, 'Você só pode inserir até 60 caracteres')
-      .when('category', ([category], schema) => {
-        if (!isSizeNotRequired && category === 'Roupas') {
-          return schema.required('Selecione um tamanho');
-        }
-        return schema.notRequired();
-      }),
+      .max(60, 'Você só pode inserir até 60 caracteres'),
     category: yup
       .string()
       .max(20, 'Você só pode inserir até 20 caracteres')

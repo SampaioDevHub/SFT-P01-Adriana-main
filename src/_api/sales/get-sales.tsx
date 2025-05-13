@@ -16,7 +16,6 @@ export async function getSales({
   priceFilter,
   pageSize,
 }: GetSalesQuery) {
-  console.log(statusFilter)
   const response = await api.get<GetSalesBody>(
     `/sales/find-all?size=${pageSize ?? '10'}&page=${pageIndex ?? ''}&customerCpf=${cpfFilter ?? ''}&status=${statusFilter ?? ''}&totalPrice=${priceFilter ?? ''}`
   );

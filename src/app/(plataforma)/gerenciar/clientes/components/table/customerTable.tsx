@@ -80,7 +80,7 @@ export function CustomerTable() {
               ))
             ) : (
               <TableRow className="w-full">
-                <TableCell colSpan={5} className="text-center w-full p-4">
+                <TableCell colSpan={7} className="text-center w-full p-4">
                   <span>Nenhum cliente encontrado</span>
                 </TableCell>
               </TableRow>

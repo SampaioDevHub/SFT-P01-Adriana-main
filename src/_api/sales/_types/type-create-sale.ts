@@ -13,5 +13,6 @@ export interface CreateSaleBody {
       amount: number;
     }[];
   status: "FINALIZADO" | "PENDENTE";
-  paymentMethod: string
+  paymentMethod: string;
+  numberInstallments?: number
 }

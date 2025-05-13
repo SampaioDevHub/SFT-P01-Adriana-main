@@ -30,19 +30,19 @@ export interface GetCustomerContent {
   father?: string;
   mother?: string;
   referenceEntityList?: {
-    id: string;
     name: string;
-    phone: string;
+    phone?: string;
     addressData: {
-      zipCode: string;
-      address: string;
-      number: string;
-      complement: string;
-      referencePoint: string;
-      city: string;
-      state: string;
+      zipCode?: string;
+      address?: string;
+      number?: string;
+      complement?: string;
+      referencePoint?: string;
+      city?: string;
+      state?: string;
     };
-  }[];
+  }[],
+  createAt?: Date
 }
 
 export interface GetCustomersBody {

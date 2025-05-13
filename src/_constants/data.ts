@@ -37,6 +37,12 @@ export const navItems: NavItem[] = [
         url: '/gerenciar/vendas',
         shortcut: ['v', 'v'],
         isActive: true,
+      },
+      {
+        title: 'Fornecedores',
+        url: '/gerenciar/fornecedores',
+        shortcut: ['v', 'v'],
+        isActive: true,
       }
     ],
   },

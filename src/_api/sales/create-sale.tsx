@@ -11,6 +11,7 @@ export async function createSale({
   products,
   subtotal,
   totalPrice,
+  numberInstallments,
 }: CreateSaleBody) {
   await api.post('/sales/create', {
     discountPercentage,
@@ -21,5 +22,6 @@ export async function createSale({
     paymentMethod,
     subtotal,
     totalPrice,
+    numberInstallments,
   });
 }

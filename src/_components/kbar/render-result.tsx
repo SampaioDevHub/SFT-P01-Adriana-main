@@ -1,7 +1,8 @@
 import { KBarResults, useMatches } from 'kbar';
-import ResultItem from './result-item';
 
-export default function RenderResults() {
+import { ResultItem } from './result-item';
+
+export function RenderResults() {
   const { results, rootActionId } = useMatches();
 
   return (
@@ -9,7 +10,7 @@ export default function RenderResults() {
       items={results}
       onRender={({ item, active }) =>
         typeof item === 'string' ? (
-          <div className='px-4 py-2 text-sm uppercase text-primary-foreground opacity-40 text-black'>
+          <div className="px-4 py-2 text-sm uppercase text-primary-foreground opacity-40 text-black">
             {item}
           </div>
         ) : (

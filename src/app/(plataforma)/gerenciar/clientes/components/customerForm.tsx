@@ -32,7 +32,7 @@ import {
 
 export function CustomerForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [exibirReferencias, setExibirReferencias] = useState(false);
+  const [exibirReferences, setExibirReferences] = useState(false);
 
   function handleReference() {
     const criarReferenciaVazia = () => ({
@@ -48,7 +48,7 @@ export function CustomerForm() {
         state: '',
       },
     });
-    setExibirReferencias(true);
+    setExibirReferences(true);
     append(criarReferenciaVazia());
   }
 
@@ -65,13 +65,13 @@ export function CustomerForm() {
   } = useForm<FormSchemaCustomer>({
     resolver: yupResolver(formSchemaCustomer),
     defaultValues: {
-      referencias: [],
+      references: [],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'referencias',
+    name: 'references',
   });
 
   const zipCode = watch('zipCode')?.replace(/\D/g, '');
@@ -120,7 +120,7 @@ export function CustomerForm() {
 
   useEffect(() => {
     fields.forEach((_, index) => {
-      const zipCode = watch(`referencias.${index}.addressData.zipCode`);
+      const zipCode = watch(`references.${index}.addressData.zipCode`);
       const cleanZipCode = zipCode?.replace(/\D/g, '');
 
       if (cleanZipCode && cleanZipCode.length === 8) {
@@ -129,14 +129,14 @@ export function CustomerForm() {
           .then((data) => {
             if (!data.erro) {
               setValue(
-                `referencias.${index}.addressData.address`,
+                `references.${index}.addressData.address`,
                 `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`.trim()
               );
               setValue(
-                `referencias.${index}.addressData.city`,
+                `references.${index}.addressData.city`,
                 data.localidade
               );
-              setValue(`referencias.${index}.addressData.state`, data.uf);
+              setValue(`references.${index}.addressData.state`, data.uf);
             }
           })
           .catch(() => {
@@ -146,7 +146,7 @@ export function CustomerForm() {
     });
   }, [
     fields
-      .map((_, index) => watch(`referencias.${index}.addressData.zipCode`))
+      .map((_, index) => watch(`references.${index}.addressData.zipCode`))
       .join(','),
   ]);
 
@@ -158,7 +158,6 @@ export function CustomerForm() {
   });
 
   async function handleCreateCustomer(data: FormSchemaCustomer) {
-    console.log(data.profile)
     try {
       await createCustomerFn({
         name: data.name,
@@ -190,10 +189,10 @@ export function CustomerForm() {
         agency: data.agency,
         father: data.father,
         mother: data.mother,
-        referenceEntityList: data.referencias,
+        referenceEntityList: data.references,
       });
       reset();
-      setExibirReferencias(false);
+      setExibirReferences(false);
       setValue('cpf', '');
       setErrorMessage(null);
       toast.success('Cliente cadastrado com sucesso');
@@ -560,14 +559,14 @@ export function CustomerForm() {
                 )}
               </div>
             </div>
-            {!exibirReferencias && (
+            {!exibirReferences && (
               <Button type="button" variant="outline" onClick={handleReference}>
                 Adicionar referência
               </Button>
             )}
           </div>
 
-          {exibirReferencias && (
+          {exibirReferences && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Referências</h3>
               <AnimatePresence>
@@ -593,25 +592,25 @@ export function CustomerForm() {
                           </Label>
                           <Input
                             id="name"
-                            {...register(`referencias.${index}.name` as const)}
+                            {...register(`references.${index}.name` as const)}
                             required
                           />
-                          {errors.referencias?.[index]?.name && (
+                          {errors.references?.[index]?.name && (
                             <p className="text-sm text-destructive">
-                              {errors.referencias?.[index]?.name?.message}
+                              {errors.references?.[index]?.name?.message}
                             </p>
                           )}
                         </div>
                         <div className="space-y-2 flex-1">
                           <Label htmlFor="phone">Telefone</Label>
                           <Controller
-                            name={`referencias.${index}.phone` as const}
+                            name={`references.${index}.phone` as const}
                             control={control}
                             render={({ field }) => <PhoneInput {...field} />}
                           />
-                          {errors.referencias?.[index]?.phone && (
+                          {errors.references?.[index]?.phone && (
                             <p className="text-destructive text-sm">
-                              {errors.referencias?.[index]?.phone?.message}
+                              {errors.references?.[index]?.phone?.message}
                             </p>
                           )}
                         </div>
@@ -629,16 +628,16 @@ export function CustomerForm() {
                           <Label htmlFor="cep">CEP</Label>
                           <Controller
                             name={
-                              `referencias.${index}.addressData.zipCode` as const
+                              `references.${index}.addressData.zipCode` as const
                             }
                             control={control}
                             render={({ field }) => <CepInput {...field} />}
                           />
-                          {errors.referencias?.[index]?.addressData?.zipCode
+                          {errors.references?.[index]?.addressData?.zipCode
                             ?.message && (
                             <p className="text-sm text-destructive">
                               {
-                                errors.referencias?.[index]?.addressData
+                                errors.references?.[index]?.addressData
                                   ?.zipCode?.message
                               }
                             </p>
@@ -649,14 +648,14 @@ export function CustomerForm() {
                           <Input
                             id="address"
                             {...register(
-                              `referencias.${index}.addressData.address` as const
+                              `references.${index}.addressData.address` as const
                             )}
                           />
-                          {errors.referencias?.[index]?.addressData?.address
+                          {errors.references?.[index]?.addressData?.address
                             ?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.referencias?.[index]?.addressData
+                                errors.references?.[index]?.addressData
                                   ?.address?.message
                               }
                             </p>
@@ -667,14 +666,14 @@ export function CustomerForm() {
                           <Input
                             id="city"
                             {...register(
-                              `referencias.${index}.addressData.city` as const
+                              `references.${index}.addressData.city` as const
                             )}
                           />
-                          {errors.referencias?.[index]?.addressData?.city
+                          {errors.references?.[index]?.addressData?.city
                             ?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.referencias?.[index]?.addressData?.city
+                                errors.references?.[index]?.addressData?.city
                                   ?.message
                               }
                             </p>
@@ -685,14 +684,14 @@ export function CustomerForm() {
                           <Input
                             id="state"
                             {...register(
-                              `referencias.${index}.addressData.state` as const
+                              `references.${index}.addressData.state` as const
                             )}
                           />
-                          {errors.referencias?.[index]?.addressData?.state
+                          {errors.references?.[index]?.addressData?.state
                             ?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.referencias?.[index]?.addressData?.state
+                                errors.references?.[index]?.addressData?.state
                                   ?.message
                               }
                             </p>
@@ -705,14 +704,14 @@ export function CustomerForm() {
                           <Input
                             id="referencePoint"
                             {...register(
-                              `referencias.${index}.addressData.referencePoint` as const
+                              `references.${index}.addressData.referencePoint` as const
                             )}
                           />
-                          {errors.referencias?.[index]?.addressData
+                          {errors.references?.[index]?.addressData
                             ?.referencePoint?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.referencias?.[index]?.addressData
+                                errors.references?.[index]?.addressData
                                   ?.referencePoint?.message
                               }
                             </p>
@@ -723,14 +722,14 @@ export function CustomerForm() {
                           <Input
                             id="number"
                             {...register(
-                              `referencias.${index}.addressData.number` as const
+                              `references.${index}.addressData.number` as const
                             )}
                           />
-                          {errors.referencias?.[index]?.addressData?.number
+                          {errors.references?.[index]?.addressData?.number
                             ?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.referencias?.[index]?.addressData?.number
+                                errors.references?.[index]?.addressData?.number
                                   ?.message
                               }
                             </p>
@@ -741,14 +740,14 @@ export function CustomerForm() {
                           <Input
                             id="complement"
                             {...register(
-                              `referencias.${index}.addressData.complement` as const
+                              `references.${index}.addressData.complement` as const
                             )}
                           />
-                          {errors.referencias?.[index]?.addressData?.complement
+                          {errors.references?.[index]?.addressData?.complement
                             ?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.referencias?.[index]?.addressData
+                                errors.references?.[index]?.addressData
                                   ?.complement?.message
                               }
                             </p>

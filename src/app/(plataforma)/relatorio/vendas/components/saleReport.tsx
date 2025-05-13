@@ -34,29 +34,39 @@ import { Separator } from '@/_components/ui/separator';
 import { paymentLabels } from '@/app/(plataforma)/gerenciar/vendas/_constants/paymentMethod';
 import { statusLabels } from '@/app/(plataforma)/gerenciar/vendas/_constants/saleStatus';
 import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
+import { formatForReals } from '@/_utils/formatForReals';
 
 export function SalesReport() {
   const [search, setSearch] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [sales, setSales] = useState<GetSaleContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     async function fetchAllSales() {
       setIsLoading(true);
+      setIsError(false);
 
-      // Primeiro, pega a primeira página para descobrir o total de vendas
-      const firstPage = await getSales({ pageIndex: 0 });
-      const totalElements = firstPage.totalElements;
+      try {
+        const firstPage = await getSales({});
+        const totalElements = firstPage.totalElements;
 
-      // Agora busca tudo de uma vez
-      const allSales = await getSales({
-        pageIndex: 0,
-        pageSize: totalElements,
-      });
-
-      setSales(allSales.content);
-      setIsLoading(false);
+        if (totalElements > 0) {
+          const allSales = await getSales({
+            pageIndex: 0,
+            pageSize: totalElements,
+          });
+          setSales(allSales.content);
+        } else {
+          setSales([]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar vendas:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchAllSales();
@@ -118,16 +128,41 @@ export function SalesReport() {
   };
 
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredSales);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendas');
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'Relatorio_Vendas.xlsx');
-  };
+  const formattedSales = filteredSales.map((sale) => ({
+    'CPF do Cliente': sale.customerCpf || '-',
+    'Desconto (%)': sale.discountPercentage !== undefined ? `${sale.discountPercentage}%` : '-',
+    'Total de Itens': sale.totalItems,
+    'Subtotal': formatForReals(sale.subtotal),
+    'Preço Total': formatForReals(sale.totalPrice),
+    'Status': sale.status === 'FINALIZADO' ? 'Finalizado' : 'Pendente',
+    'Forma de Pagamento': sale.paymentMethod || '-',
+    'Parcelas': sale.numberInstallments !== undefined ? `${sale.numberInstallments}` : '-',
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(formattedSales);
+
+  worksheet['!cols'] = [
+    { wch: 20 }, // CPF do Cliente
+    { wch: 15 }, // Desconto (%)
+    { wch: 15 }, // Total de Itens
+    { wch: 15 }, // Subtotal
+    { wch: 15 }, // Preço Total
+    { wch: 15 }, // Status
+    { wch: 25 }, // Forma de Pagamento
+    { wch: 12 }, // Parcelas
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendas');
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: 'xlsx',
+    type: 'array',
+  });
+
+  const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  saveAs(data, 'Relatorio_Vendas.xlsx');
+};
 
   return (
     <div className="container space-y-8 py-8">
@@ -145,7 +180,7 @@ export function SalesReport() {
             <CardTitle>Valor Total</CardTitle>
             <Tags className="h-5 w-5 text-green-500" />
           </CardHeader>
-          <CardContent>R$ {totalRevenue.toFixed(2)}</CardContent>
+          <CardContent>{formatForReals(totalRevenue)}</CardContent>
         </Card>
         <Card>
           <CardHeader className="flex items-center justify-between">
@@ -178,18 +213,31 @@ export function SalesReport() {
 
       {/* Tabela */}
       <Card className="w-full bg-muted/30">
-        <CardHeader>
+        <CardHeader className="flex items-center justify-between space-y-2">
           <CardTitle className="flex items-center gap-2">
             <ShoppingCart className="h-6 w-6 text-primary" />
             Vendas Realizadas
           </CardTitle>
         </CardHeader>
-        <Separator />
         <CardContent>
           <ScrollArea className="w-full max-h-[40vh] overflow-auto rounded-md border">
             {isLoading ? (
-              <div className="text-center py-12 text-muted-foreground">
-                Carregando...
+              <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
+                <ShoppingCart className="h-16 w-16 mb-4 text-muted-foreground" />
+                <p className="text-lg font-medium">Carregando vendas...</p>
+                <p className="text-sm">
+                  Aguarde um momento enquanto buscamos os dados.
+                </p>
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center text-red-500">
+                <ShoppingCart className="h-16 w-16 mb-4 text-red-300" />
+                <p className="text-lg font-medium">
+                  Erro ao carregar as vendas
+                </p>
+                <p className="text-sm text-red-400">
+                  Tente novamente mais tarde.
+                </p>
               </div>
             ) : filteredSales.length > 0 ? (
               <Table>
@@ -197,7 +245,7 @@ export function SalesReport() {
                   <TableRow>
                     <TableHead>CPF do Cliente</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Total</TableHead>
+                    <TableHead>Valor</TableHead>
                     <TableHead>Qtd. Itens</TableHead>
                     <TableHead>Método</TableHead>
                   </TableRow>
@@ -207,18 +255,36 @@ export function SalesReport() {
                     <TableRow key={sale.id}>
                       <TableCell>{sale.customerCpf}</TableCell>
                       <TableCell>{statusLabels[sale.status]}</TableCell>
-                      <TableCell>R$ {sale.totalPrice.toFixed(2)}</TableCell>
-                      <TableCell>{sale.totalItems}</TableCell>
                       <TableCell>
-                        {paymentLabels[sale.paymentMethod]}
+                        {sale.discountPercentage ? (
+                          <div className="space-x-1 flex flex-wrap">
+                            <span
+                              style={{ textDecoration: 'line-through' }}
+                              className="text-xs text-muted-foreground className='whitespace-nowrap'"
+                            >
+                              {formatForReals(sale.subtotal)}
+                            </span>
+                            <span className="whitespace-nowrap">
+                              {formatForReals(sale.totalPrice)}
+                            </span>
+                          </div>
+                        ) : (
+                          <p>{formatForReals(sale.totalPrice)}</p>
+                        )}
                       </TableCell>
+                      <TableCell>{sale.totalItems}</TableCell>
+                      <TableCell>{paymentLabels[sale.paymentMethod]}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                Nenhuma venda encontrada
+              <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+                <ShoppingCart className="h-16 w-16 mb-4 text-muted-foreground" />
+                <p className="text-lg font-medium">Nenhuma venda encontrada</p>
+                <p className="text-sm">
+                  Cadastre uma venda, ou coloque um filtro válido.
+                </p>
               </div>
             )}
           </ScrollArea>

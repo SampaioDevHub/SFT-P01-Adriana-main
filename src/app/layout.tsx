@@ -27,8 +27,8 @@ import { ClerkProvider, ClerkLoading } from '@clerk/nextjs';
 import { ptBR } from '@clerk/localizations';
 
 // Providers
-import { ThemeProvider } from '@/_components/providers/theme-provider';
-import ReactQueryProvider from '@/_components/providers/react-query-provider';
+import { ThemeProvider } from '@/_providers/theme-provider';
+import { ReactQueryProvider } from '@/_providers/react-query-provider';
 
 // UI/UX
 import NextTopLoader from 'nextjs-toploader';
@@ -40,9 +40,6 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 // Styles
 import './globals.css';
-
-
-
 
 // Root Layout
 export default async function RootLayout({

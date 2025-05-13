@@ -16,7 +16,8 @@ export interface GetSaleContent {
     }
   ];
   status: "FINALIZADO" | "PENDENTE",
-  paymentMethod: string
+  paymentMethod: string;
+  numberInstallments?: number
 }
 
 export interface GetSalesBody {
