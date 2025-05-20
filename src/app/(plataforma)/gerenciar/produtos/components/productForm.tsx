@@ -49,8 +49,6 @@ export function ProductForm() {
   } = useForm<FormSchemaProduct>({
     resolver: yupResolver(formSchemaProduct()),
     defaultValues: {
-      category: '',
-      size: '',
       code: uuidV4(),
     },
   });
@@ -70,14 +68,8 @@ export function ProductForm() {
   async function handleCreateProduct(data: FormSchemaProduct) {
     try {
       await createProductFn({
-        code: data.code,
-        name: data.name,
-        discountPercentage: data.discountPercentage,
-        price: data.price,
-        quantityInStock: data.quantityInStock,
-        size: data.size,
-        category: data.category,
-        subCategory: data.subCategory,
+        ...data,
+        code: uuidV4(),
       });
       reset();
       setErrorMessage(null);
@@ -98,7 +90,6 @@ export function ProductForm() {
   }
 
   const category = watch('category');
-  const isClothingCategory = category === 'Roupas';
 
   return (
     <Card>
@@ -240,7 +231,6 @@ export function ProductForm() {
               </p>
             )}
           </div>
-          {isClothingCategory && (
             <div className="space-y-2">
               <Label htmlFor="size">
                 Tamanhos Disponiveis{' '}
@@ -253,7 +243,6 @@ export function ProductForm() {
                 </p>
               )}
             </div>
-          )}
           {errorMessage && (
             <AlertError
               title="Ops, parece que temos um erro!"

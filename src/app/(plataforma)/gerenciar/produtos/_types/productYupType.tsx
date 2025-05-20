@@ -23,7 +23,8 @@ export const formSchemaProduct = () =>
       .required('Informe a quantidade do produto'),
     size: yup
       .string()
-      .max(60, 'Você só pode inserir até 60 caracteres'),
+      .max(60, 'Você só pode inserir até 60 caracteres')
+      .optional(),
     category: yup
       .string()
       .max(20, 'Você só pode inserir até 20 caracteres')

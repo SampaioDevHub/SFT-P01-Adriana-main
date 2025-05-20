@@ -41,17 +41,8 @@ export function EditProductModalContent({
   open,
 }: ModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [sizesArray, setSizesArray] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
-
-  const toggleSize = (size: string) => {
-    setSizesArray((prevSizes) =>
-      prevSizes.includes(size)
-        ? prevSizes.filter((s) => s !== size)
-        : [...prevSizes, size]
-    );
-  };
 
   const { data: categoriesArray } = useQuery({
     queryKey: ['categories'],
@@ -75,28 +66,12 @@ export function EditProductModalContent({
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaProduct>({
     resolver: yupResolver(formSchemaProduct()),
-    defaultValues: {
-      name: '',
-      discountPercentage: undefined,
-      price: 0,
-      quantityInStock: 0,
-      size: '',
-      category: 'Roupas',
-      subCategory: '',
-    },
   });
 
   useEffect(() => {
     if (product && open) {
       reset({
-        code: product.code,
-        name: product.name ?? '',
-        discountPercentage: product.discountPercentage,
-        price: product.price ?? '',
-        quantityInStock: product.quantityInStock ?? 0,
-        size: product.size,
-        category: product.category ?? 'Roupas',
-        subCategory: product.subCategory ?? '',
+        ...product
       });
     }
   }, [product, open, reset]);
@@ -128,18 +103,10 @@ export function EditProductModalContent({
   async function handleUpdatedProduct(data: FormSchemaProduct) {
     try {
       await updatedProductFn({
-        id: productId,
-        code: uuidv4(),
-        name: data.name,
-        discountPercentage: data.discountPercentage,
-        price: data.price,
-        quantityInStock: data.quantityInStock,
-        size: data.category === 'Roupas' ? data.size : '',
-        category: data.category,
-        subCategory: data.subCategory,
+        ...data,
+        id: productId
       });
       reset();
-      setSizesArray([]);
       setIsOpen(false);
       setErrorMessage(null);
       toast.success('Produto atualizado com sucesso');
@@ -260,20 +227,16 @@ export function EditProductModalContent({
               </p>
             )}
           </div>
-          {category === 'Roupas' && (
-            <div className="space-y-2">
-              <Label htmlFor="size">
-                Tamanhos Disponiveis{' '}
-                <span className="text-muted-foreground">(Opcional)</span>
-              </Label>
-              <Input {...register('size')} id='size' type="string" />
-              {errors.size?.message && (
-                <p className="text-sm text-destructive">
-                  {errors.size.message}
-                </p>
-              )}
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="size">
+              Tamanhos Disponiveis{' '}
+              <span className="text-muted-foreground">(Opcional)</span>
+            </Label>
+            <Input {...register('size')} id="size" type="string" />
+            {errors.size?.message && (
+              <p className="text-sm text-destructive">{errors.size.message}</p>
+            )}
+          </div>
         </form>
       )}
       {errorMessage && (
