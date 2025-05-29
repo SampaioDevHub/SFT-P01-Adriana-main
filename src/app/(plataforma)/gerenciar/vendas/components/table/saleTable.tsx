@@ -58,7 +58,7 @@ export function SaleTable() {
       <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
         <SaleTableFilter />
       </div>
-      <div className="max-h-[40vh] overflow-auto rounded-md border">
+      <div className="max-h-[60vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -66,7 +66,7 @@ export function SaleTable() {
               <TableHead>Produtos(Qtd)</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className='w-[11rem]'></TableHead>
+              <TableHead className="w-[11rem]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">

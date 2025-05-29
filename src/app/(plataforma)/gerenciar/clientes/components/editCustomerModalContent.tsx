@@ -6,7 +6,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from '@/_components/ui/card';
 import {
   DialogContent,
@@ -24,10 +23,16 @@ import {
   FormSchemaCustomer,
   formSchemaCustomer,
 } from '../_types/customerYupType';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/_components/ui/popover';
 import { AxiosError } from 'axios';
-import { format, parseISO, set } from 'date-fns';
+import { format, isValid, parseISO, set } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pencil, User, X } from 'lucide-react';
+import { CalendarIcon, Pencil, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -43,6 +48,8 @@ import { CpfInput } from '@/_components/Inputs/cpfInput';
 import { PhoneInput } from '@/_components/Inputs/phoneInput';
 import { CepInput } from '@/_components/Inputs/cepInput';
 import { AlertError } from '@/_components/alert/alert-error';
+import { GetCustomerContent } from '@/_api/customers/_types/type-get-custumer';
+import { Calendar } from '@/_components/ui/calendar';
 
 import { customerProfile, profileLabels } from '../_constants/customerProfile';
 import { customerStatus } from '../_constants/customerStatus';
@@ -71,10 +78,6 @@ export function EditCustomerModalContent({
     gcTime: 0,
   });
 
-  const dataFormatada =
-    customer?.dateBirth &&
-    format(parseISO(customer.dateBirth.split(' ')[0]), 'yyyy-MM-dd');
-
   const {
     handleSubmit,
     register,
@@ -86,37 +89,16 @@ export function EditCustomerModalContent({
   } = useForm<FormSchemaCustomer>({
     resolver: yupResolver(formSchemaCustomer),
     values: {
+      ...customer,
       name: customer?.name ?? '',
-      phone: customer?.phone ?? '',
-      email: customer?.email ?? null,
       profile: customer?.profile ?? '',
-      zipCode: customer?.addressData.zipCode ?? '',
-      address: customer?.addressData.address ?? '',
-      number: customer?.addressData.number ?? '',
-      complement: customer?.addressData.complement ?? '',
-      referencePoint: customer?.addressData.referencePoint ?? '',
-      city: customer?.addressData.city ?? '',
-      state: customer?.addressData.state ?? '',
       cpf: customer?.cpf ?? '',
-      dateBirth: dataFormatada ?? '',
-      maritalStatus: customer?.maritalStatus ?? '',
-      enterprise: customer?.enterprise ?? '',
-      businessPhone: customer?.businessPhone ?? '',
-      lengthService: customer?.lengthService ?? '',
-      businessZipCode: customer?.businessZipCode ?? '',
-      businessAddress: customer?.businessAddress ?? '',
-      businessCity: customer?.businessCity ?? '',
-      businessState: customer?.businessState ?? '',
-      businessPosition: customer?.businessPosition ?? '',
-      bank: customer?.bank ?? '',
-      agency: customer?.agency ?? '',
-      father: customer?.father ?? '',
-      mother: customer?.mother ?? '',
-      references: customer?.referenceEntityList || [],
+      dateBirth: customer?.dateBirth,
+      references: customer?.referenceEntityList,
     },
   });
 
-  const zipCode = watch('zipCode')?.replace(/\D/g, '');
+  const zipCode = watch('addressData.zipCode')?.replace(/\D/g, '');
 
   // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
@@ -126,13 +108,16 @@ export function EditCustomerModalContent({
         .then((data) => {
           if (!data.erro) {
             setValue(
-              'address',
+              'addressData.address',
               `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
             );
-            setValue('complement', `${data.logradouro} ${data.complemento}`);
-            setValue('referencePoint', data.bairro);
-            setValue('city', data.localidade);
-            setValue('state', data.estado);
+            setValue(
+              'addressData.complement',
+              `${data.logradouro} ${data.complemento}`
+            );
+            setValue('addressData.referencePoint', data.bairro);
+            setValue('addressData.city', data.localidade);
+            setValue('addressData.state', data.estado);
           }
         })
         .catch((error) => toast.error('Erro ao buscara o CEP'));
@@ -181,13 +166,13 @@ export function EditCustomerModalContent({
         error: 'personalinformation',
       });
     } else if (
-      errors.zipCode ||
-      errors.address ||
-      errors.city ||
-      errors.state ||
-      errors.referencePoint ||
-      errors.number ||
-      errors.complement
+      errors.addressData?.zipCode ||
+      errors.addressData?.address ||
+      errors.addressData?.city ||
+      errors.addressData?.state ||
+      errors.addressData?.referencePoint ||
+      errors.addressData?.number ||
+      errors.addressData?.complement
     ) {
       setActiveTab({
         key: 'homeAddress',
@@ -222,20 +207,21 @@ export function EditCustomerModalContent({
         key: 'affiliation',
         error: 'affiliation',
       });
-    }else if (Array.isArray(errors.references)) {
-      const errorIndex = errors.references.findIndex((ref) =>
-        ref && typeof ref === 'object' && (
-          ('name' in ref && ref.name?.message) ||
-          ('phone' in ref && ref.phone?.message)
-        )
+    } else if (Array.isArray(errors.references)) {
+      const errorIndex = errors.references.findIndex(
+        (ref) =>
+          ref &&
+          typeof ref === 'object' &&
+          (('name' in ref && ref.name?.message) ||
+            ('phone' in ref && ref.phone?.message))
       );
-    
+
       if (errorIndex !== -1) {
         setActiveTab({
           key: 'references',
           error: 'references',
         });
-    
+
         setIndexEdit([errorIndex]);
       }
     }
@@ -258,9 +244,9 @@ export function EditCustomerModalContent({
 
   function handleIsOpenEditReference(index: number) {
     if (indexEdit.includes(index)) {
-      setIndexEdit(state => state.filter(i => i !== index));
+      setIndexEdit((state) => state.filter((i) => i !== index));
     } else {
-      setIndexEdit(state => [...state, index]);
+      setIndexEdit((state) => [...state, index]);
     }
   }
 
@@ -298,39 +284,53 @@ export function EditCustomerModalContent({
   ]);
 
   async function handleUpdatedCustomer(data: FormSchemaCustomer) {
+    console.log(data);
     try {
       await updatedCustomerFn({
-        id: customer!.id,
-        name: data.name,
-        phone: data.phone === undefined ? '' : data.phone,
-        email: data.email === '' ? null : data.email,
-        profile: data.profile,
-        addressData: {
-          zipCode: data.zipCode === undefined ? '' : data.zipCode,
-          address: data.address,
-          number: data.number,
-          complement: data.complement,
-          referencePoint: data.referencePoint,
-          city: data.city,
-          state: data.state,
-        },
-        cpf: data.cpf,
-        dateBirth: data.dateBirth,
+        id: customer?.id!,
+        name: data.name ?? '',
+        cpf: data.cpf ?? '',
         maritalStatus: data.maritalStatus === 'all' ? '' : data.maritalStatus,
-        enterprise: data.enterprise,
-        businessPhone:
-          data.businessPhone === undefined ? '' : data.businessPhone,
-        lengthService: data.lengthService,
-        businessZipCode: data.businessZipCode,
-        businessAddress: data.businessAddress,
-        businessCity: data.businessCity,
-        businessState: data.businessState,
-        businessPosition: data.businessPosition,
-        bank: data.bank,
-        agency: data.agency,
-        father: data.father,
-        mother: data.mother,
-        referenceEntityList: data.references,
+        email: data.email ?? null,
+        profile: data.profile === 'all' ? '' : data.profile,
+        phone: data.phone ?? '',
+        enterprise: data.enterprise ?? '',
+        businessPhone: data.businessPhone ?? '',
+        lengthService: data.lengthService ?? '',
+        businessZipCode: data.businessZipCode ?? '',
+        businessAddress: data.businessAddress ?? '',
+        businessSector: data.businessPosition ?? '',
+        businessCity: data.businessCity ?? '',
+        businessState: data.businessState ?? '',
+        businessPosition: data.businessPosition ?? '',
+        dateBirth: data.dateBirth ?? null,
+        addressData: {
+          zipCode: data.addressData?.zipCode ?? '',
+          address: data.addressData?.address ?? '',
+          number: data.addressData?.number ?? '',
+          complement: data.addressData?.complement ?? '',
+          referencePoint: data.addressData?.referencePoint ?? '',
+          city: data.addressData?.city ?? '',
+          state: data.addressData?.state ?? '',
+        },
+        bank: data.bank ?? '',
+        agency: data.agency ?? '',
+        father: data.father ?? '',
+        mother: data.mother ?? '',
+        referenceEntityList:
+          data.references?.map((ref) => ({
+            name: ref.name ?? '',
+            phone: ref.phone ?? '',
+            addressData: {
+              zipCode: data.addressData?.zipCode ?? '',
+              address: data.addressData?.address ?? '',
+              number: data.addressData?.number ?? '',
+              complement: data.addressData?.complement ?? '',
+              referencePoint: data.addressData?.referencePoint ?? '',
+              city: data.addressData?.city ?? '',
+              state: data.addressData?.state ?? '',
+            },
+          })) ?? [],
       });
       reset();
       setIsOpen(false);
@@ -462,7 +462,11 @@ export function EditCustomerModalContent({
                         (Obrigatório)
                       </span>
                     </Label>
-                    <Input id="name" {...register('name')} required />
+                    <Input
+                      id="name"
+                      required={errors.name?.message ? true : false}
+                      {...register('name')}
+                    />
                     {errors.name?.message && (
                       <p className="text-sm text-destructive">
                         {errors.name?.message}
@@ -474,7 +478,12 @@ export function EditCustomerModalContent({
                     <Controller
                       name="phone"
                       control={control}
-                      render={({ field }) => <PhoneInput {...field} />}
+                      render={({ field }) => (
+                        <PhoneInput
+                          required={errors.phone?.message ? true : false}
+                          {...field}
+                        />
+                      )}
                     />
                     {errors.phone?.message && (
                       <p className="text-sm text-destructive">
@@ -484,7 +493,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">E-mail</Label>
-                    <Input id="email" {...register('email')} />
+                    <Input
+                      id="email"
+                      required={errors.email?.message ? true : false}
+                      {...register('email')}
+                    />
                     {errors.email?.message && (
                       <p className="text-sm text-destructive">
                         {errors.email?.message}
@@ -494,6 +507,8 @@ export function EditCustomerModalContent({
                   <div className="space-y-2">
                     <Label htmlFor="profile">Perfil</Label>
                     <select
+                      id="profile"
+                      required={errors.profile?.message ? true : false}
                       defaultValue="all"
                       className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                       {...register('profile')}
@@ -533,40 +548,65 @@ export function EditCustomerModalContent({
                   <div className="space-y-2">
                     <Label htmlFor="cep">CEP</Label>
                     <Controller
-                      name="zipCode"
+                      name="addressData.zipCode"
                       control={control}
-                      render={({ field }) => <CepInput {...field} />}
+                      render={({ field }) => (
+                        <CepInput
+                          required={
+                            errors.addressData?.zipCode?.message ? true : false
+                          }
+                          {...field}
+                        />
+                      )}
                     />
-                    {errors.zipCode?.message && (
+                    {errors.addressData?.zipCode?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.zipCode?.message}
+                        {errors.addressData?.zipCode?.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address">Endereço</Label>
-                    <Input id="address" {...register('address')} />
-                    {errors.address?.message && (
+                    <Input
+                      id="address"
+                      required={
+                        errors.addressData?.address?.message ? true : false
+                      }
+                      {...register('addressData.address')}
+                    />
+                    {errors.addressData?.address?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.address?.message}
+                        {errors.addressData?.address?.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="city">Cidade</Label>
-                    <Input id="city" {...register('city')} />
-                    {errors.city?.message && (
+                    <Input
+                      id="city"
+                      required={
+                        errors.addressData?.city?.message ? true : false
+                      }
+                      {...register('addressData.city')}
+                    />
+                    {errors.addressData?.city?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.city?.message}
+                        {errors.addressData?.city?.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="state">Estado</Label>
-                    <Input id="state" {...register('state')} />
-                    {errors.state?.message && (
+                    <Input
+                      id="state"
+                      required={
+                        errors.addressData?.state?.message ? true : false
+                      }
+                      {...register('addressData.state')}
+                    />
+                    {errors.addressData?.state?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.state?.message}
+                        {errors.addressData?.state?.message}
                       </p>
                     )}
                   </div>
@@ -574,29 +614,46 @@ export function EditCustomerModalContent({
                     <Label htmlFor="referencePoint">Ponto de referência</Label>
                     <Input
                       id="referencePoint"
-                      {...register('referencePoint')}
+                      required={
+                        errors.addressData?.referencePoint?.message
+                          ? true
+                          : false
+                      }
+                      {...register('addressData.referencePoint')}
                     />
-                    {errors.referencePoint?.message && (
+                    {errors.addressData?.referencePoint?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.referencePoint?.message}
+                        {errors.addressData?.referencePoint?.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="number">Numero da casa</Label>
-                    <Input id="number" {...register('number')} />
-                    {errors.number?.message && (
+                    <Input
+                      id="number"
+                      required={
+                        errors.addressData?.number?.message ? true : false
+                      }
+                      {...register('addressData.number')}
+                    />
+                    {errors.addressData?.number?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.number?.message}
+                        {errors.addressData?.number?.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="complement">Complemento</Label>
-                    <Input id="complement" {...register('complement')} />
-                    {errors.complement?.message && (
+                    <Input
+                      id="complement"
+                      required={
+                        errors.addressData?.complement?.message ? true : false
+                      }
+                      {...register('addressData.complement')}
+                    />
+                    {errors.addressData?.complement?.message && (
                       <p className="text-sm text-destructive">
-                        {errors.complement?.message}
+                        {errors.addressData?.complement?.message}
                       </p>
                     )}
                   </div>
@@ -623,7 +680,12 @@ export function EditCustomerModalContent({
                     <Controller
                       name="cpf"
                       control={control}
-                      render={({ field }) => <CpfInput {...field} />}
+                      render={({ field }) => (
+                        <CpfInput
+                          required={errors.cpf?.message ? true : false}
+                          {...field}
+                        />
+                      )}
                     />
                     {errors.cpf?.message && (
                       <p className="text-sm text-destructive">
@@ -632,21 +694,105 @@ export function EditCustomerModalContent({
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="dataBirth">Data de nascimento</Label>
-                    <Input
-                      id="dataBirth"
-                      type="date"
-                      {...register('dateBirth')}
+                    <Controller
+                      name="dateBirth"
+                      control={control}
+                      render={({ field }) => {
+                        // Função para formatar a data em yyyy-MM-dd usando UTC, para evitar o problema de timezone
+                        function formatDateToInputValue(date: Date) {
+                          if (!date) return '';
+                          const d =
+                            date instanceof Date ? date : new Date(date);
+                          if (isNaN(d.getTime())) return ''; // não é data válida
+                          const year = d.getUTCFullYear();
+                          const month = String(d.getUTCMonth() + 1).padStart(
+                            2,
+                            '0'
+                          );
+                          const day = String(d.getUTCDate()).padStart(2, '0');
+                          return `${year}-${month}-${day}`;
+                        }
+
+                        // Converte o Date para string yyyy-MM-dd para o input type="date"
+                        const dateString = field.value ? formatDateToInputValue(field.value) : '';
+
+                        // Função para atualizar o field.value com Date a partir do input string
+                        const onInputChange = (
+                          e: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          const val = e.target.value;
+                          if (val === '') {
+                            field.onChange(undefined); // limpa o valor
+                          } else {
+                            const parsedDate = parseISO(val);
+                            if (isValid(parsedDate)) {
+                              field.onChange(parsedDate);
+                            }
+                          }
+                        };
+
+                        return (
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">
+                              Data de nascimento
+                            </label>
+                            <div className="relative flex items-center gap-2">
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="outline" size="icon">
+                                    <CalendarIcon className="h-4 w-4" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                  <Calendar
+                                    mode="single"
+                                    captionLayout="dropdown"
+                                    selected={field.value as Date | undefined}
+                                    onSelect={(date) =>
+                                      field.onChange(date ?? undefined)
+                                    }
+                                    initialFocus
+                                    toYear={new Date().getFullYear()}
+                                    fromYear={1900}
+                                    locale={ptBR}
+                                    className="rounded-md"
+                                    classNames={{
+                                      caption_label: 'hidden',
+                                      caption_dropdowns:
+                                        'flex justify-center items-center gap-1 [&>label]:sr-only',
+                                      dropdown_month:
+                                        'text-sm px-2 py-1 rounded-md border border-input bg-background shadow-sm focus:outline-none',
+                                      dropdown_year:
+                                        'text-sm px-2 py-1 rounded-md border border-input bg-background shadow-sm focus:outline-none',
+                                    }}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+
+                              <Input
+                                className="no-calendar-button"
+                                type="date"
+                                value={dateString}
+                                onChange={onInputChange}
+                              />
+                            </div>
+
+                            {errors.dateBirth && (
+                              <p className="text-sm text-destructive">
+                                {errors.dateBirth.message}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      }}
                     />
-                    {errors.dateBirth?.message && (
-                      <p className="text-sm text-destructive">
-                        {errors.dateBirth?.message}
-                      </p>
-                    )}
                   </div>
+
                   <div className="flex flex-col space-y-2">
                     <Label htmlFor="maritalStatus">Estado civil</Label>
                     <select
+                      id="maritalStatus"
+                      required={errors.maritalStatus?.message ? true : false}
                       defaultValue="all"
                       className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                       {...register('maritalStatus')}
@@ -685,7 +831,11 @@ export function EditCustomerModalContent({
                 <CardContent className="max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden">
                   <div className="space-y-2">
                     <Label htmlFor="enterprise">Empresa</Label>
-                    <Input id="enterprise" {...register('enterprise')} />
+                    <Input
+                      id="enterprise"
+                      required={errors.enterprise?.message ? true : false}
+                      {...register('enterprise')}
+                    />
                     {errors.enterprise?.message && (
                       <p className="text-sm text-destructive">
                         {errors.enterprise?.message}
@@ -694,7 +844,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="businessPhone">Telefone comercial</Label>
-                    <Input id="businessPhone" {...register('businessPhone')} />
+                    <Input
+                      id="businessPhone"
+                      required={errors.businessPhone?.message ? true : false}
+                      {...register('businessPhone')}
+                    />
                     {errors.businessPhone?.message && (
                       <p className="text-sm text-destructive">
                         {errors.businessPhone?.message}
@@ -703,7 +857,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lengthService">Tempo de serviço</Label>
-                    <Input id="lengthService" {...register('lengthService')} />
+                    <Input
+                      id="lengthService"
+                      required={errors.lengthService?.message ? true : false}
+                      {...register('lengthService')}
+                    />
                     {errors.lengthService?.message && (
                       <p className="text-sm text-destructive">
                         {errors.lengthService?.message}
@@ -711,11 +869,18 @@ export function EditCustomerModalContent({
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="businessCep">CEP</Label>
+                    <Label htmlFor="businessZipCode">CEP</Label>
                     <Controller
                       name="businessZipCode"
                       control={control}
-                      render={({ field }) => <CepInput {...field} />}
+                      render={({ field }) => (
+                        <CepInput
+                          required={
+                            errors.businessZipCode?.message ? true : false
+                          }
+                          {...field}
+                        />
+                      )}
                     />
                     {errors.businessZipCode?.message && (
                       <p className="text-sm text-destructive">
@@ -727,6 +892,7 @@ export function EditCustomerModalContent({
                     <Label htmlFor="businessAddress">Endereço comercial</Label>
                     <Input
                       id="businessAddress"
+                      required={errors.businessAddress?.message ? true : false}
                       {...register('businessAddress')}
                     />
                     {errors.businessAddress?.message && (
@@ -737,7 +903,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="businessCity">Cidade</Label>
-                    <Input id="businessCity" {...register('businessCity')} />
+                    <Input
+                      id="businessCity"
+                      required={errors.businessCity?.message ? true : false}
+                      {...register('businessCity')}
+                    />
                     {errors.businessCity?.message && (
                       <p className="text-sm text-destructive">
                         {errors.businessCity?.message}
@@ -746,7 +916,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="businessState">Estado</Label>
-                    <Input id="businessState" {...register('businessState')} />
+                    <Input
+                      id="businessState"
+                      required={errors.businessState?.message ? true : false}
+                      {...register('businessState')}
+                    />
                     {errors.businessState?.message && (
                       <p className="text-sm text-destructive">
                         {errors.businessState?.message}
@@ -757,6 +931,7 @@ export function EditCustomerModalContent({
                     <Label htmlFor="businessPosition">Cargo</Label>
                     <Input
                       id="businessPosition"
+                      required={errors.businessPosition?.message ? true : false}
                       {...register('businessPosition')}
                     />
                     {errors.businessPosition?.message && (
@@ -780,7 +955,11 @@ export function EditCustomerModalContent({
                 <CardContent className="max-h-[40vh] space-y-2 overflow-y-auto overflow-x-hidden">
                   <div className="space-y-2">
                     <Label htmlFor="bank">Banco</Label>
-                    <Input id="bank" {...register('bank')} />
+                    <Input
+                      id="bank"
+                      required={errors.bank?.message ? true : false}
+                      {...register('bank')}
+                    />
                     {errors.bank?.message && (
                       <p className="text-sm text-destructive">
                         {errors.bank?.message}
@@ -789,7 +968,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="agency">Agência</Label>
-                    <Input id="agency" {...register('agency')} />
+                    <Input
+                      id="agency"
+                      required={errors.agency?.message ? true : false}
+                      {...register('agency')}
+                    />
                     {errors.agency?.message && (
                       <p className="text-sm text-destructive">
                         {errors.agency?.message}
@@ -811,7 +994,11 @@ export function EditCustomerModalContent({
                 <CardContent className="max-h-[50vh] space-y-2 overflow-y-auto overflow-x-hidden">
                   <div className="space-y-2">
                     <Label htmlFor="father">Pai</Label>
-                    <Input id="father" {...register('father')} />
+                    <Input
+                      id="father"
+                      required={errors.father?.message ? true : false}
+                      {...register('father')}
+                    />
                     {errors.father?.message && (
                       <p className="text-sm text-destructive">
                         {errors.father?.message}
@@ -820,7 +1007,11 @@ export function EditCustomerModalContent({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="mother">Mãe</Label>
-                    <Input id="mother" {...register('mother')} />
+                    <Input
+                      id="mother"
+                      required={errors.mother?.message ? true : false}
+                      {...register('mother')}
+                    />
                     {errors.mother?.message && (
                       <p className="text-sm text-destructive">
                         {errors.mother?.message}
@@ -899,6 +1090,13 @@ export function EditCustomerModalContent({
                                         Nome
                                       </Label>
                                       <Input
+                                        id={`references.${index}.name`}
+                                        required={
+                                          errors.references?.[index]?.name
+                                            ?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.name`
                                         )}
@@ -924,7 +1122,16 @@ export function EditCustomerModalContent({
                                         control={control}
                                         name={`references.${index}.phone`}
                                         render={({ field }) => (
-                                          <PhoneInput {...field} />
+                                          <PhoneInput
+                                            required={
+                                              errors.references?.[index]?.phone
+                                                ?.message
+                                                ? true
+                                                : false
+                                            }
+                                            id={`references.${index}.phone`}
+                                            {...field}
+                                          />
                                         )}
                                         defaultValue={field.phone}
                                       />
@@ -947,7 +1154,16 @@ export function EditCustomerModalContent({
                                         }
                                         control={control}
                                         render={({ field }) => (
-                                          <CepInput {...field} />
+                                          <CepInput
+                                            required={
+                                              errors.references?.[index]
+                                                ?.addressData?.zipCode?.message
+                                                ? true
+                                                : false
+                                            }
+                                            id={`references.${index}.zipCode`}
+                                            {...field}
+                                          />
                                         )}
                                       />
                                       {errors.references?.[index]?.addressData
@@ -961,9 +1177,19 @@ export function EditCustomerModalContent({
                                       )}
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="address">Endereço</Label>
+                                      <Label
+                                        htmlFor={`references.${index}.address`}
+                                      >
+                                        Endereço
+                                      </Label>
                                       <Input
-                                        id="address"
+                                        id={`references.${index}.address`}
+                                        required={
+                                          errors.references?.[index]
+                                            ?.addressData?.address?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.addressData.address` as const
                                         )}
@@ -981,9 +1207,19 @@ export function EditCustomerModalContent({
                                       )}
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="city">Cidade</Label>
+                                      <Label
+                                        htmlFor={`references.${index}.city`}
+                                      >
+                                        Cidade
+                                      </Label>
                                       <Input
-                                        id="city"
+                                        id={`references.${index}.city`}
+                                        required={
+                                          errors.references?.[index]
+                                            ?.addressData?.city?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.addressData.city` as const
                                         )}
@@ -1001,9 +1237,19 @@ export function EditCustomerModalContent({
                                       )}
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="state">Estado</Label>
+                                      <Label
+                                        htmlFor={`references.${index}.state`}
+                                      >
+                                        Estado
+                                      </Label>
                                       <Input
-                                        id="state"
+                                        id={`references.${index}.state`}
+                                        required={
+                                          errors.references?.[index]
+                                            ?.addressData?.state?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.addressData.state` as const
                                         )}
@@ -1021,11 +1267,20 @@ export function EditCustomerModalContent({
                                       )}
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="referencePoint">
+                                      <Label
+                                        htmlFor={`references.${index}.referencePoint`}
+                                      >
                                         Ponto de referência
                                       </Label>
                                       <Input
-                                        id="referencePoint"
+                                        id={`references.${index}.referencePoint`}
+                                        required={
+                                          errors.references?.[index]
+                                            ?.addressData?.referencePoint
+                                            ?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.addressData.referencePoint` as const
                                         )}
@@ -1044,11 +1299,19 @@ export function EditCustomerModalContent({
                                       )}
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="number">
+                                      <Label
+                                        htmlFor={`references.${index}.number`}
+                                      >
                                         Numero da casa
                                       </Label>
                                       <Input
-                                        id="number"
+                                        id={`references.${index}.number`}
+                                        required={
+                                          errors.references?.[index]
+                                            ?.addressData?.number?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.addressData.number` as const
                                         )}
@@ -1066,11 +1329,19 @@ export function EditCustomerModalContent({
                                       )}
                                     </div>
                                     <div className="space-y-2">
-                                      <Label htmlFor="complement">
+                                      <Label
+                                        htmlFor={`references.${index}.complement`}
+                                      >
                                         Complemento
                                       </Label>
                                       <Input
-                                        id="complement"
+                                        id={`references.${index}.complement`}
+                                        required={
+                                          errors.references?.[index]
+                                            ?.addressData?.complement?.message
+                                            ? true
+                                            : false
+                                        }
                                         {...register(
                                           `references.${index}.addressData.complement` as const
                                         )}

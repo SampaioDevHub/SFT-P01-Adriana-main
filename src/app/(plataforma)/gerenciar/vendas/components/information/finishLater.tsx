@@ -22,12 +22,13 @@ export function FinishLater({
   finishLater,
   setFinishLater,
 }: FinishLaterProps) {
+  const savedData = JSON.parse(localStorage.getItem('saleInformation') || 'null');
   return (
     <div className="flex flex-col items-start justify-center space-y-4 w-full">
       <div className="flex items-center justify-start gap-2 space-x-2 rounded">
         <Checkbox
           id="complete-later"
-          checked={finishLater}
+          checked={savedData?.endDate ? true : finishLater}
           onCheckedChange={(value) => setFinishLater(value === true)}
           className="border-[0.5px] border-muted-foreground data-[state=checked]:bg-muted-foreground data-[state=checked]:text-card"
         />
@@ -38,7 +39,7 @@ export function FinishLater({
           Gostaria de concluir esta venda depois?
         </Label>
       </div>
-      {finishLater && (
+      {(savedData?.endDate || finishLater) && (
         <div className=" flex space-x-4 items-start justify-center">
           <div className="text-sm">
             <div className="space-y-2">

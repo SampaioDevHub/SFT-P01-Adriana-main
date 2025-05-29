@@ -66,15 +66,17 @@ export function EditProductModalContent({
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaProduct>({
     resolver: yupResolver(formSchemaProduct()),
+    values: {
+      category: product?.category ?? '',
+      code: product?.code ?? '',
+      name: product?.name ?? '',
+      quantityInStock: product?.quantityInStock ?? 0,
+      subCategory: product?.subCategory ?? '',
+      discountPercentage: product?.discountPercentage,
+      size: product?.size,
+      price: product?.price ?? 0,
+    },
   });
-
-  useEffect(() => {
-    if (product && open) {
-      reset({
-        ...product
-      });
-    }
-  }, [product, open, reset]);
 
   const category = watch('category');
   const subCategory = watch('subCategory');
@@ -104,7 +106,7 @@ export function EditProductModalContent({
     try {
       await updatedProductFn({
         ...data,
-        id: productId
+        id: productId,
       });
       reset();
       setIsOpen(false);
@@ -133,7 +135,11 @@ export function EditProductModalContent({
         >
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Produto</Label>
-            <Input id="name" {...register('name')} required />
+            <Input
+              id="name"
+              required={errors.name?.message ? true : false}
+              {...register('name')}
+            />
             {errors.name?.message && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
@@ -142,6 +148,7 @@ export function EditProductModalContent({
             <Label htmlFor="discountPercentage">Desconto(%)</Label>
             <Input
               id="discountPercentage"
+              required={errors.discountPercentage?.message ? true : false}
               {...register('discountPercentage')}
             />
             {errors.discountPercentage?.message && (
@@ -151,8 +158,10 @@ export function EditProductModalContent({
             )}
           </div>
           <div className="flex flex-col space-y-2">
-            <Label htmlFor="edit-category">Categoria</Label>
+            <Label htmlFor="category">Categoria</Label>
             <select
+              id="category"
+              required={errors.category?.message ? true : false}
               className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register('category')}
             >
@@ -176,8 +185,10 @@ export function EditProductModalContent({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-subcategory">SubCategoria</Label>
+            <Label htmlFor="subCategory">SubCategoria</Label>
             <select
+              id="subCategory"
+              required={errors.subCategory?.message ? true : false}
               className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...register('subCategory')}
             >
@@ -211,7 +222,11 @@ export function EditProductModalContent({
               name="price"
               control={control}
               render={({ field }) => (
-                <MoneyInput {...field} value={String(field.value || '')} />
+                <MoneyInput
+                  required={errors.price?.message ? true : false}
+                  {...field}
+                  valueInCents={String(field.value * 100 || '')}
+                />
               )}
             />
             {errors.price?.message && (
@@ -220,7 +235,11 @@ export function EditProductModalContent({
           </div>
           <div className="space-y-2">
             <Label>Quantidade</Label>
-            <Input {...register('quantityInStock')} type="number" required />
+            <Input
+              required={errors.quantityInStock?.message ? true : false}
+              {...register('quantityInStock')}
+              type="number"
+            />
             {errors.quantityInStock?.message && (
               <p className="text-sm text-destructive">
                 {errors.quantityInStock.message}
@@ -232,7 +251,12 @@ export function EditProductModalContent({
               Tamanhos Disponiveis{' '}
               <span className="text-muted-foreground">(Opcional)</span>
             </Label>
-            <Input {...register('size')} id="size" type="string" />
+            <Input
+              required={errors.size?.message ? true : false}
+              {...register('size')}
+              id="size"
+              type="string"
+            />
             {errors.size?.message && (
               <p className="text-sm text-destructive">{errors.size.message}</p>
             )}

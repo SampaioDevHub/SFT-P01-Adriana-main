@@ -115,7 +115,7 @@ export function ProductForm() {
           </div> */}
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Produto</Label>
-            <Input id="name" {...register('name')} required />
+            <Input id="name" required={errors.name?.message ? true : false} {...register('name')}/>
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
@@ -130,6 +130,7 @@ export function ProductForm() {
             <Input
               type="number"
               id="discountPercentage"
+              required={errors.discountPercentage?.message ? true : false}
               {...register('discountPercentage')}
             />
             {errors.discountPercentage?.message && (
@@ -144,7 +145,7 @@ export function ProductForm() {
               name="category" // Nome do campo no formulário
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select required={errors.category?.message ? true : false} onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
@@ -171,7 +172,7 @@ export function ProductForm() {
                 name="subCategory" // Nome do campo no formulário
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select required={errors.subCategory?.message ? true : false} onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione uma SubCategoria" />
                     </SelectTrigger>
@@ -208,7 +209,7 @@ export function ProductForm() {
               name="price" // Nome do campo no formulário
               control={control}
               render={({ field }) => (
-                <MoneyInput {...field} value={String(field.value || '')} />
+                <MoneyInput required={errors.price?.message ? true : false} {...field} valueInCents={String(field.value || '')} />
               )}
             />
             {errors.price?.message && (
@@ -221,9 +222,9 @@ export function ProductForm() {
             <Label htmlFor="quantityInStock">Quantidade</Label>
             <Input
               id="quantityInStock"
+              required={errors.quantityInStock?.message ? true : false}
               {...register('quantityInStock')}
               type="number"
-              required
             />
             {errors.quantityInStock?.message && (
               <p className={`text-sm text-destructive`}>
@@ -236,7 +237,7 @@ export function ProductForm() {
                 Tamanhos Disponiveis{' '}
                 <span className="text-muted-foreground">(Opcional)</span>
               </Label>
-              <Input id="size" {...register('size')} type="string" />
+              <Input id="size" required={errors.size?.message ? true : false} {...register('size')} type="string" />
               {errors.size?.message && (
                 <p className={`text-sm text-destructive`}>
                   {errors.size?.message}

@@ -5,19 +5,21 @@ export interface GetSaleContent {
   totalItems: number;
   subtotal: number;
   totalPrice: number;
-  products: [
-    {
-      id: string;
-      code: string;
-      name: string;
-      unitPrice: number;
-      totalPrice: number;
-      amount: number;
-    }
-  ];
-  status: "FINALIZADO" | "PENDENTE",
+  products: {
+    code: string;
+    name: string;
+    unitPrice: number;
+    totalPrice: number;
+    priceWithDiscount?: number, 
+    amount: number;
+  }[];
+  status: 'FINALIZADO' | 'PENDENTE';
   paymentMethod: string;
-  numberInstallments?: number
+  numberInstallments?: number;
+  rateName?: string;
+  rateAmount?: number;
+  startDate?: Date;
+  endDate?: Date;
 }
 
 export interface GetSalesBody {

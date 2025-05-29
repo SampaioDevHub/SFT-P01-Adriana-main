@@ -1,11 +1,11 @@
 import { api } from '@/_lib/axios';
 import { GetCustomerContent } from './_types/type-get-custumer';
 
-interface GetCustomersByIdProps {
+interface GetCustomerByIdProps {
   customerId: string;
 }
 
-export async function getCustomerById({ customerId }: GetCustomersByIdProps) {
+export async function getCustomerById({ customerId }: GetCustomerByIdProps) {
   const response = await api.get<GetCustomerContent>(
     `/customers/find/${customerId}`
   );

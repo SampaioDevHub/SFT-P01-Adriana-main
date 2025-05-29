@@ -2,11 +2,11 @@ import { api } from '@/_lib/axios';
 
 import { GetProductContent } from './_types/type-get-product';
 
-interface GetProductsByIdProps {
+interface GetProductByIdProps {
   productId: string;
 }
 
-export async function getProductsById({ productId }: GetProductsByIdProps) {
+export async function getProductsById({ productId }: GetProductByIdProps) {
   const response = await api.get<GetProductContent>(
     `/products/find/${productId}`
   );

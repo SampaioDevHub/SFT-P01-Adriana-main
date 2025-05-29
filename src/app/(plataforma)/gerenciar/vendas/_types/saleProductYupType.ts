@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 export const formSchemaSaleProduct = () => {
   return yup.object({
-    code: yup.string().optional(),
+    code: yup.string(),
     name: yup.string().required('O campo "Nome do Produto" é obrigatório.'),
     amount: yup
       .number()

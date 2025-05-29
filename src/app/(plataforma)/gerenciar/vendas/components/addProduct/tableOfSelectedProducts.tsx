@@ -13,7 +13,7 @@ import { UseFormSetError } from 'react-hook-form';
 
 import { Button } from '@/_components/ui/button';
 import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
-import { useSale } from '@/_providers/saleContext';
+import { useSale } from '@/_providers/sale-provider';
 
 import { ListProductType } from '../../_types/listProductsType';
 import { DeleteSelectedProductModal } from './deleteSelectedProductModal';

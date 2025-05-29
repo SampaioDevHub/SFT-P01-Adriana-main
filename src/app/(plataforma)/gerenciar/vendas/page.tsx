@@ -8,7 +8,7 @@ import {
   TabsTrigger,
 } from '@/_components/ui/tabs';
 import { motion } from 'framer-motion';
-import { useSale } from '@/_providers/saleContext';
+import { useSale } from '@/_providers/sale-provider';
 import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';

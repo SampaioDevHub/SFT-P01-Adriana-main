@@ -9,10 +9,11 @@ import {
   formSchemaSaleInformation,
   FormSchemaSaleInformation,
 } from '../../_types/saleInformationDataYupType';
+import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { SaleInformationData, useSale } from '@/_providers/saleContext';
+import { useSale } from '@/_providers/sale-provider';
 import { Button } from '@/_components/ui/button';
 import { Label } from '@/_components/ui/label';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,8 +26,10 @@ import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
 import { profileLabels } from '../../../clientes/_constants/customerProfile';
 import { paymentLabels, paymentMethod } from '../../_constants/paymentMethod';
+import { FinishLater } from './finishLater';
 
 export function Information() {
+  const [finishLater, setFinishLater] = useState(false);
   const [customerProfile, setCustomerProfile] = useState('');
   const { setActiveTab, productData, informationData, setInformationData } =
     useSale();
@@ -61,6 +64,10 @@ export function Information() {
         setValue('discountPercentage', parsed.discountPercentage);
       if (parsed.paymentMethod) setValue('paymentMethod', parsed.paymentMethod);
       if (parsed.profile) setCustomerProfile(parsed.profile);
+      if (parsed.startDate) setValue('startDate', parsed.startDate);
+      if (parsed.endDate) setValue('endDate', parsed.endDate);
+      if (parsed.rateName) setValue('rateName', parsed.rateName);
+      if (parsed.rateAmount) setValue('rateAmount', parsed.rateAmount);
     }
   }, [setValue]);
 
@@ -114,20 +121,35 @@ export function Information() {
       const discountAmount = (productData.subtotal * discount) / 100;
       const totalPrice = productData.subtotal - discountAmount;
 
-      const infoToSave = {
+      setInformationData({
         customerCpf: selected.cpf,
-        customerName: selected.name,
         discountPercentage: data.discountPercentage,
         totalPrice,
         paymentMethod: data.paymentMethod,
         numberInstallments: 0,
-        profile: customerProfile
-      };
-
-      setInformationData(infoToSave);
+        endDate: data.endDate,
+        startDate: data.startDate,
+        RateName: data.rateName,
+        RateAmount: data.rateAmount,
+      });
 
       // ✅ Salvar no localStorage
-      localStorage.setItem('saleInformation', JSON.stringify(infoToSave));
+      localStorage.setItem(
+        'saleInformation',
+        JSON.stringify({
+          customerCpf: selected.cpf,
+          customerName: selected.name,
+          discountPercentage: data.discountPercentage,
+          totalPrice,
+          paymentMethod: data.paymentMethod,
+          numberInstallments: 0,
+          profile: customerProfile,
+          endDate: data.endDate ? format(data.endDate, 'yyyy-MM-dd') : '',
+          startDate: data.startDate ? format(data.startDate, 'yyyy-MM-dd') : '',
+          RateName: data.rateName,
+          RateAmount: data.rateAmount,
+        })
+      );
 
       setActiveTab('overview');
     } catch (error) {
@@ -149,6 +171,12 @@ export function Information() {
           onSubmit={handleSubmit(handleAddInformations)}
           className="space-y-4"
         >
+          <FinishLater
+            errors={errors}
+            finishLater={finishLater}
+            setFinishLater={setFinishLater}
+            register={register}
+          />
           <div className="grid w-full grid-cols-2 gap-4">
             <div className="space-y-2 relative">
               <Label htmlFor="cpf">

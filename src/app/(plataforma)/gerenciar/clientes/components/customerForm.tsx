@@ -6,8 +6,20 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
+import {
+  formSchemaCustomer,
+  FormSchemaCustomer,
+} from '../_types/customerYupType';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/_components/ui/popover';
 import { AxiosError } from 'axios';
+import { format, isValid, parse, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CalendarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -22,18 +34,17 @@ import { PhoneInput } from '@/_components/Inputs/phoneInput';
 import { CpfInput } from '@/_components/Inputs/cpfInput';
 import { CepInput } from '@/_components/Inputs/cepInput';
 import { AlertError } from '@/_components/alert/alert-error';
+import { Calendar } from '@/_components/ui/calendar';
 
 import { customerProfile, profileLabels } from '../_constants/customerProfile';
 import { customerStatus } from '../_constants/customerStatus';
-import {
-  formSchemaCustomer,
-  FormSchemaCustomer,
-} from '../_types/customerYupType';
+import { DefaultCreateCustomerContent } from '../_constants/deafultCreateCustomerContent';
+import { formatDate } from '../_utils/formatDate';
+import { sanitizeObject } from '../_utils/sanitizeObject';
 
 export function CustomerForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [exibirReferences, setExibirReferences] = useState(false);
-
   function handleReference() {
     const criarReferenciaVazia = () => ({
       name: '',
@@ -64,9 +75,7 @@ export function CustomerForm() {
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaCustomer>({
     resolver: yupResolver(formSchemaCustomer),
-    defaultValues: {
-      references: [],
-    },
+    defaultValues: DefaultCreateCustomerContent,
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -74,7 +83,7 @@ export function CustomerForm() {
     name: 'references',
   });
 
-  const zipCode = watch('zipCode')?.replace(/\D/g, '');
+  const zipCode = watch('addressData.zipCode')?.replace(/\D/g, '');
 
   // Busca os dados do CEP sempre que ele mudar e tiver 8 dígitos
   useEffect(() => {
@@ -84,13 +93,16 @@ export function CustomerForm() {
         .then((data) => {
           if (!data.erro) {
             setValue(
-              'address',
+              'addressData.address',
               `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`
             );
-            setValue('complement', `${data.logradouro} ${data.complemento}`);
-            setValue('referencePoint', data.bairro);
-            setValue('city', data.localidade);
-            setValue('state', data.estado);
+            setValue(
+              'addressData.complement',
+              `${data.logradouro} ${data.complemento}`
+            );
+            setValue('addressData.referencePoint', data.bairro);
+            setValue('addressData.city', data.localidade);
+            setValue('addressData.state', data.estado);
           }
         })
         .catch((error) => toast.error('Erro ao buscara o CEP'));
@@ -132,10 +144,7 @@ export function CustomerForm() {
                 `references.${index}.addressData.address`,
                 `${data.estado} ${data.localidade} ${data.logradouro} ${data.complemento}`.trim()
               );
-              setValue(
-                `references.${index}.addressData.city`,
-                data.localidade
-              );
+              setValue(`references.${index}.addressData.city`, data.localidade);
               setValue(`references.${index}.addressData.state`, data.uf);
             }
           })
@@ -158,38 +167,52 @@ export function CustomerForm() {
   });
 
   async function handleCreateCustomer(data: FormSchemaCustomer) {
+    console.log(data);
     try {
       await createCustomerFn({
-        name: data.name,
-        phone: data.phone === undefined ? '' : data.phone,
-        email: data.email === '' ? null : data.email,
-        profile: data.profile === 'all' ? '' : data.profile,
-        addressData: {
-          zipCode: data.zipCode === undefined ? '' : data.zipCode,
-          address: data.address,
-          number: data.number,
-          complement: data.complement,
-          referencePoint: data.referencePoint,
-          city: data.city,
-          state: data.state,
-        },
-        cpf: data.cpf,
-        dateBirth: data.dateBirth,
+        name: data.name ?? '',
+        cpf: data.cpf ?? '',
         maritalStatus: data.maritalStatus === 'all' ? '' : data.maritalStatus,
-        enterprise: data.enterprise,
-        businessPhone:
-          data.businessPhone === undefined ? '' : data.businessPhone,
-        lengthService: data.lengthService,
-        businessZipCode: data.businessZipCode,
-        businessAddress: data.businessAddress,
-        businessCity: data.businessCity,
-        businessState: data.businessState,
-        businessPosition: data.businessPosition,
-        bank: data.bank,
-        agency: data.agency,
-        father: data.father,
-        mother: data.mother,
-        referenceEntityList: data.references,
+        email: data.email ?? null,
+        profile: data.profile === 'all' ? '' : data.profile,
+        phone: data.phone ?? '',
+        enterprise: data.enterprise ?? '',
+        businessPhone: data.businessPhone ?? '',
+        lengthService: data.lengthService ?? '',
+        businessZipCode: data.businessZipCode ?? '',
+        businessAddress: data.businessAddress ?? '',
+        businessSector: data.businessPosition ?? '',
+        businessCity: data.businessCity ?? '',
+        businessState: data.businessState ?? '',
+        businessPosition: data.businessPosition ?? '',
+        dateBirth: data.dateBirth ?? null,
+        addressData: {
+          zipCode: data.addressData?.zipCode ?? '',
+          address: data.addressData?.address ?? '',
+          number: data.addressData?.number ?? '',
+          complement: data.addressData?.complement ?? '',
+          referencePoint: data.addressData?.referencePoint ?? '',
+          city: data.addressData?.city ?? '',
+          state: data.addressData?.state ?? '',
+        },
+        bank: data.bank ?? '',
+        agency: data.agency ?? '',
+        father: data.father ?? '',
+        mother: data.mother ?? '',
+        referenceEntityList:
+          data.references?.map((ref) => ({
+            name: ref.name ?? '',
+            phone: ref.phone ?? '',
+            addressData: {
+              zipCode: data.addressData?.zipCode ?? '',
+              address: data.addressData?.address ?? '',
+              number: data.addressData?.number ?? '',
+              complement: data.addressData?.complement ?? '',
+              referencePoint: data.addressData?.referencePoint ?? '',
+              city: data.addressData?.city ?? '',
+              state: data.addressData?.state ?? '',
+            },
+          })) ?? [],
       });
       reset();
       setExibirReferences(false);
@@ -230,7 +253,11 @@ export function CustomerForm() {
                   Nome{' '}
                   <span className="text-muted-foreground">(Obrigatório)</span>
                 </Label>
-                <Input id="name" {...register('name')} required />
+                <Input
+                  id="name"
+                  {...register('name')}
+                  required={errors.name?.message ? true : false}
+                />
                 {errors.name?.message && (
                   <p className="text-sm text-destructive">
                     {errors.name?.message}
@@ -242,7 +269,12 @@ export function CustomerForm() {
                 <Controller
                   name="phone"
                   control={control}
-                  render={({ field }) => <PhoneInput {...field} />}
+                  render={({ field }) => (
+                    <PhoneInput
+                      required={errors.phone?.message ? true : false}
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.phone?.message && (
                   <p className={`text-sm text-destructive`}>
@@ -252,7 +284,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">E-mail</Label>
-                <Input id="email" {...register('email')} />
+                <Input
+                  required={errors.email?.message ? true : false}
+                  id="email"
+                  {...register('email')}
+                />
                 {errors.email?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.email?.message}
@@ -260,11 +296,13 @@ export function CustomerForm() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label className="gap-1" htmlFor="name">
+                <Label className="gap-1" htmlFor="profile">
                   Perfil{' '}
                   <span className="text-muted-foreground">(Obrigatório)</span>
                 </Label>
                 <select
+                  id="profile"
+                  required={errors.profile?.message ? true : false}
                   className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   {...register('profile')}
                 >
@@ -300,67 +338,102 @@ export function CustomerForm() {
               <div className="space-y-2">
                 <Label htmlFor="cep">CEP</Label>
                 <Controller
-                  name="zipCode"
+                  name="addressData.zipCode"
                   control={control}
-                  render={({ field }) => <CepInput {...field} />}
+                  render={({ field }) => (
+                    <CepInput
+                      required={
+                        errors.addressData?.zipCode?.message ? true : false
+                      }
+                      {...field}
+                    />
+                  )}
                 />
-                {errors.zipCode?.message && (
+                {errors.addressData?.zipCode?.message && (
                   <p className="text-sm text-destructive">
-                    {errors.zipCode?.message}
+                    {errors.addressData.zipCode?.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="address">Endereço</Label>
-                <Input id="address" {...register('address')} />
-                {errors.address?.message && (
+                <Input
+                  id="address"
+                  required={errors.addressData?.address?.message ? true : false}
+                  {...register('addressData.address')}
+                />
+                {errors.addressData?.address?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.address?.message}
+                    {errors.addressData?.address?.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="city">Cidade</Label>
-                <Input id="city" {...register('city')} />
-                {errors.city?.message && (
+                <Input
+                  id="city"
+                  required={errors.addressData?.city?.message ? true : false}
+                  {...register('addressData.city')}
+                />
+                {errors.addressData?.city?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.city?.message}
+                    {errors.addressData?.city?.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="state">Estado</Label>
-                <Input id="state" {...register('state')} />
-                {errors.state?.message && (
+                <Input
+                  id="state"
+                  required={errors.addressData?.state?.message ? true : false}
+                  {...register('addressData.state')}
+                />
+                {errors.addressData?.state?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.state?.message}
+                    {errors.addressData?.state?.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="referencePoint">Ponto de referência</Label>
-                <Input id="referencePoint" {...register('referencePoint')} />
-                {errors.referencePoint?.message && (
+                <Input
+                  required={
+                    errors.addressData?.referencePoint?.message ? true : false
+                  }
+                  id="referencePoint"
+                  {...register('addressData.referencePoint')}
+                />
+                {errors.addressData?.referencePoint?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.referencePoint?.message}
+                    {errors.addressData?.referencePoint?.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="number">Numero da casa</Label>
-                <Input id="number" {...register('number')} />
-                {errors.number?.message && (
+                <Input
+                  required={errors.addressData?.number?.message ? true : false}
+                  id="number"
+                  {...register('addressData.number')}
+                />
+                {errors.addressData?.number?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.number?.message}
+                    {errors.addressData?.number?.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="complement">Complemento</Label>
-                <Input id="complement" {...register('complement')} />
-                {errors.complement?.message && (
+                <Input
+                  required={
+                    errors.addressData?.complement?.message ? true : false
+                  }
+                  id="complement"
+                  {...register('addressData.complement')}
+                />
+                {errors.addressData?.complement?.message && (
                   <p className={`text-sm text-destructive`}>
-                    {errors.complement?.message}
+                    {errors.addressData?.complement?.message}
                   </p>
                 )}
               </div>
@@ -378,7 +451,12 @@ export function CustomerForm() {
                 <Controller
                   name="cpf"
                   control={control}
-                  render={({ field }) => <CpfInput {...field} />}
+                  render={({ field }) => (
+                    <CpfInput
+                      required={errors.cpf?.message ? true : false}
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.cpf?.message && (
                   <p className="text-sm text-destructive">
@@ -387,17 +465,89 @@ export function CustomerForm() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="dataBirth">Data de nascimento</Label>
-                <Input id="dataBirth" type="date" {...register('dateBirth')} />
-                {errors.dateBirth?.message && (
-                  <p className={`text-sm text-destructive`}>
-                    {errors.dateBirth?.message}
-                  </p>
-                )}
+                <Controller
+                  name="dateBirth"
+                  control={control}
+                  render={({ field }) => {
+                    // Converte o Date para string yyyy-MM-dd para o input type="date"
+                    const dateString = field.value
+                      ? format(field.value, 'yyyy-MM-dd')
+                      : '';
+
+                    // Função para atualizar o field.value com Date a partir do input string
+                    const onInputChange = (
+                      e: React.ChangeEvent<HTMLInputElement>
+                    ) => {
+                      const val = e.target.value;
+                      const parsedDate = parseISO(val);
+                      if (val === '') {
+                        field.onChange(undefined); // limpa o valor
+                      } else if (isValid(parsedDate)) {
+                        field.onChange(parsedDate);
+                      }
+                    };
+
+                    return (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">
+                          Data de nascimento
+                        </label>
+                        <div className="relative flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button variant="outline" size="icon">
+                                <CalendarIcon className="h-4 w-4" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                captionLayout="dropdown"
+                                selected={field.value as Date | undefined}
+                                onSelect={(date) =>
+                                  field.onChange(date ?? undefined)
+                                }
+                                initialFocus
+                                toYear={new Date().getFullYear()}
+                                fromYear={1900}
+                                locale={ptBR}
+                                className="rounded-md"
+                                classNames={{
+                                  caption_label: 'hidden',
+                                  caption_dropdowns:
+                                    'flex justify-center items-center gap-1 [&>label]:sr-only',
+                                  dropdown_month:
+                                    'text-sm px-2 py-1 rounded-md border border-input bg-background shadow-sm focus:outline-none',
+                                  dropdown_year:
+                                    'text-sm px-2 py-1 rounded-md border border-input bg-background shadow-sm focus:outline-none',
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <Input
+                            className="no-calendar-button"
+                            type="date"
+                            value={dateString}
+                            onChange={onInputChange}
+                          />
+                        </div>
+
+                        {errors.dateBirth && (
+                          <p className="text-sm text-destructive">
+                            {errors.dateBirth.message}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }}
+                />
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="maritalStatus">Estado civil</Label>
                 <select
+                  id="maritalStatus"
+                  required={errors.maritalStatus?.message ? true : false}
                   defaultValue="all"
                   className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   {...register('maritalStatus')}
@@ -429,7 +579,11 @@ export function CustomerForm() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="enterprise">Empresa</Label>
-                <Input id="enterprise" {...register('enterprise')} />
+                <Input
+                  id="enterprise"
+                  required={errors.enterprise?.message ? true : false}
+                  {...register('enterprise')}
+                />
                 {errors.enterprise?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.enterprise?.message}
@@ -441,7 +595,12 @@ export function CustomerForm() {
                 <Controller
                   name="businessPhone"
                   control={control}
-                  render={({ field }) => <PhoneInput {...field} />}
+                  render={({ field }) => (
+                    <PhoneInput
+                      required={errors.businessPhone?.message ? true : false}
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.businessPhone?.message && (
                   <p className={`text-sm text-destructive`}>
@@ -451,7 +610,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lengthService">Tempo de serviço</Label>
-                <Input id="lengthService" {...register('lengthService')} />
+                <Input
+                  id="lengthService"
+                  required={errors.lengthService?.message ? true : false}
+                  {...register('lengthService')}
+                />
                 {errors.lengthService?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.lengthService?.message}
@@ -463,7 +626,12 @@ export function CustomerForm() {
                 <Controller
                   name="businessZipCode"
                   control={control}
-                  render={({ field }) => <CepInput {...field} />}
+                  render={({ field }) => (
+                    <CepInput
+                      required={errors.businessZipCode?.message ? true : false}
+                      {...field}
+                    />
+                  )}
                 />
                 {errors.businessZipCode?.message && (
                   <p className="text-sm text-destructive">
@@ -473,7 +641,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="businessAddress">Endereço comercial</Label>
-                <Input id="businessAddress" {...register('businessAddress')} />
+                <Input
+                  id="businessAddress"
+                  required={errors.businessAddress?.message ? true : false}
+                  {...register('businessAddress')}
+                />
                 {errors.businessAddress?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.businessAddress?.message}
@@ -482,7 +654,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="businessCity">Cidade</Label>
-                <Input id="businessCity" {...register('businessCity')} />
+                <Input
+                  id="businessCity"
+                  required={errors.businessCity?.message ? true : false}
+                  {...register('businessCity')}
+                />
                 {errors.businessCity?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.businessCity?.message}
@@ -491,7 +667,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="businessState">Estado</Label>
-                <Input id="businessState" {...register('businessState')} />
+                <Input
+                  id="businessState"
+                  required={errors.businessState?.message ? true : false}
+                  {...register('businessState')}
+                />
                 {errors.businessState?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.businessState?.message}
@@ -502,6 +682,7 @@ export function CustomerForm() {
                 <Label htmlFor="businessPosition">Cargo</Label>
                 <Input
                   id="businessPosition"
+                  required={errors.businessPosition?.message ? true : false}
                   {...register('businessPosition')}
                 />
                 {errors.businessPosition?.message && (
@@ -518,7 +699,11 @@ export function CustomerForm() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="bank">Banco</Label>
-                <Input id="bank" {...register('bank')} />
+                <Input
+                  id="bank"
+                  required={errors.bank?.message ? true : false}
+                  {...register('bank')}
+                />
                 {errors.bank?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.bank?.message}
@@ -527,7 +712,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="agency">Agência</Label>
-                <Input id="agency" {...register('agency')} />
+                <Input
+                  id="agency"
+                  required={errors.agency?.message ? true : false}
+                  {...register('agency')}
+                />
                 {errors.agency?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.agency?.message}
@@ -542,7 +731,11 @@ export function CustomerForm() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="father">Pai</Label>
-                <Input id="father" {...register('father')} />
+                <Input
+                  id="father"
+                  required={errors.father?.message ? true : false}
+                  {...register('father')}
+                />
                 {errors.father?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.father?.message}
@@ -551,7 +744,11 @@ export function CustomerForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="mother">Mãe</Label>
-                <Input id="mother" {...register('mother')} />
+                <Input
+                  id="mother"
+                  required={errors.mother?.message ? true : false}
+                  {...register('mother')}
+                />
                 {errors.mother?.message && (
                   <p className={`text-sm text-destructive`}>
                     {errors.mother?.message}
@@ -584,16 +781,23 @@ export function CustomerForm() {
                         className="grid grid-cols-1 gap-4 md:grid-cols-2"
                       >
                         <div className="space-y-2">
-                          <Label className="gap-1" htmlFor="name">
+                          <Label
+                            className="gap-1"
+                            htmlFor={`references.${index}.name`}
+                          >
                             Nome{' '}
                             <span className="text-muted-foreground">
                               (Obrigatório)
                             </span>
                           </Label>
                           <Input
-                            id="name"
+                            id={`references.${index}.name`}
                             {...register(`references.${index}.name` as const)}
-                            required
+                            required={
+                              errors.references?.[index]?.name?.message
+                                ? true
+                                : false
+                            }
                           />
                           {errors.references?.[index]?.name && (
                             <p className="text-sm text-destructive">
@@ -602,11 +806,23 @@ export function CustomerForm() {
                           )}
                         </div>
                         <div className="space-y-2 flex-1">
-                          <Label htmlFor="phone">Telefone</Label>
+                          <Label htmlFor={`references.${index}.phone`}>
+                            Telefone
+                          </Label>
                           <Controller
                             name={`references.${index}.phone` as const}
                             control={control}
-                            render={({ field }) => <PhoneInput {...field} />}
+                            render={({ field }) => (
+                              <PhoneInput
+                                id={`references.${index}.phone`}
+                                required={
+                                  errors.references?.[index]?.phone?.message
+                                    ? true
+                                    : false
+                                }
+                                {...field}
+                              />
+                            )}
                           />
                           {errors.references?.[index]?.phone && (
                             <p className="text-destructive text-sm">
@@ -625,28 +841,49 @@ export function CustomerForm() {
                       </div>
                       <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="cep">CEP</Label>
+                          <Label htmlFor={`references.${index}.zipCode`}>
+                            CEP
+                          </Label>
                           <Controller
                             name={
                               `references.${index}.addressData.zipCode` as const
                             }
                             control={control}
-                            render={({ field }) => <CepInput {...field} />}
+                            render={({ field }) => (
+                              <CepInput
+                                id={`references.${index}.zipCode`}
+                                required={
+                                  errors.references?.[index]?.addressData
+                                    ?.zipCode?.message
+                                    ? true
+                                    : false
+                                }
+                                {...field}
+                              />
+                            )}
                           />
                           {errors.references?.[index]?.addressData?.zipCode
                             ?.message && (
                             <p className="text-sm text-destructive">
                               {
-                                errors.references?.[index]?.addressData
-                                  ?.zipCode?.message
+                                errors.references?.[index]?.addressData?.zipCode
+                                  ?.message
                               }
                             </p>
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="address">Endereço</Label>
+                          <Label htmlFor={`references.${index}.address`}>
+                            Endereço
+                          </Label>
                           <Input
-                            id="address"
+                            id={`references.${index}.address`}
+                            required={
+                              errors.references?.[index]?.addressData?.address
+                                ?.message
+                                ? true
+                                : false
+                            }
                             {...register(
                               `references.${index}.addressData.address` as const
                             )}
@@ -655,16 +892,24 @@ export function CustomerForm() {
                             ?.message && (
                             <p className={`text-sm text-destructive`}>
                               {
-                                errors.references?.[index]?.addressData
-                                  ?.address?.message
+                                errors.references?.[index]?.addressData?.address
+                                  ?.message
                               }
                             </p>
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="city">Cidade</Label>
+                          <Label htmlFor={`references.${index}.city`}>
+                            Cidade
+                          </Label>
                           <Input
                             id="city"
+                            required={
+                              errors.references?.[index]?.addressData?.city
+                                ?.message
+                                ? true
+                                : false
+                            }
                             {...register(
                               `references.${index}.addressData.city` as const
                             )}
@@ -680,9 +925,17 @@ export function CustomerForm() {
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="state">Estado</Label>
+                          <Label htmlFor={`references.${index}.state`}>
+                            Estado
+                          </Label>
                           <Input
-                            id="state"
+                            id={`references.${index}.state`}
+                            required={
+                              errors.references?.[index]?.addressData?.state
+                                ?.message
+                                ? true
+                                : false
+                            }
                             {...register(
                               `references.${index}.addressData.state` as const
                             )}
@@ -698,11 +951,17 @@ export function CustomerForm() {
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="referencePoint">
+                          <Label htmlFor={`references.${index}.referencePoint`}>
                             Ponto de referência
                           </Label>
                           <Input
-                            id="referencePoint"
+                            id={`references.${index}.referencePoint`}
+                            required={
+                              errors.references?.[index]?.addressData
+                                ?.referencePoint?.message
+                                ? true
+                                : false
+                            }
                             {...register(
                               `references.${index}.addressData.referencePoint` as const
                             )}
@@ -718,9 +977,17 @@ export function CustomerForm() {
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="number">Numero da casa</Label>
+                          <Label htmlFor={`references.${index}.number`}>
+                            Numero da casa
+                          </Label>
                           <Input
-                            id="number"
+                            id={`references.${index}.number`}
+                            required={
+                              errors.references?.[index]?.addressData?.number
+                                ?.message
+                                ? true
+                                : false
+                            }
                             {...register(
                               `references.${index}.addressData.number` as const
                             )}
@@ -736,9 +1003,17 @@ export function CustomerForm() {
                           )}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="complement">Complemento</Label>
+                          <Label htmlFor={`references.${index}.city`}>
+                            Complemento
+                          </Label>
                           <Input
-                            id="complement"
+                            id={`references.${index}.city`}
+                            required={
+                              errors.references?.[index]?.addressData
+                                ?.complement?.message
+                                ? true
+                                : false
+                            }
                             {...register(
                               `references.${index}.addressData.complement` as const
                             )}

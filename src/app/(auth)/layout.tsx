@@ -1,12 +1,19 @@
 'use client';
 
+import { LoadingSpinner } from '@/_components/layout/loading';
+import { ClerkLoading } from '@clerk/nextjs';
 import Image from 'next/image';
 import React from 'react';
 
 const DashboardAuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2 isolate">
-      <div className="flex flex-col bg-background">{children}</div>
+      <div className="flex flex-col bg-background">
+        <ClerkLoading>
+          <LoadingSpinner />
+        </ClerkLoading>
+        {children}
+      </div>
       <div className="relative hidden bg-muted lg:block">
         {/* Light Mode Image */}
         <Image

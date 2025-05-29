@@ -128,41 +128,47 @@ export function SalesReport() {
   };
 
   const exportToExcel = () => {
-  const formattedSales = filteredSales.map((sale) => ({
-    'CPF do Cliente': sale.customerCpf || '-',
-    'Desconto (%)': sale.discountPercentage !== undefined ? `${sale.discountPercentage}%` : '-',
-    'Total de Itens': sale.totalItems,
-    'Subtotal': formatForReals(sale.subtotal),
-    'Preço Total': formatForReals(sale.totalPrice),
-    'Status': sale.status === 'FINALIZADO' ? 'Finalizado' : 'Pendente',
-    'Forma de Pagamento': sale.paymentMethod || '-',
-    'Parcelas': sale.numberInstallments !== undefined ? `${sale.numberInstallments}` : '-',
-  }));
+    const formattedSales = filteredSales.map((sale) => ({
+      'CPF do Cliente': sale.customerCpf || '-',
+      'Desconto (%)':
+        sale.discountPercentage !== undefined
+          ? `${sale.discountPercentage}%`
+          : '-',
+      'Total de Itens': sale.totalItems,
+      Subtotal: formatForReals(sale.subtotal),
+      'Preço Total': formatForReals(sale.totalPrice),
+      Status: sale.status === 'FINALIZADO' ? 'Finalizado' : 'Pendente',
+      'Forma de Pagamento': sale.paymentMethod || '-',
+      Parcelas:
+        sale.numberInstallments !== undefined
+          ? `${sale.numberInstallments}`
+          : '-',
+    }));
 
-  const worksheet = XLSX.utils.json_to_sheet(formattedSales);
+    const worksheet = XLSX.utils.json_to_sheet(formattedSales);
 
-  worksheet['!cols'] = [
-    { wch: 20 }, // CPF do Cliente
-    { wch: 15 }, // Desconto (%)
-    { wch: 15 }, // Total de Itens
-    { wch: 15 }, // Subtotal
-    { wch: 15 }, // Preço Total
-    { wch: 15 }, // Status
-    { wch: 25 }, // Forma de Pagamento
-    { wch: 12 }, // Parcelas
-  ];
+    worksheet['!cols'] = [
+      { wch: 20 }, // CPF do Cliente
+      { wch: 15 }, // Desconto (%)
+      { wch: 15 }, // Total de Itens
+      { wch: 15 }, // Subtotal
+      { wch: 15 }, // Preço Total
+      { wch: 15 }, // Status
+      { wch: 25 }, // Forma de Pagamento
+      { wch: 12 }, // Parcelas
+    ];
 
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendas');
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendas');
 
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: 'xlsx',
-    type: 'array',
-  });
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
 
-  const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-  saveAs(data, 'Relatorio_Vendas.xlsx');
-};
+    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'Relatorio_Vendas.xlsx');
+  };
 
   return (
     <div className="container space-y-8 py-8">

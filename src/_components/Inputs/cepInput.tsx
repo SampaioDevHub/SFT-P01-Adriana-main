@@ -1,12 +1,12 @@
 import { ChangeEvent } from 'react';
-import { Input } from '../ui/input';
+import { Input, InputProps } from '../ui/input';
 
-interface CepInputProps {
+interface CepInputProps extends Omit<InputProps, 'onChange'> {
   value?: string; // Agora aceita string | undefined
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function CepInput({ value = '', onChange }: CepInputProps) {
+export function CepInput({ value = '', onChange, ...props }: CepInputProps) {
   // Função para formatar o CEP no padrão 99999-999
   const formatCep = (cep: string) => {
     return cep
@@ -25,6 +25,7 @@ export function CepInput({ value = '', onChange }: CepInputProps) {
 
   return (
     <Input
+      {...props}
       type="text"
       value={value} // Agora `value` nunca será undefined
       onChange={handleChange}

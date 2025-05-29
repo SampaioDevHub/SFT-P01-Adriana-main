@@ -18,7 +18,7 @@ import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { TabsList, TabsTrigger } from '@/_components/ui/tabs';
-import { useSale } from '@/_providers/saleContext';
+import { useSale } from '@/_providers/sale-provider';
 import { AlertError } from '@/_components/alert/alert-error';
 
 import { paymentLabels } from '../../_constants/paymentMethod';

@@ -21,7 +21,9 @@ export interface SaleInformationData {
   discountPercentage?: number;
   totalPrice: number;
   paymentMethod: string;
-  numberInstallments: number
+  numberInstallments: number;
+  RateName?: string;
+	RateAmount?: number;
 }
 
 export interface SaleProductData {

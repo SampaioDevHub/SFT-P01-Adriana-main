@@ -9,7 +9,6 @@ import { PageContainer } from '@/_components/layout/page-container';
 import { CustomerTable } from './components/table/customerTable';
 import { CustomerForm } from './components/customerForm';
 
-
 export default function CustomersPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   return (
@@ -24,14 +23,14 @@ export default function CustomersPage() {
 
         <div className="w-full space-y-8">
           {isFormVisible && (
-            <motion.div
+            <motion.section
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <CustomerForm />
-            </motion.div>
+                <CustomerForm />
+            </motion.section>
           )}
           <CustomerTable />
         </div>

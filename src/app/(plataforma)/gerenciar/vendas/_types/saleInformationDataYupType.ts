@@ -45,6 +45,8 @@ export const formSchemaSaleInformation = ({
     paymentMethod: yup
       .string()
       .required('O campo "Método de Pagamento" é obrigatório.'),
+      rateName: yup.string().optional(),
+      rateAmount: yup.number().optional()
   });
 };
 

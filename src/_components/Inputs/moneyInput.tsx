@@ -2,11 +2,11 @@ import { ChangeEvent } from 'react';
 import { Input, InputProps } from '@/_components/ui/input';
 
 interface MoneyInputProps extends InputProps {
-  value: string; // Valor controlado pelo Controller
+  valueInCents: string; // Valor controlado pelo Controller
   onChange: (event: ChangeEvent<HTMLInputElement>) => void; // Manipulador de mudança
 }
 
-export function MoneyInput({ value, onChange, ...props }: MoneyInputProps) {
+export function MoneyInput({ valueInCents, onChange, ...props }: MoneyInputProps) {
   // Função para formatar o valor como moeda
   const formatValue = (valor: string): string => {
     const onlyDigits = valor.replace(/\D/g, ''); // Remove tudo que não for número
@@ -48,7 +48,7 @@ export function MoneyInput({ value, onChange, ...props }: MoneyInputProps) {
   };
 
   // Formata o valor quando ele é alterado e exibido
-  const formattedValue = formatValue(value);
+  const formattedValue = formatValue(valueInCents);
 
   return (
     <Input

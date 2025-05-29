@@ -7,7 +7,7 @@
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;     
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 346.8 77.2% 49.8%;
@@ -59,22 +59,31 @@
 }
 
 @layer base {
+  /* classe para esconder botão do calendário */
+  .no-calendar-button::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+  }
+
+  .no-calendar-button {
+    -moz-appearance: textfield;
+  }
+
   * {
     @apply border-border;
 
     /* Estilo geral do scrollbar */
     &::-webkit-scrollbar {
-      width: 4px; /* Largura do scrollbar */
-      height: 8px; /* Altura do scrollbar */
+      width: 4px;
+      height: 8px;
       border-radius: 8px;
     }
-  
-    /* Cor da barra de rolagem */
     &::-webkit-scrollbar-thumb {
-      background-color: hsl(240 5% 64.9%); /* Personalize */
-      border-radius: 4px; /* Borda arredondada */
+      background-color: hsl(240 5% 64.9%);
+      border-radius: 4px;
     }
   }
+
   body {
     @apply box-border bg-background text-foreground;
   }

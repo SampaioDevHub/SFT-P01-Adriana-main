@@ -15,8 +15,8 @@ export interface GetCustomerContent {
   businessCity?: string;
   businessState?: string;
   businessPosition?: string;
-  dateBirth?: string | null;
-  addressData: {
+  dateBirth?: Date | null;
+  addressData?: {
     zipCode?: string;
     address?: string;
     number?: string;
@@ -32,7 +32,7 @@ export interface GetCustomerContent {
   referenceEntityList?: {
     name: string;
     phone?: string;
-    addressData: {
+    addressData?: {
       zipCode?: string;
       address?: string;
       number?: string;

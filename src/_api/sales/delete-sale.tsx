@@ -1,9 +1,9 @@
 import { api } from '@/_lib/axios';
 
-interface GetSalesByIdProps {
+interface GetSaleByIdProps {
   saleId: string;
 }
 
-export async function DeleteSale({ saleId }: GetSalesByIdProps) {
+export async function DeleteSale({ saleId }: GetSaleByIdProps) {
   await api.delete(`/sales/delete/${saleId}`);
 }

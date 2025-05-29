@@ -14,6 +14,8 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
+import { useQuery } from '@tanstack/react-query';
+import { getProductsByCategories } from '@/_api/products/get-products-by-categories';
 
 const formSchemaFilter = yup.object().shape({
   name: yup.string(),
@@ -31,6 +33,11 @@ export function ProductTableFilter() {
   const nameFilter = searchParams.get('name') ?? '';
   const quantityInStockFilter = searchParams.get('quantity') ?? '';
   const categoryFilter = searchParams.get('category') ?? '';
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getProductsByCategories,
+  });
 
   const {
     handleSubmit,
@@ -110,9 +117,11 @@ export function ProductTableFilter() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="Roupas">Roupas</SelectItem>
-              <SelectItem value="Acessórios">Acessórios</SelectItem>
-              <SelectItem value="Perfumaria">Perfumaria</SelectItem>
+              {categories?.map((cat, index) => (
+                <SelectItem key={index} value={cat.category}>
+                  {cat.category}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         )}

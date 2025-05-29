@@ -64,7 +64,7 @@ export function ProductTable() {
       <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
         <ProductTableFilter />
       </div>
-      <div className="max-h-[40vh] overflow-auto rounded-md border">
+      <div className="max-h-[60vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>

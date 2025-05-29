@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 // Clerk
-import { ClerkProvider, ClerkLoading } from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ptBR } from '@clerk/localizations';
 
 // Providers
@@ -33,13 +33,13 @@ import { ReactQueryProvider } from '@/_providers/react-query-provider';
 // UI/UX
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from '@/_components/ui/sonner';
-import { LoadingSpinner } from '@/_components/layout/loading';
 import { FloatingChat } from '@/_components/layout/FloatingChat';
 import { Analytics } from '@vercel/analytics/next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 // Styles
 import './globals.css';
+import { OnlineProvider } from '@/_providers/online-provider';
 
 // Root Layout
 export default async function RootLayout({
@@ -60,11 +60,8 @@ export default async function RootLayout({
               disableTransitionOnChange
             >
               <NextTopLoader showSpinner={false} />
-              <ClerkLoading>
-                <LoadingSpinner />
-              </ClerkLoading>
               <ReactQueryProvider>
-                {children}
+                <OnlineProvider>{children}</OnlineProvider>
                 <Analytics />
                 <FloatingChat />
               </ReactQueryProvider>
