@@ -1,61 +1,51 @@
-import { ChangeEvent } from 'react';
-import { Input, InputProps } from '@/_components/ui/input';
+import { Input } from "@/_components/ui/input"; // ShadCN input
+import { ChangeEvent } from "react";
 
-interface MoneyInputProps extends InputProps {
-  valueInCents: string; // Valor controlado pelo Controller
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void; // Manipulador de mudança
+interface MoneyInputProps {
+  value: string; // valor em centavos, como string (ex: "1234" = R$ 12,34)
+  onChange: (value: string) => void;
 }
 
-export function MoneyInput({ valueInCents, onChange, ...props }: MoneyInputProps) {
-  // Função para formatar o valor como moeda
-  const formatValue = (valor: string): string => {
-    const onlyDigits = valor.replace(/\D/g, ''); // Remove tudo que não for número
+export function MoneyInput({ value, onChange }: MoneyInputProps) {
+  const formatCurrency = (valor: string): string => {
+    const cleaned = valor.replace(/\D/g, "");
+    if (!cleaned) return "R$ 0,00";
 
-    if (!onlyDigits) return ''; // Retorna uma string vazia se não houver números
+    const padded = cleaned.padStart(3, "0");
+    const reais = padded.slice(0, -2);
+    const centavos = padded.slice(-2);
+    const number = Number(`${reais}.${centavos}`);
 
-    const digitsFloat = onlyDigits.slice(0, -2) + '.' + onlyDigits.slice(-2);
-
-    return maskCurrency(digitsFloat);
+    return number.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
-  // Função de formatação da moeda
-  const maskCurrency = (
-    valor: string,
-    locale = 'pt-BR',
-    currency = 'BRL'
-  ): string => {
-    const numValue = Number(valor);
-    if (isNaN(numValue)) return 'R$ 0,00'; // Retorna um valor padrão se for NaN
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
 
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency,
-    }).format(numValue);
+    if (raw.length === 0) {
+      onChange("0"); // caso apague tudo
+      return;
+    }
+
+    // Previne a inserção de mais que 2 dígitos no final (centavos)
+    if (raw.length > 2) {
+      const integerPart = raw.slice(0, -2); // Parte inteira
+      const decimalPart = raw.slice(-2); // Parte decimal
+      const formattedValue = integerPart + decimalPart;
+      onChange(formattedValue); // Valor sem formatação, mas em centavos
+    } else {
+      onChange(raw); // Apenas os centavos se o valor for pequeno
+    }
   };
-
-  // Função chamada ao mudar o valor no input
-  const mascaraMoeda = (event: ChangeEvent<HTMLInputElement>): void => {
-    const onlyDigits = event.target.value
-      .replace(/\D/g, '') // Remove tudo que não for número
-      .padStart(3, '0'); // Adiciona zeros à esquerda para evitar valores inválidos
-
-    const digitsFloat = onlyDigits.slice(0, -2) + '.' + onlyDigits.slice(-2);
-
-    // Chama a função onChange passada via props para atualizar o valor controlado
-    onChange({
-      target: { value: digitsFloat },
-    } as ChangeEvent<HTMLInputElement>);
-  };
-
-  // Formata o valor quando ele é alterado e exibido
-  const formattedValue = formatValue(valueInCents);
 
   return (
     <Input
-      {...props}
-      id="valor"
-      value={formattedValue} // Exibe o valor formatado
-      onChange={mascaraMoeda} // Chama a função que formata o valor enquanto o usuário digita
+      value={formatCurrency(value)}
+      onChange={handleChange}
+      inputMode="numeric"
     />
   );
 }

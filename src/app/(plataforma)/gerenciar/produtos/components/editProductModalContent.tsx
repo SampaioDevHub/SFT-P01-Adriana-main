@@ -223,12 +223,19 @@ export function EditProductModalContent({
               control={control}
               render={({ field }) => (
                 <MoneyInput
-                  required={errors.price?.message ? true : false}
-                  {...field}
-                  valueInCents={String(field.value * 100 || '')}
+                  value={
+                    field.value !== null && field.value !== undefined
+                      ? String(Math.round(Number(field.value * 100)))
+                      : '0'
+                  }
+                  onChange={(centValue: string) => {
+                    const valueInReais = Number(centValue) / 100;
+                    field.onChange(valueInReais);
+                  }}
                 />
               )}
             />
+
             {errors.price?.message && (
               <p className="text-sm text-destructive">{errors.price.message}</p>
             )}

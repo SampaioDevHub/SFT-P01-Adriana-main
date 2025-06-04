@@ -115,7 +115,11 @@ export function ProductForm() {
           </div> */}
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Produto</Label>
-            <Input id="name" required={errors.name?.message ? true : false} {...register('name')}/>
+            <Input
+              id="name"
+              required={errors.name?.message ? true : false}
+              {...register('name')}
+            />
             {errors.name?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.name?.message}
@@ -145,7 +149,11 @@ export function ProductForm() {
               name="category" // Nome do campo no formulário
               control={control}
               render={({ field }) => (
-                <Select required={errors.category?.message ? true : false} onValueChange={field.onChange} value={field.value}>
+                <Select
+                  required={errors.category?.message ? true : false}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
@@ -172,7 +180,11 @@ export function ProductForm() {
                 name="subCategory" // Nome do campo no formulário
                 control={control}
                 render={({ field }) => (
-                  <Select required={errors.subCategory?.message ? true : false} onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    required={errors.subCategory?.message ? true : false}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione uma SubCategoria" />
                     </SelectTrigger>
@@ -206,12 +218,23 @@ export function ProductForm() {
               <span className="text-muted-foreground">(Sem desconto)</span>
             </Label>
             <Controller
-              name="price" // Nome do campo no formulário
+              name="price"
               control={control}
               render={({ field }) => (
-                <MoneyInput required={errors.price?.message ? true : false} {...field} valueInCents={String(field.value || '')} />
+                <MoneyInput
+                  value={
+                    field.value !== null && field.value !== undefined
+                      ? String(Math.round(Number(field.value * 100))) // converte de real para centavos
+                      : '0'
+                  }
+                  onChange={(centValue: string) => {
+                    const valueInReais = Number(centValue) / 100;
+                    field.onChange(valueInReais); // atualiza o formulário com valor em reais (número)
+                  }}
+                />
               )}
             />
+
             {errors.price?.message && (
               <p className={`text-sm text-destructive`}>
                 {errors.price?.message}
@@ -232,18 +255,23 @@ export function ProductForm() {
               </p>
             )}
           </div>
-            <div className="space-y-2">
-              <Label htmlFor="size">
-                Tamanhos Disponiveis{' '}
-                <span className="text-muted-foreground">(Opcional)</span>
-              </Label>
-              <Input id="size" required={errors.size?.message ? true : false} {...register('size')} type="string" />
-              {errors.size?.message && (
-                <p className={`text-sm text-destructive`}>
-                  {errors.size?.message}
-                </p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="size">
+              Tamanhos Disponiveis{' '}
+              <span className="text-muted-foreground">(Opcional)</span>
+            </Label>
+            <Input
+              id="size"
+              required={errors.size?.message ? true : false}
+              {...register('size')}
+              type="string"
+            />
+            {errors.size?.message && (
+              <p className={`text-sm text-destructive`}>
+                {errors.size?.message}
+              </p>
+            )}
+          </div>
           {errorMessage && (
             <AlertError
               title="Ops, parece que temos um erro!"
