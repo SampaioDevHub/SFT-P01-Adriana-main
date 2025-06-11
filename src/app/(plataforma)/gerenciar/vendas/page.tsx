@@ -8,20 +8,24 @@ import {
   TabsTrigger,
 } from '@/_components/ui/tabs';
 import { motion } from 'framer-motion';
-import { useSale } from '@/_providers/sale-provider';
 import { useState } from 'react';
 
+import { useSale } from '@/_providers/sale-provider';
 import { Button } from '@/_components/ui/button';
 import { PageContainer } from '@/_components/layout/page-container';
+import { Dialog } from '@/_components/ui/dialog';
 
 import { SaleTable } from './components/table/saleTable';
 import { AddProduct } from './components/addProduct';
+import { CreateRateModal } from './components/createRateModal';
 import { Information } from './components/information';
 import { Overview } from './components/overview';
 
 export default function RegisterSale() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const { activeTab, setActiveTab, productData, informationData } = useSale();
+
+  const [isCreateRateModalOpen, setIsCreateRateModalOpen] = useState(false)
 
   // Verifica se o produto foi adicionado
   const isProductAdded = productData?.products?.length > 0;
@@ -34,9 +38,18 @@ export default function RegisterSale() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Vendas</h1>
-          <Button onClick={() => setIsFormVisible(!isFormVisible)}>
-            {isFormVisible ? 'Fechar Formulário' : 'Nova Venda'}
-          </Button>
+          <div className="flex gap-4 items-center">
+            <Button onClick={() => setIsCreateRateModalOpen(true)} variant="outline">Adicionar Taxa</Button>
+            <Dialog
+              open={isCreateRateModalOpen}
+              onOpenChange={setIsCreateRateModalOpen}
+            >
+              <CreateRateModal setIsOpen={setIsCreateRateModalOpen} />
+            </Dialog>
+            <Button onClick={() => setIsFormVisible(!isFormVisible)}>
+              {isFormVisible ? 'Fechar Formulário' : 'Nova Venda'}
+            </Button>
+          </div>
         </div>
         <div className="w-full space-y-8">
           {isFormVisible && (

@@ -4,7 +4,7 @@ export interface CreateProductBody {
   discountPercentage?: number;
   price: number;
   quantityInStock: number;
-  size?: string;
+  size?: string | null;
   category: string;
   subCategory: string;
 }

@@ -3,24 +3,14 @@ import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
-import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
+import { Dialog } from '@/_components/ui/dialog';
 import { GetCustomerContent } from '@/_api/customers/_types/type-get-custumer';
-import { DialogClose } from '@radix-ui/react-dialog';
 
 import { DeleteModal } from '../deleteModal';
 import { EditCustomerModalContent } from '../editCustomerModalContent';
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/_components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/_components/ui/tooltip';
-import { MoreVertical } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/_components/ui/dropdown-menu';
 
 export function CustomerTableRow({
   id,
@@ -48,66 +38,45 @@ export function CustomerTableRow({
       <TableCell>{addressData?.zipCode}</TableCell>
       <TableCell>{addressData?.city}</TableCell>
       <TableCell>{addressData?.state}</TableCell>
-      <TableCell className="w-4">
-        <Popover>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <PopoverTrigger asChild>
-                <Button variant="secondary" size="icon">
-                  <MoreVertical className="h-5 w-5" />
-                </Button>
-              </PopoverTrigger>
-            </TooltipTrigger>
-            <TooltipContent className="bg-background/75">
-              <p>Ações</p>
-            </TooltipContent>
-          </Tooltip>
+     <TableCell className="w-4">
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" size="icon">
+        <MoreHorizontal className="h-5 w-5" />
+      </Button>
+    </DropdownMenuTrigger>
 
-          <PopoverContent className="flex flex-col gap-2 w-32">
-            <Dialog
-              open={isEditModalOpen}
-              onOpenChange={setIsEditModalOpen}
-            >
-              <DialogClose asChild />
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                >
-                  Editar
-                </Button>
-              </DialogTrigger>
-              <EditCustomerModalContent
-                setIsOpen={setIsEditModalOpen}
-                open={isEditModalOpen}
-                customerId={id}
-              />
-            </Dialog>
+    <DropdownMenuContent align="end" className="w-36">
+      <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
+        Editar
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        onClick={() => setIsDeleteModalOpen(true)}
+        className="w-full justify-start text-destructive focus:text-destructive"
+      >
+        Excluir
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
 
-            <Dialog
-              open={isDeleteModalOpen}
-              onOpenChange={setIsDeleteModalOpen}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="w-full"
-                >
-                  Excluir
-                </Button>
-              </DialogTrigger>
-              <DeleteModal
-                title="Excluir Cliente"
-                subTitle={`Tem certeza que deseja excluir o cliente: ${name}?`}
-                setIsOpen={setIsDeleteModalOpen}
-                id={id}
-              />
-            </Dialog>
-          </PopoverContent>
-        </Popover>
-      </TableCell>
+  {/* Modais fora do menu */}
+  <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+    <EditCustomerModalContent
+      setIsOpen={setIsEditModalOpen}
+      open={isEditModalOpen}
+      customerId={id}
+    />
+  </Dialog>
+
+  <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+    <DeleteModal
+      title="Excluir Cliente"
+      subTitle={`Tem certeza que deseja excluir o cliente: ${name}?`}
+      setIsOpen={setIsDeleteModalOpen}
+      id={id}
+    />
+  </Dialog>
+</TableCell>
     </TableRow>
   );
 }

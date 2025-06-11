@@ -94,7 +94,7 @@ export function SaleTableFilter() {
       className="flex w-full items-center gap-2"
     >
       <span className="text-sm hidden lg:block">Filtros:</span>
-      <Input {...register('cpf')} placeholder="CPF do client" />
+      <Input {...register('cpf')} placeholder="CPF do cliente" />
       <Input {...register('price')} placeholder="Preço da venda" />
       <Controller
         control={control}

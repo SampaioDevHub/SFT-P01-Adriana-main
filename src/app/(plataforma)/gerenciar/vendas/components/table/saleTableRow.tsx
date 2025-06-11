@@ -1,26 +1,22 @@
+import { MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import { MoreVertical } from 'lucide-react';
 
 import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
-import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
+import { Dialog } from '@/_components/ui/dialog';
 import { GetSaleContent } from '@/_api/sales/_types/type-get-sale';
 import { formatForReals } from '@/_utils/formatForReals';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/_components/ui/dropdown-menu';
 
 import { DeleteModal } from '../deleteModal';
 import { OverviewModal } from '../overviewModal';
-
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from '@/_components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/_components/ui/tooltip';
-import { DialogClose } from '@radix-ui/react-dialog';
+// Importe o modal de emissão
+import { PreviewNotaModal } from '../previewNotaModal';
 
 export function SaleTableRow({
   id,
@@ -33,6 +29,7 @@ export function SaleTableRow({
 }: GetSaleContent) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isOverviewModalOpen, setIsOverviewModalOpen] = useState(false);
+  const [isEmitirNotaModalOpen, setIsEmitirNotaModalOpen] = useState(false); // novo estado
 
   return (
     <TableRow key={id}>
@@ -61,65 +58,53 @@ export function SaleTableRow({
           : status === 'PENDENTE' && 'Pendente'}
       </TableCell>
       <TableCell className="w-4">
-        <Popover>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <PopoverTrigger asChild>
-                <Button variant="secondary" size="icon">
-                  <MoreVertical className="h-5 w-5" />
-                </Button>
-              </PopoverTrigger>
-            </TooltipTrigger>
-            <TooltipContent className="bg-background/75">
-              <p>Ações</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <PopoverContent className="flex flex-col gap-2 w-32">
-            <Dialog
-              open={isOverviewModalOpen}
-              onOpenChange={setIsOverviewModalOpen}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem onClick={() => setIsOverviewModalOpen(true)}>
+              Visualizar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setIsEmitirNotaModalOpen(true)}>
+              Nota
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="w-full justify-start text-destructive focus:text-destructive"
+              onClick={() => setIsDeleteModalOpen(true)}
             >
-              <DialogClose asChild />
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                >
-                  Visualizar
-                </Button>
-              </DialogTrigger>
-              <OverviewModal
-                title="Visualizar Venda"
-                subTitle="Visualize os detalhes da sua venda"
-                setIsOpen={setIsOverviewModalOpen}
-                id={id}
-              />
-            </Dialog>
+              Excluir
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-            <Dialog
-              open={isDeleteModalOpen}
-              onOpenChange={setIsDeleteModalOpen}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="w-full"
-                >
-                  Excluir
-                </Button>
-              </DialogTrigger>
-              <DeleteModal
-                title="Excluir Venda"
-                subTitle={`Tem certeza que deseja excluir a venda de id: ${id}`}
-                setIsOpen={setIsDeleteModalOpen}
-                id={id}
-              />
-            </Dialog>
-          </PopoverContent>
-        </Popover>
+        {/* Modais */}
+        <Dialog open={isOverviewModalOpen} onOpenChange={setIsOverviewModalOpen}>
+          <OverviewModal
+            title="Visualizar Venda"
+            subTitle="Visualize os detalhes da sua venda"
+            setIsOpen={setIsOverviewModalOpen}
+            id={id}
+          />
+        </Dialog>
+
+        <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <DeleteModal
+            title="Excluir Venda"
+            subTitle={`Tem certeza que deseja excluir a venda de id: ${id}`}
+            setIsOpen={setIsDeleteModalOpen}
+            id={id}
+          />
+        </Dialog>
+
+        <Dialog open={isEmitirNotaModalOpen} onOpenChange={setIsEmitirNotaModalOpen}>
+          <PreviewNotaModal
+            setIsOpen={setIsEmitirNotaModalOpen}
+            id={id}
+          />
+        </Dialog>
       </TableCell>
     </TableRow>
   );

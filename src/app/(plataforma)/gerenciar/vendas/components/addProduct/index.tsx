@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import { Command, CommandGroup, CommandItem } from '@/_components/ui/command';
 import {
   formSchemaSaleProduct,
   FormSchemaSaleProduct,
@@ -15,12 +14,14 @@ import {
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
+import { Command, CommandGroup, CommandItem } from '@/_components/ui/command';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/_components/ui/input';
 import { Label } from '@/_components/ui/label';
 import { Button } from '@/_components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/_api/products/get-products';
+import { formatForReals } from '@/_utils/formatForReals';
 
 import { ListProductType } from '../../_types/listProductsType';
 import { AlertStockModal } from '../alertStockModal';
@@ -291,13 +292,40 @@ export function AddProduct() {
                                       selectedProductId === product.id
                                     }
                                   >
-                                    <div className="flex flex-col">
-                                      <span className="font-medium">
-                                        {product.name}
-                                      </span>
-                                      <span className="text-sm text-muted-foreground">
-                                        Categoria: {product.category}
-                                      </span>
+                                    <div className="flex items-start w-full justify-between">
+                                      <div className="flex flex-col">
+                                        <span className="font-medium">
+                                          {product.name}
+                                        </span>
+                                        <div className="flex items-center gap-4 justify-between">
+                                          <span className="text-sm text-muted-foreground">
+                                            Categoria: {product.category}
+                                          </span>
+                                          <span className="text-sm text-muted-foreground">
+                                            Sub Categoria: {product.subCategory}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      {product.discountPercentage &&
+                                      product.priceWithDiscount ? (
+                                        <div className="space-x-1 flex flex-wrap">
+                                          <span
+                                            style={{
+                                              textDecoration: 'line-through',
+                                            }}
+                                            className="text-xs text-muted-foreground whitespace-nowrap"
+                                          >
+                                            {formatForReals(product.price)}
+                                          </span>
+                                          <span className="whitespace-nowrap text-green-500">
+                                            {formatForReals(
+                                              product.priceWithDiscount
+                                            )}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <span className='text-green-500'>{formatForReals(product.price)}</span>
+                                      )}
                                     </div>
                                   </CommandItem>
                                 ))

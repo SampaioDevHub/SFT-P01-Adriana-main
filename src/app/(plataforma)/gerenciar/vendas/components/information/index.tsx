@@ -23,6 +23,7 @@ import { getCustomers } from '@/_api/customers/get-customers';
 import { useQuery } from '@tanstack/react-query';
 import { Command, CommandGroup, CommandItem } from '@/_components/ui/command';
 import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
+import { getRates } from '@/_api/rate/get-rates';
 
 import { profileLabels } from '../../../clientes/_constants/customerProfile';
 import { paymentLabels, paymentMethod } from '../../_constants/paymentMethod';
@@ -35,6 +36,7 @@ export function Information() {
     useSale();
   const [openCpf, setOpenCpf] = useState(false);
   const [openName, setOpenName] = useState(false);
+  const [openRate, setOpenRate] = useState(false);
   const {
     handleSubmit,
     register,
@@ -50,6 +52,7 @@ export function Information() {
       customerCpf: informationData.customerCpf ?? '',
       discountPercentage: informationData.discountPercentage ?? 0,
       paymentMethod: informationData.paymentMethod ?? '',
+      startDate: new Date(),
     },
   });
 
@@ -64,10 +67,12 @@ export function Information() {
         setValue('discountPercentage', parsed.discountPercentage);
       if (parsed.paymentMethod) setValue('paymentMethod', parsed.paymentMethod);
       if (parsed.profile) setCustomerProfile(parsed.profile);
-      if (parsed.startDate) setValue('startDate', parsed.startDate);
-      if (parsed.endDate) setValue('endDate', parsed.endDate);
+      if (parsed.startDate) setValue('startDate', new Date(parsed.startDate));
+      if (parsed.endDate) setValue('endDate', new Date(parsed.endDate));
       if (parsed.rateName) setValue('rateName', parsed.rateName);
       if (parsed.rateAmount) setValue('rateAmount', parsed.rateAmount);
+      if (parsed.numberInstallments)
+        setValue('numberInstallments', parsed.numberInstallments);
     }
   }, [setValue]);
 
@@ -85,6 +90,11 @@ export function Information() {
     queryKey: ['customers', debouncedSearch],
     queryFn: () => getCustomers({ cpfFilter: debouncedSearch }),
     enabled: debouncedSearch.length >= 2,
+  });
+
+  const { data: rates } = useQuery({
+    queryKey: ['rates'],
+    queryFn: () => getRates(),
   });
 
   const nameSearch = watch('customerName');
@@ -126,11 +136,11 @@ export function Information() {
         discountPercentage: data.discountPercentage,
         totalPrice,
         paymentMethod: data.paymentMethod,
-        numberInstallments: 0,
+        numberInstallments: data.numberInstallments ?? 0,
         endDate: data.endDate,
         startDate: data.startDate,
-        RateName: data.rateName,
-        RateAmount: data.rateAmount,
+        rateName: data.rateName,
+        rateAmount: data.rateAmount,
       });
 
       // ✅ Salvar no localStorage
@@ -142,12 +152,12 @@ export function Information() {
           discountPercentage: data.discountPercentage,
           totalPrice,
           paymentMethod: data.paymentMethod,
-          numberInstallments: 0,
+          numberInstallments: data.numberInstallments ?? 0,
           profile: customerProfile,
-          endDate: data.endDate ? format(data.endDate, 'yyyy-MM-dd') : '',
-          startDate: data.startDate ? format(data.startDate, 'yyyy-MM-dd') : '',
-          RateName: data.rateName,
-          RateAmount: data.rateAmount,
+          endDate: data.endDate ? data.endDate.toISOString() : null,
+          startDate: data.startDate ? data.startDate.toISOString() : null,
+          rateName: data.rateName,
+          rateAmount: data.rateAmount,
         })
       );
 
@@ -175,11 +185,12 @@ export function Information() {
             errors={errors}
             finishLater={finishLater}
             setFinishLater={setFinishLater}
-            register={register}
+            control={control}
+            setValue={setValue}
           />
-          <div className="grid w-full grid-cols-2 gap-4">
+          <div className="grid w-full grid-cols-2 gap-4 items-start">
             <div className="space-y-2 relative">
-              <Label htmlFor="cpf">
+              <Label htmlFor="cpf" className="flex items-center gap-1 w-full">
                 CPF do cliente{' '}
                 <span className="text-muted-foreground">(Pesquise)</span>
               </Label>
@@ -215,12 +226,24 @@ export function Information() {
                                     setOpenCpf(false);
                                   }}
                                 >
-                                  <div className="flex flex-col">
-                                    <span className="font-medium">
-                                      {customer.name}
-                                    </span>
-                                    <span className="text-sm text-muted-foreground">
-                                      CPF: {customer.cpf}
+                                  <div className="flex items-start w-full justify-between">
+                                    <div className="flex flex-col">
+                                      <span className="font-medium">
+                                        {customer.name}
+                                      </span>
+                                      <div className="flex items-center gap-4 justify-between">
+                                        <span className="text-sm text-muted-foreground">
+                                          CPF: {customer.cpf}
+                                        </span>
+                                        <span className="text-sm text-muted-foreground">
+                                          Tel: {customer.phone}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <span
+                                      className={`${customerProfile === 'BOM' ? 'text-green-500' : customerProfile === 'MEDIO' ? 'text-yellow-500' : 'text-destructive'}`}
+                                    >
+                                      {profileLabels[customerProfile]}
                                     </span>
                                   </div>
                                 </CommandItem>
@@ -291,12 +314,24 @@ export function Information() {
                                     setOpenName(false);
                                   }}
                                 >
-                                  <div className="flex flex-col">
-                                    <span className="font-medium">
-                                      {customer.name}
-                                    </span>
-                                    <span className="text-sm text-muted-foreground">
-                                      CPF: {customer.cpf}
+                                  <div className="flex items-start w-full justify-between">
+                                    <div className="flex flex-col">
+                                      <span className="font-medium">
+                                        {customer.name}
+                                      </span>
+                                      <div className="flex items-center gap-4 justify-between">
+                                        <span className="text-sm text-muted-foreground">
+                                          CPF: {customer.cpf}
+                                        </span>
+                                        <span className="text-sm text-muted-foreground">
+                                          Tel: {customer.phone}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <span
+                                      className={`${customerProfile === 'BOM' ? 'text-green-500' : customerProfile === 'MEDIO' ? 'text-yellow-500' : 'text-destructive'}`}
+                                    >
+                                      {profileLabels[customerProfile]}
                                     </span>
                                   </div>
                                 </CommandItem>
@@ -315,30 +350,106 @@ export function Information() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-category">Método de Pagamento</Label>
-              <select
-                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                {...register('paymentMethod')}
-              >
-                <option value="" disabled hidden>
-                  Selecione um método de pagamento
-                </option>
-                {paymentMethod?.map((method, index) => (
-                  <option
-                    className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
-                    key={index}
-                    value={method}
-                  >
-                    {paymentLabels[method] || method}
+            <div className="flex items-start gap-2">
+              <div className="space-y-2 w-full">
+                <Label htmlFor="edit-category">Método de Pagamento</Label>
+                <select
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  {...register('paymentMethod')}
+                >
+                  <option value="" disabled hidden>
+                    Selecione um método de pagamento
                   </option>
-                ))}
-              </select>
-              {errors.paymentMethod?.message && (
-                <p className={`text-sm text-destructive`}>
-                  {errors.paymentMethod?.message}
-                </p>
-              )}
+                  {paymentMethod?.map((method, index) => (
+                    <option
+                      className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
+                      key={index}
+                      value={method}
+                    >
+                      {paymentLabels[method] || method}
+                    </option>
+                  ))}
+                </select>
+                {errors.paymentMethod?.message && (
+                  <p className={`text-sm text-destructive`}>
+                    {errors.paymentMethod?.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2 relative w-full">
+                <Label htmlFor="cpf">Taxa</Label>
+
+                <Controller
+                  name="rateName"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="cpf"
+                        autoComplete="off"
+                        onFocus={() => setOpenRate(true)}
+                        onBlur={() => setTimeout(() => setOpenRate(false), 200)}
+                      />
+                      {openRate && (
+                        <div className="absolute z-50 w-full border rounded-md shadow-md mt-1">
+                          <Command>
+                            <CommandGroup
+                              className="max-h-[30vh] overflow-auto"
+                              heading="Resultados"
+                            >
+                              {rates?.length ? (
+                                rates.map((rate) => (
+                                  <CommandItem
+                                    key={rate.id}
+                                    value={rate.rateName}
+                                    onSelect={() => {
+                                      setValue('rateAmount', rate.rateAmount);
+                                      setValue('rateName', rate.rateName);
+                                      setValue(
+                                        'numberInstallments',
+                                        rate.numberInstallments
+                                      );
+                                      setOpenRate(false);
+                                    }}
+                                  >
+                                    <div className="flex items-start w-full justify-between">
+                                      <div className="flex flex-col">
+                                        <span className="font-medium">
+                                          {rate.rateName}
+                                        </span>
+                                        <div className="flex items-center gap-4 justify-between">
+                                          <span className="text-sm text-muted-foreground">
+                                            Taxa: {rate.rateAmount}%
+                                          </span>
+                                          <span className="text-sm text-muted-foreground">
+                                            Parcelas: {rate.numberInstallments}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </CommandItem>
+                                ))
+                              ) : (
+                                <div className="text-muted-foreground p-2">
+                                  Nenhuma taxa encontrado
+                                </div>
+                              )}
+                            </CommandGroup>
+                          </Command>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                />
+
+                {errors.rateName?.message && (
+                  <p className="text-sm text-destructive">
+                    {errors.rateName?.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">

@@ -260,7 +260,7 @@ export function ProductReport() {
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground animate-pulse">
                 <Package className="h-16 w-16 mb-4 text-muted-foreground" />
-                <p className="text-lg font-medium">Carregando clientes...</p>
+                <p className="text-lg font-medium">Carregando produtos...</p>
                 <p className="text-sm">
                   Aguarde um momento enquanto buscamos os dados.
                 </p>

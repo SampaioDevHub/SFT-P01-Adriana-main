@@ -4,126 +4,31 @@ import { TableCell, TableRow } from '@/_components/ui/table';
 export function ProductTableSkeleton() {
   return (
     <>
-      <TableRow>
+       {Array.from({ length: 10 }).map((_, index) => (
+         <TableRow key={index}>
         <TableCell>
-          <Skeleton className="h-[49px] w-full" />
+          <Skeleton className="h-10 w-full" />
         </TableCell>
         <TableCell>
-          <Skeleton className="h-[49px] w-full" />
+          <Skeleton className="h-10 w-full" />
         </TableCell>
         <TableCell>
-          <Skeleton className="h-[49px] w-full" />
+          <Skeleton className="h-10 w-full" />
         </TableCell>
         <TableCell>
-          <Skeleton className="h-[49px] w-full" />
+          <Skeleton className="h-10 w-full" />
         </TableCell>
         <TableCell>
-          <Skeleton className="h-[49px] w-full" />
+          <Skeleton className="h-10 w-full" />
         </TableCell>
         <TableCell>
-          <Skeleton className="h-[49px] w-full" />
+          <Skeleton className="h-10 w-full" />
         </TableCell>
-        <TableCell className="flex">
-          <Skeleton className="mr-2 h-[49px] w-full" />
-          <Skeleton className="h-[49px] w-full" />
+        <TableCell className='w-4'>
+          <Skeleton className="h-10 w-10" />
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell className="flex">
-          <Skeleton className="mr-2 h-[49px] w-full" />
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell className="flex">
-          <Skeleton className="mr-2 h-[49px] w-full" />
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell className="flex">
-          <Skeleton className="mr-2 h-[49px] w-full" />
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell>
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-        <TableCell className="flex">
-          <Skeleton className="mr-2 h-[49px] w-full" />
-          <Skeleton className="h-[49px] w-full" />
-        </TableCell>
-      </TableRow>
+      ))}
     </>
   );
 }

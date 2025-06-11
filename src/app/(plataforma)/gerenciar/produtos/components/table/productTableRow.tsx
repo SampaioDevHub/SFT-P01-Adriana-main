@@ -1,21 +1,17 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/_components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/_components/ui/tooltip';
-import { MoreVertical } from 'lucide-react'; // Importando o ícone
+import { MoreHorizontal } from 'lucide-react'; // Importando o ícone
 import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { TableRow, TableCell } from '@/_components/ui/table';
-import { Dialog, DialogTrigger } from '@/_components/ui/dialog';
+import { Dialog } from '@/_components/ui/dialog';
 import { GetProductContent } from '@/_api/products/_types/type-get-product';
 import { formatForReals } from '@/_utils/formatForReals';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/_components/ui/dropdown-menu';
 
 import { DeleteModal } from '../deleteModal';
 import { EditProductModalContent } from '../editProductModalContent';
@@ -33,7 +29,6 @@ export function ProductTableRow({
 }: GetProductContent) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   return (
     <TableRow key={id}>
@@ -63,51 +58,40 @@ export function ProductTableRow({
       <TableCell>{size}</TableCell>
 
       <TableCell className="w-4">
-        <Popover>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <PopoverTrigger asChild>
-                <Button variant="secondary" size="icon">
-                  <MoreVertical className="h-5 w-5" />
-                </Button>
-              </PopoverTrigger>
-            </TooltipTrigger>
-            <TooltipContent className="bg-background/75">
-              <p>Ações</p>
-            </TooltipContent>
-          </Tooltip>
-          <PopoverContent className="flex flex-col gap-2 w-32">
-            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="w-full">
-                  Editar
-                </Button>
-              </DialogTrigger>
-              <EditProductModalContent
-                setIsOpen={setIsEditModalOpen}
-                open={isEditModalOpen}
-                productId={id}
-              />
-            </Dialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
 
-            <Dialog
-              open={isDeleteModalOpen}
-              onOpenChange={setIsDeleteModalOpen}
-            >
-              <DialogTrigger asChild>
-                <Button variant="destructive" size="sm" className="w-full">
-                  Excluir
-                </Button>
-              </DialogTrigger>
-              <DeleteModal
-                title="Excluir Produto"
-                subTitle={`Tem certeza que deseja excluir o produto: ${name}?`}
-                setIsOpen={setIsDeleteModalOpen}
-                id={id}
-              />
-            </Dialog>
-          </PopoverContent>
-        </Popover>
+          <DropdownMenuContent align="end" className="w-36">
+            <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem className="w-full justify-start text-destructive focus:text-destructive" onClick={() => setIsDeleteModalOpen(true)}>
+              Excluir
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Modais fora do menu */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <EditProductModalContent
+            setIsOpen={setIsEditModalOpen}
+            open={isEditModalOpen}
+            productId={id}
+          />
+        </Dialog>
+
+        <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <DeleteModal
+            title="Excluir Produto"
+            subTitle={`Tem certeza que deseja excluir o produto: ${name}?`}
+            setIsOpen={setIsDeleteModalOpen}
+            id={id}
+          />
+        </Dialog>
       </TableCell>
     </TableRow>
   );

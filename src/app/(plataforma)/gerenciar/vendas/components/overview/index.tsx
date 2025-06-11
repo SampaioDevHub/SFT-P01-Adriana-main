@@ -14,15 +14,17 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import { AxiosError } from 'axios';
+import { format } from 'date-fns';
 import { useState } from 'react';
 
 import { Button } from '@/_components/ui/button';
 import { TabsList, TabsTrigger } from '@/_components/ui/tabs';
 import { useSale } from '@/_providers/sale-provider';
 import { AlertError } from '@/_components/alert/alert-error';
+import { formatForReals } from '@/_utils/formatForReals';
 
 import { paymentLabels } from '../../_constants/paymentMethod';
-import { formatForReals } from '@/_utils/formatForReals';
+import { formatUTCToBRDate } from '@/_utils/formatUTCToBRDate';
 
 export function Overview() {
   const {
@@ -57,6 +59,31 @@ export function Overview() {
       }
     }
   }
+
+  let totalDiscount = 0;
+  let priceWithDiscont = 0;
+  let totalRate = 0;
+
+  if (informationData.discountPercentage) {
+    totalDiscount =
+      (productData.subtotal * informationData.discountPercentage) / 100;
+
+    priceWithDiscont =
+      productData.subtotal -
+      (productData.subtotal * informationData.discountPercentage) / 100;
+  }
+
+  if (informationData.rateAmount && informationData.discountPercentage) {
+    totalRate =
+      ((productData.subtotal -
+        (productData.subtotal * informationData.discountPercentage) / 100) /
+        100) *
+      informationData.rateAmount;
+  }
+  if (informationData.rateAmount && informationData.discountPercentage === 0) {
+    totalRate = (productData.subtotal / 100) * informationData.rateAmount;
+  }
+
   return (
     <Card className="bg-background">
       <CardHeader>
@@ -66,7 +93,7 @@ export function Overview() {
       <CardContent className="space-y-2">
         <div className="grid lg:grid-cols-[65%_35%] gap-4">
           <div className="flex flex-col items-center bg-muted/40 rounded-md justify-between w-full">
-            <div className="w-full">
+            <div className="w-full max-h-[30vh] overflow-auto">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between p-2.5 rounded-sm">
                   <span className="text-muted-foreground">CPF</span>
@@ -95,52 +122,55 @@ export function Overview() {
                   <span>{formatForReals(productData.subtotal)}</span>
                 </div>
               </div>
-              <div className="flex flex-col">
-                <div className="flex items-center justify-between p-2.5 rounded-sm">
-                  <span className="text-muted-foreground">
-                    Total de Descontos
-                  </span>
-                  <span>
-                    {informationData.discountPercentage
-                      ? formatForReals(
-                          (productData.subtotal *
-                            informationData.discountPercentage) /
-                            100
-                        )
-                      : 'Não teve desconto'}
-                  </span>
+              {totalDiscount > 0 && (
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between p-2.5 rounded-sm">
+                    <span className="text-muted-foreground">
+                      Total de Descontos
+                    </span>
+                    <span>{formatForReals(totalDiscount)}</span>
+                  </div>
                 </div>
-              </div>
+              )}
+              {totalRate > 0 && (
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between p-2.5 rounded-sm">
+                    <span className="text-muted-foreground">Taxas</span>
+                    <span>{formatForReals(totalRate)}</span>
+                  </div>
+                </div>
+              )}
+              {informationData.numberInstallments ? (
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between p-2.5 rounded-sm">
+                    <span className="text-muted-foreground">Parcelas</span>
+                    <span>{informationData.numberInstallments}</span>
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
+              {informationData.endDate && (
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between p-2.5 rounded-sm">
+                    <span className="text-muted-foreground">
+                      Data de finalização
+                    </span>
+                    <span>{formatUTCToBRDate(informationData.endDate)}</span>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between w-full p-4 bg-muted rounded-md">
               <h2 className="text-sm">Valor Total</h2>
-              {informationData.discountPercentage ? (
-                <div className="space-x-1 flex flex-wrap">
-                  <span
-                    style={{ textDecoration: 'line-through' }}
-                    className="text-xs text-muted-foreground className='whitespace-nowrap'"
-                  >
-                    {formatForReals(productData.subtotal)}
-                  </span>
-                  <h1 className="text-green-500 text-lg">
-                    {informationData.discountPercentage
-                      ? formatForReals(
-                          productData.subtotal -
-                            (productData.subtotal *
-                              informationData.discountPercentage) /
-                              100
-                        )
-                      : productData.subtotal}
-                  </h1>
-                </div>
-              ) : (
-                <h1 className="text-green-500 text-lg">
-                  {formatForReals(informationData.totalPrice)}
-                </h1>
-              )}
+              <h1 className="text-green-500 text-lg">
+                {formatForReals(
+                  productData.subtotal - totalDiscount + totalRate
+                )}
+              </h1>
             </div>
           </div>
-          <div className="max-h-[30vh] overflow-auto rounded-md border-t border-b border-muted">
+          <div className="max-h-[37vh] overflow-auto rounded-md border-t border-b border-muted">
             <Table>
               <TableHeader className="border-b-2">
                 <TableRow>
@@ -183,7 +213,7 @@ export function Overview() {
           </div>
         </div>
         <TabsList asChild className="bg-transparent">
-          <TabsTrigger value="client" asChild>
+          <TabsTrigger value="information" asChild>
             <Button variant="outline" className="h-9 px-4 py-2 mr-2">
               Voltar
             </Button>
@@ -200,7 +230,7 @@ export function Overview() {
           disabled={isCreatingSale}
           className="disabled:cursor-not-allowed disabled:opacity-70 bg-green-500 text-background col-span-1 font-bold hover:bg-green-600"
         >
-          Finalizar
+          {informationData.endDate ? 'Reservar' : 'Finalizar'}
         </Button>
       </CardContent>
     </Card>

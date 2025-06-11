@@ -1,16 +1,13 @@
 import { api } from '@/_lib/axios';
-import { GetRatesBody } from './_types/type-get-rate';
+
+import { RateGetBody } from './_types/type-get-rate';
 
 export interface GetRatesQuery {
   pageSize?: number | null;
 }
 
-export async function getRates({
-  pageSize,
-}: GetRatesQuery) {
-  const response = await api.get<GetRatesBody>(
-    `/rates/find-all?size=${pageSize ?? '10'}`
-  );
+export async function getRates() {
+  const response = await api.get<RateGetBody[]>(`/rates/find-all`);
 
   return response.data;
 }

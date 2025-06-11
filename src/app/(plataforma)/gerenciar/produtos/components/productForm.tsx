@@ -31,7 +31,6 @@ import { getProductsByCategories } from '@/_api/products/get-products-by-categor
 import { AlertError } from '@/_components/alert/alert-error';
 import { MoneyInput } from '@/_components/Inputs/moneyInput';
 
-import { availableSizes } from '../_constants/availableSizes';
 import { FormSchemaProduct, formSchemaProduct } from '../_types/productYupType';
 
 export function ProductForm() {

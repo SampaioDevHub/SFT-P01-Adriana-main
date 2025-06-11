@@ -6,9 +6,9 @@ export const formSchemaSaleProduct = () => {
     name: yup.string().required('O campo "Nome do Produto" é obrigatório.'),
     amount: yup
       .number()
-      .transform((value, originalValue) =>
-        originalValue === '' ? undefined : value
-      ) // Permite campo vazio (por exemplo, quando o usuário apaga o conteúdo)
+      .transform((value, originalValue) => {
+        return isNaN(value) || originalValue === '' ? undefined : value;
+      })
       .required('O campo "Quantidade" é obrigatório.')
       .integer('O campo "Quantidade" deve ser um número inteiro.')
       .min(1, 'O campo "Quantidade" deve ser pelo menos 1.'),

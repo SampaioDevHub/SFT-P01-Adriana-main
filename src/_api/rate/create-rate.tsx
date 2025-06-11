@@ -1,15 +1,15 @@
 import { api } from '@/_lib/axios';
 
-import { CreateRateBody } from './_types/type-rate';
+import { RateBody } from './_types/type-rate';
 
 export async function createRate({
-  TaxAmount,
-  TaxName,
+  rateAmount,
+  rateName,
   numberInstallments,
-}: CreateRateBody) {
+}: RateBody) {
   await api.post('/rates/create', {
-    TaxAmount,
-    TaxName,
+    rateAmount,
+    rateName,
     numberInstallments,
   });
 }

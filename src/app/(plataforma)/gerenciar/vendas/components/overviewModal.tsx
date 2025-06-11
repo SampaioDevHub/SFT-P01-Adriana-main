@@ -6,10 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/_components/ui/dialog';
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getSaleById } from '@/_api/sales/get-sale-by-id';
-import { formatForReals } from '@/_utils/formatForReals';
 import {
   Table,
   TableBody,
@@ -18,8 +14,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table';
+import { format } from 'date-fns';
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getSaleById } from '@/_api/sales/get-sale-by-id';
+import { formatForReals } from '@/_utils/formatForReals';
 
 import { paymentLabels } from '../_constants/paymentMethod';
+import { formatUTCToBRDate } from '@/_utils/formatUTCToBRDate';
 
 interface ModalProps {
   title: string;
@@ -34,15 +36,36 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
     queryFn: () => getSaleById({ saleId: id }),
   });
 
+  let totalDiscount = 0;
+  let priceWithDiscont = 0;
+  let totalRate = 0;
+
+  if (sale?.discountPercentage) {
+    totalDiscount = (sale.subtotal * sale.discountPercentage) / 100;
+
+    priceWithDiscont =
+      sale.subtotal - (sale.subtotal * sale.discountPercentage) / 100;
+  }
+
+  if (sale?.rateAmount && sale.discountPercentage) {
+    totalRate =
+      ((sale.subtotal - (sale.subtotal * sale.discountPercentage) / 100) /
+        100) *
+      sale.rateAmount;
+  }
+  if (sale?.rateAmount && sale.discountPercentage === 0) {
+    totalRate = (sale.subtotal / 100) * sale.rateAmount;
+  }
+
   return (
-    <DialogContent className='max-h-[90vh] w-full overflow-auto '>
+    <DialogContent className="max-h-[90vh] w-full overflow-auto ">
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
         <p className="py-2">{subTitle}</p>
       </DialogHeader>
       <div className="flex flex-col items-center space-y-2">
         <div className="flex flex-col items-center bg-muted/40 rounded-md justify-between w-full">
-          <div className="w-full">
+          <div className="w-full max-h-[30vh] overflow-auto">
             <div className="flex flex-col">
               <div className="flex items-center justify-between p-2.5 rounded-sm">
                 <span className="text-muted-foreground">CPF</span>
@@ -54,61 +77,68 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
                 <span className="text-muted-foreground">
                   Método de Pagamento
                 </span>
-                <span>{paymentLabels[sale?.paymentMethod || '']}</span>
+                <span>{paymentLabels[sale?.paymentMethod ?? '']}</span>
               </div>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center justify-between p-2.5 rounded-sm">
                 <span className="text-muted-foreground">Total de Produtos</span>
-                <span>{sale?.products.length}</span>
+                <span>{sale?.totalItems}</span>
               </div>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center justify-between p-2.5 rounded-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>{formatForReals(sale?.subtotal || 0)}</span>
+                <span>{formatForReals(sale?.subtotal ?? 0)}</span>
               </div>
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center justify-between p-2.5 rounded-sm">
-                <span className="text-muted-foreground">
-                  Total de Descontos
-                </span>
-                <span>
-                  {sale?.discountPercentage
-                    ? formatForReals(
-                        (sale?.subtotal * sale?.discountPercentage) / 100
-                      )
-                    : 'Não teve desconto'}
-                </span>
+            {totalDiscount > 0 && (
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between p-2.5 rounded-sm">
+                  <span className="text-muted-foreground">
+                    Total de Descontos
+                  </span>
+                  <span>{formatForReals(totalDiscount)}</span>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between w-full p-4 bg-muted rounded-md">
-            <h2 className="text-sm">Valor Total</h2>
-            {sale?.discountPercentage ? (
-              <div className="space-x-1 flex flex-wrap">
-                <span
-                  style={{ textDecoration: 'line-through' }}
-                  className="text-xs text-muted-foreground className='whitespace-nowrap'"
-                >
-                  {formatForReals(sale?.subtotal)}
-                </span>
-                <h1 className="text-green-500 text-lg">
-                  {sale?.discountPercentage
-                    ? formatForReals(
-                        sale?.subtotal -
-                          (sale?.subtotal * sale?.discountPercentage) / 100
-                      )
-                    : sale?.subtotal}
-                </h1>
+            )}
+            {totalRate > 0 && (
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between p-2.5 rounded-sm">
+                  <span className="text-muted-foreground">Taxas</span>
+                  <span>{formatForReals(totalRate)}</span>
+                </div>
+              </div>
+            )}
+            {sale?.numberInstallments ? (
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between p-2.5 rounded-sm">
+                  <span className="text-muted-foreground">Parcelas</span>
+                  <span>{sale?.numberInstallments}</span>
+                </div>
               </div>
             ) : (
-              <h1 className="text-green-500 text-lg">
-                {formatForReals(sale?.totalPrice || 0)}
-              </h1>
+              ''
+            )}
+            {sale?.endDate && (
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between p-2.5 rounded-sm">
+                  <span className="text-muted-foreground">
+                    Data de finalização
+                  </span>
+                  <span>{formatUTCToBRDate(sale?.endDate)}</span>
+                </div>
+              </div>
             )}
           </div>
+          {sale?.subtotal && (
+            <div className="flex items-center justify-between w-full p-4 bg-muted rounded-md">
+              <h2 className="text-sm">Valor Total</h2>
+              <h1 className="text-green-500 text-lg">
+                {formatForReals(sale.subtotal - totalDiscount + totalRate)}
+              </h1>
+            </div>
+          )}
         </div>
         <div className="max-h-[50vh] w-full overflow-auto rounded-md border-t border-b border-muted">
           <Table>
@@ -127,7 +157,7 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
                     <TableCell>{product.amount}</TableCell>
                     <TableCell className="w-1/3">
                       {' '}
-                      {Number(product.totalPrice) > 0 ? (
+                      {Number(product.priceWithDiscount) > 0 ? (
                         <div className="space-x-1 flex flex-wrap">
                           <span
                             style={{ textDecoration: 'line-through' }}
@@ -136,7 +166,7 @@ export function OverviewModal({ id, title, subTitle, setIsOpen }: ModalProps) {
                             {formatForReals(product.totalPrice)}
                           </span>
                           <span className="whitespace-nowrap">
-                            {formatForReals(Number(product.totalPrice))}
+                            {formatForReals(Number(product.priceWithDiscount))}
                           </span>
                         </div>
                       ) : (

@@ -1,5 +1,5 @@
-export interface CreateRateBody {
- TaxName: string;
-  TaxAmount: number;
+export interface RateBody {
+  rateName: string;
+  rateAmount: number;
   numberInstallments: number;
 }

@@ -26,6 +26,18 @@ export const formSchemaSaleInformation = ({
           ? schema.notRequired()
           : schema.required('Coloque a Data Final');
       }),
+    rateName: yup.string(),
+    rateAmount: yup
+      .number()
+      .typeError('Digite um número válido')
+      .positive('Precisa ser maior que zero'),
+    numberInstallments: yup
+      .number()
+      .transform((value, originalValue) =>
+        originalValue === '' ? undefined : value
+      ) // Permite campo vazio (por exemplo, quando o usuário apaga o conteúdo)
+      .integer('O campo "Parcelas" deve ser um número inteiro.')
+      .min(1, 'O campo "Parcelas" deve ser pelo menos 1.'),
     customerCpf: yup
       .string()
       .required('O campo "CPF do cliente" é obrigatório.')
@@ -45,8 +57,6 @@ export const formSchemaSaleInformation = ({
     paymentMethod: yup
       .string()
       .required('O campo "Método de Pagamento" é obrigatório.'),
-      rateName: yup.string().optional(),
-      rateAmount: yup.number().optional()
   });
 };
 
