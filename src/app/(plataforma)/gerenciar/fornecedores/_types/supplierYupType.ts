@@ -85,10 +85,6 @@ export const formSchemaSupplier = () =>
           .string()
           .max(20, 'Você só pode inserir até 20 caracteres')
           .required('Informe uma categoria'),
-        subCategory: yup
-          .string()
-          .max(20, 'Você só pode inserir até 20 caracteres')
-          .required('Informe uma SubCategoria'),
       })
     )
     .required('É necessário incluir pelo menos um produto')

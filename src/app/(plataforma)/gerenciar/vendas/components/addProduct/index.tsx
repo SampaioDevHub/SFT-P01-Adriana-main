@@ -301,9 +301,6 @@ export function AddProduct() {
                                           <span className="text-sm text-muted-foreground">
                                             Categoria: {product.category}
                                           </span>
-                                          <span className="text-sm text-muted-foreground">
-                                            Sub Categoria: {product.subCategory}
-                                          </span>
                                         </div>
                                       </div>
                                       {product.discountPercentage &&

@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -8,6 +9,7 @@ import { PageContainer } from '@/_components/layout/page-container';
 
 import { CustomerTable } from './components/table/customerTable';
 import { CustomerForm } from './components/customerForm';
+
 
 export default function CustomersPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);

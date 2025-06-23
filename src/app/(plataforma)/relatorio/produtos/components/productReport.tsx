@@ -119,7 +119,6 @@ export function ProductReport() {
       doc.text(String(product.name), 14, y);
       doc.text(formatForReals(product.price), 65, y);
       doc.text(String(product.category), 90, y);
-      doc.text(String(product.subCategory), 110, y);
       doc.text(String(product.size || '-'), 135, y);
       doc.text(String(product.quantityInStock), 180, y);
       y += 7;
@@ -149,7 +148,6 @@ export function ProductReport() {
       'Quantidade em Estoque': product.quantityInStock,
       Tamanho: product.size || '-',
       Categoria: product.category || '-',
-      Subcategoria: product.subCategory || '-',
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
@@ -311,7 +309,6 @@ export function ProductReport() {
                         )}
                       </TableCell>
                       <TableCell>{product.category}</TableCell>
-                      <TableCell>{product.subCategory}</TableCell>
                       <TableCell>{product.size || '-'}</TableCell>
                       <TableCell>{product.quantityInStock}</TableCell>
                     </TableRow>

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-sync-scripts */
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Lato } from 'next/font/google';
 
 // Fonts
@@ -10,16 +10,19 @@ const lato = Lato({
   display: 'swap',
 });
 
-// Metadata
 export const metadata: Metadata = {
   title: 'Painel SampaioForce',
   description: 'Plataforma de gerenciamento',
   manifest: '/manifest.json',
-  themeColor: '#e11d48',
   icons: {
     icon: '/icons/icon-192x192.png',
     apple: '/icons/icon-192x192.png',
   },
+};
+
+
+export const viewport: Viewport = {
+  themeColor: '#e11d48',
 };
 
 // Clerk

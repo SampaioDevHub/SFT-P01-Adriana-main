@@ -21,7 +21,6 @@ export function ProductTableRow({
   name,
   quantityInStock,
   category,
-  subCategory,
   price,
   discountPercentage,
   priceWithDiscount,
@@ -34,7 +33,6 @@ export function ProductTableRow({
     <TableRow key={id}>
       <TableCell>{name}</TableCell>
       <TableCell>{category}</TableCell>
-      <TableCell>{subCategory}</TableCell>
       <TableCell>
         {discountPercentage && priceWithDiscount ? (
           <div className="space-x-1 flex flex-wrap">

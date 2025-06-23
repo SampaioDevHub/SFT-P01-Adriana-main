@@ -23,7 +23,6 @@ export interface GetSupplierContent {
     quantityInStock: number;
     size?: string;
     category: string;
-    subCategory: string;
   }[];
 }
 
