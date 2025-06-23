@@ -70,7 +70,6 @@ export function ProductTable() {
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Categoria</TableHead>
-              <TableHead>SubCategoria</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Quantidade</TableHead>
               <TableHead>Tamanhos</TableHead>

@@ -5,9 +5,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/_components/ui/select';
-import { Search, X } from 'lucide-react';
+import { Search, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
@@ -16,6 +17,8 @@ import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 import { useQuery } from '@tanstack/react-query';
 import { getProductsByCategories } from '@/_api/products/get-products-by-categories';
+import { toast } from 'sonner';
+import { DeleteCategoryModal } from '../deleteCategoryModal';
 
 const formSchemaFilter = yup.object().shape({
   name: yup.string(),
@@ -26,6 +29,10 @@ const formSchemaFilter = yup.object().shape({
 type FormSchemaFilter = yup.InferType<typeof formSchemaFilter>;
 
 export function ProductTableFilter() {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -34,18 +41,13 @@ export function ProductTableFilter() {
   const quantityInStockFilter = searchParams.get('quantity') ?? '';
   const categoryFilter = searchParams.get('category') ?? '';
 
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getProductsByCategories,
-  });
-
   const {
     handleSubmit,
     register,
     reset,
     setValue,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<FormSchemaFilter>({
     resolver: yupResolver(formSchemaFilter),
     defaultValues: {
@@ -95,6 +97,11 @@ export function ProductTableFilter() {
     reset(), setValue('category', '');
   }
 
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('categories') || '[]');
+    setCategories(stored);
+  }, []);
+
   return (
     <form
       onSubmit={handleSubmit(handleSubmitFilter)}
@@ -111,18 +118,63 @@ export function ProductTableFilter() {
         control={control}
         name="category"
         render={({ field }) => (
-          <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className="max-w-[11rem]">
-              <SelectValue placeholder="Categorias" />
+          <Select
+            required={errors.category?.message ? true : false}
+            onValueChange={field.onChange}
+            value={field.value}
+          >
+            <SelectTrigger className='w-28'>
+              <SelectValue placeholder="Categoria" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              {categories?.map((cat, index) => (
-                <SelectItem key={index} value={cat.category}>
-                  {cat.category}
-                </SelectItem>
-              ))}
-            </SelectContent>
+            <>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <div
+                    key={cat}
+                    className="flex items-center justify-between pr-2"
+                  >
+                    <SelectItem value={cat} className="w-full">
+                      {cat}
+                    </SelectItem>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="ml-1 text-red-500 hover:text-red-700"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCategoryToDelete(cat);
+                        setDeleteModalOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </SelectContent>
+
+              <DeleteCategoryModal
+                open={deleteModalOpen}
+                categoryName={categoryToDelete || ''}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={() => {
+                  if (!categoryToDelete) return;
+                  const updated = categories.filter(
+                    (c) => c !== categoryToDelete
+                  );
+                  localStorage.setItem('categories', JSON.stringify(updated));
+                  setCategories(updated);
+
+                  // se o valor deletado estiver selecionado, limpa
+                  if (field.value === categoryToDelete) {
+                    field.onChange('');
+                  }
+
+                  setDeleteModalOpen(false);
+                  toast.success('Categoria excluída com sucesso');
+                }}
+              />
+            </>
           </Select>
         )}
       />
