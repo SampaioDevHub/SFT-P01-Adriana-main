@@ -30,10 +30,6 @@ export const formSchemaProduct = () =>
       .string()
       .max(20, 'Você só pode inserir até 20 caracteres')
       .required('Informe uma categoria'),
-    subCategory: yup
-      .string()
-      .max(20, 'Você só pode inserir até 20 caracteres')
-      .required('Informe uma SubCategoria'),
   });
 
 export type FormSchemaProduct = yup.InferType<ReturnType<typeof formSchemaProduct>>;

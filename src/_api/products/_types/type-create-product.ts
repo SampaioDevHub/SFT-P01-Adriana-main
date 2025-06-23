@@ -6,5 +6,4 @@ export interface CreateProductBody {
   quantityInStock: number;
   size?: string | null;
   category: string;
-  subCategory: string;
 }

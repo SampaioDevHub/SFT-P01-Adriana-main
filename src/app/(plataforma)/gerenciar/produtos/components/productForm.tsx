@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from '@/_components/ui/card';
 import { AxiosError } from 'axios';
+import { Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -32,17 +33,20 @@ import { AlertError } from '@/_components/alert/alert-error';
 import { MoneyInput } from '@/_components/Inputs/moneyInput';
 
 import { FormSchemaProduct, formSchemaProduct } from '../_types/productYupType';
+import { CategoryModal } from './categoryModal';
+import { DeleteCategoryModal } from './deleteCategoryModal';
 
 export function ProductForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [categories, setCategories] = useState<string[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const {
     handleSubmit,
     register,
     control,
-    watch,
     reset,
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaProduct>({
@@ -50,11 +54,6 @@ export function ProductForm() {
     defaultValues: {
       code: uuidV4(),
     },
-  });
-
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getProductsByCategories,
   });
 
   const { mutateAsync: createProductFn } = useMutation({
@@ -88,7 +87,10 @@ export function ProductForm() {
     }
   }
 
-  const category = watch('category');
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('categories') || '[]');
+    setCategories(stored);
+  }, []);
 
   return (
     <Card>
@@ -142,74 +144,90 @@ export function ProductForm() {
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="category">Categoria</Label>
-            <Controller
-              name="category" // Nome do campo no formulário
-              control={control}
-              render={({ field }) => (
-                <Select
-                  required={errors.category?.message ? true : false}
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((cat, index) => (
-                      <SelectItem key={index} value={cat.category}>
-                        {cat.category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.category?.message && (
-              <p className={`text-sm text-destructive`}>
-                {errors.category?.message}
-              </p>
-            )}
-          </div>
-          {category && (
-            <div className="space-y-2">
-              <Label htmlFor="subcategory">SubCategoria</Label>
+          <div className="flex items-end gap-2">
+            <div className="space-y-2 w-full">
+              <Label htmlFor="category">Categoria</Label>
               <Controller
-                name="subCategory" // Nome do campo no formulário
+                name="category" // Nome do campo no formulário
                 control={control}
                 render={({ field }) => (
                   <Select
-                    required={errors.subCategory?.message ? true : false}
+                    required={errors.category?.message ? true : false}
                     onValueChange={field.onChange}
                     value={field.value}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma SubCategoria" />
+                      <SelectValue placeholder="Selecione uma categoria" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {categories?.map((categoryy) => {
-                        if (categoryy.category === category) {
-                          return categoryy.subCategories.map(
-                            (subcat, index) => (
-                              <SelectItem key={index} value={subcat}>
-                                {subcat}
-                              </SelectItem>
-                            )
+                    <>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <div
+                            key={cat}
+                            className="flex items-center justify-between pr-2"
+                          >
+                            <SelectItem value={cat} className="w-full">
+                              {cat}
+                            </SelectItem>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="ml-1 text-red-500 hover:text-red-700"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCategoryToDelete(cat);
+                                setDeleteModalOpen(true);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </SelectContent>
+
+                      <DeleteCategoryModal
+                        open={deleteModalOpen}
+                        categoryName={categoryToDelete || ''}
+                        onClose={() => setDeleteModalOpen(false)}
+                        onConfirm={() => {
+                          if (!categoryToDelete) return;
+                          const updated = categories.filter(
+                            (c) => c !== categoryToDelete
                           );
-                        }
-                        return null;
-                      })}
-                    </SelectContent>
+                          localStorage.setItem(
+                            'categories',
+                            JSON.stringify(updated)
+                          );
+                          setCategories(updated);
+
+                          // se o valor deletado estiver selecionado, limpa
+                          if (field.value === categoryToDelete) {
+                            field.onChange('');
+                          }
+
+                          setDeleteModalOpen(false);
+                          toast.success('Categoria excluída com sucesso');
+                        }}
+                      />
+                    </>
                   </Select>
                 )}
               />
-              {errors.subCategory?.message && (
-                <p className={`text-sm text-destructive`}>
-                  {errors.subCategory?.message}
-                </p>
-              )}
             </div>
+            <CategoryModal
+              onAddCategory={() => {
+                const updated = JSON.parse(
+                  localStorage.getItem('categories') || '[]'
+                );
+                setCategories(updated);
+              }}
+            />
+          </div>
+          {errors.category?.message && (
+            <p className={`text-sm text-destructive`}>
+              {errors.category?.message}
+            </p>
           )}
           <div className="space-y-2">
             <Label className="gap-1" htmlFor="price">

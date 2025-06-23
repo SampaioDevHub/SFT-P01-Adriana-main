@@ -8,26 +8,33 @@ import {
   DialogFooter,
 } from '@/_components/ui/dialog';
 import { AxiosError } from 'axios';
+import { Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { v4 as uuidv4 } from 'uuid';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@/_components/ui/button';
 import { Input } from '@/_components/ui/input';
 import { Label } from '@/_components/ui/label';
-import { Checkbox } from '@/_components/ui/checkbox';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProductsByCategories } from '@/_api/products/get-products-by-categories';
 import { getProductsById } from '@/_api/products/get-product-by-id';
 import { updatedProduct } from '@/_api/products/updated-product';
 import { AlertError } from '@/_components/alert/alert-error';
 import { MoneyInput } from '@/_components/Inputs/moneyInput';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/_components/ui/select';
 
-import { availableSizes } from '../_constants/availableSizes';
 import { FormSchemaProduct, formSchemaProduct } from '../_types/productYupType';
 import { EditProductContentSkeleton } from './skeleton/editProductContentSkeleton';
+import { CategoryModal } from './categoryModal';
+import { DeleteCategoryModal } from './deleteCategoryModal';
 
 interface ModalProps {
   productId: string;
@@ -41,6 +48,9 @@ export function EditProductModalContent({
   open,
 }: ModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -60,7 +70,6 @@ export function EditProductModalContent({
   const {
     handleSubmit,
     register,
-    watch,
     control,
     reset,
     formState: { isSubmitting, errors },
@@ -71,28 +80,11 @@ export function EditProductModalContent({
       code: product?.code ?? '',
       name: product?.name ?? '',
       quantityInStock: product?.quantityInStock ?? 0,
-      subCategory: product?.subCategory ?? '',
       discountPercentage: product?.discountPercentage,
       size: product?.size,
       price: product?.price ?? 0,
     },
   });
-
-  const category = watch('category');
-  const subCategory = watch('subCategory');
-
-  useEffect(() => {
-    const selectedCategory = categoriesArray?.find(
-      (c) => c.category === category
-    );
-    const isValidSub = selectedCategory?.subCategories.includes(subCategory);
-    if (!isValidSub) {
-      reset((formValues) => ({
-        ...formValues,
-        subCategory: '',
-      }));
-    }
-  }, [category, categoriesArray, subCategory, reset]);
 
   const { mutateAsync: updatedProductFn } = useMutation({
     mutationFn: updatedProduct,
@@ -120,6 +112,11 @@ export function EditProductModalContent({
       setErrorMessage(message);
     }
   }
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('categories') || '[]');
+    setCategories(stored);
+  }, []);
 
   return (
     <DialogContent>
@@ -157,62 +154,91 @@ export function EditProductModalContent({
               </p>
             )}
           </div>
-          <div className="flex flex-col space-y-2">
-            <Label htmlFor="category">Categoria</Label>
-            <select
-              id="category"
-              required={errors.category?.message ? true : false}
-              className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              {...register('category')}
-            >
-              <option value="" disabled hidden>
-                Selecione uma categoria
-              </option>
-              {categoriesArray?.map((cat, index) => (
-                <option
-                  className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
-                  key={index}
-                  value={cat.category}
-                >
-                  {cat.category}
-                </option>
-              ))}
-            </select>
-            {errors.category?.message && (
-              <p className="text-sm text-destructive">
-                {errors.category.message}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="subCategory">SubCategoria</Label>
-            <select
-              id="subCategory"
-              required={errors.subCategory?.message ? true : false}
-              className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              {...register('subCategory')}
-            >
-              <option value="" disabled hidden>
-                Selecione uma subcategoria
-              </option>
-              {categoriesArray
-                ?.find((c) => c.category === category)
-                ?.subCategories.map((subcat, index) => (
-                  <option
-                    className="w-full rounded-sm bg-popover py-1.5 pl-2 pr-8 text-sm outline-none"
-                    key={index}
-                    value={subcat}
+          <div className="flex items-end gap-2">
+            <div className="space-y-2 w-full">
+              <Label htmlFor="category">Categoria</Label>
+              <Controller
+                name="category" // Nome do campo no formulário
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    required={errors.category?.message ? true : false}
+                    onValueChange={field.onChange}
+                    value={field.value}
                   >
-                    {subcat}
-                  </option>
-                ))}
-            </select>
-            {errors.subCategory?.message && (
-              <p className="text-sm text-destructive">
-                {errors.subCategory.message}
-              </p>
-            )}
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+                    <>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <div
+                            key={cat}
+                            className="flex items-center justify-between pr-2"
+                          >
+                            <SelectItem value={cat} className="w-full">
+                              {cat}
+                            </SelectItem>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="ml-1 text-red-500 hover:text-red-700"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCategoryToDelete(cat);
+                                setDeleteModalOpen(true);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </SelectContent>
+
+                      <DeleteCategoryModal
+                        open={deleteModalOpen}
+                        categoryName={categoryToDelete || ''}
+                        onClose={() => setDeleteModalOpen(false)}
+                        onConfirm={() => {
+                          if (!categoryToDelete) return;
+                          const updated = categories.filter(
+                            (c) => c !== categoryToDelete
+                          );
+                          localStorage.setItem(
+                            'categories',
+                            JSON.stringify(updated)
+                          );
+                          setCategories(updated);
+
+                          // se o valor deletado estiver selecionado, limpa
+                          if (field.value === categoryToDelete) {
+                            field.onChange('');
+                          }
+
+                          setDeleteModalOpen(false);
+                          toast.success('Categoria excluída com sucesso');
+                        }}
+                      />
+                    </>
+                  </Select>
+                )}
+              />
+            </div>
+            <CategoryModal
+              onAddCategory={() => {
+                const updated = JSON.parse(
+                  localStorage.getItem('categories') || '[]'
+                );
+                setCategories(updated);
+              }}
+            />
           </div>
+          {errors.category?.message && (
+            <p className={`text-sm text-destructive`}>
+              {errors.category?.message}
+            </p>
+          )}
           <div className="space-y-2">
             <Label htmlFor="price">
               Preço{' '}

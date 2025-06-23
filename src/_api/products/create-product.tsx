@@ -8,8 +8,7 @@ export async function createProduct({
   price,
   quantityInStock,
   size,
-  category,
-  subCategory,
+  category
 }: CreateProductBody) {
   await api.post('/products/create', {
     code,
@@ -18,7 +17,6 @@ export async function createProduct({
     price,
     quantityInStock,
     size,
-    category,
-    subCategory,
+    category
   });
 }

@@ -8,7 +8,6 @@ export interface GetProductContent {
   quantityInStock: number;
   size?: string | null;
   category: string;
-  subCategory: string;
 }
 
 export interface GetProductsBody {
