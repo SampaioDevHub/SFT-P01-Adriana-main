@@ -54,11 +54,6 @@ export function EditProductModalContent({
 
   const queryClient = useQueryClient();
 
-  const { data: categoriesArray } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getProductsByCategories,
-  });
-
   const { data: product, isLoading: isLoadingGetProduct } = useQuery({
     queryKey: ['product', productId],
     queryFn: () => getProductsById({ productId }),
@@ -71,6 +66,7 @@ export function EditProductModalContent({
     handleSubmit,
     register,
     control,
+    watch,
     reset,
     formState: { isSubmitting, errors },
   } = useForm<FormSchemaProduct>({
@@ -98,6 +94,7 @@ export function EditProductModalContent({
     try {
       await updatedProductFn({
         ...data,
+        category: data.category,
         id: productId,
       });
       reset();
@@ -117,6 +114,8 @@ export function EditProductModalContent({
     const stored = JSON.parse(localStorage.getItem('categories') || '[]');
     setCategories(stored);
   }, []);
+
+  console.log(watch("category"))
 
   return (
     <DialogContent>
@@ -164,7 +163,9 @@ export function EditProductModalContent({
                   <Select
                     required={errors.category?.message ? true : false}
                     onValueChange={field.onChange}
+                    defaultValue={field.value}
                     value={field.value}
+                    key={field.value}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione uma categoria" />

@@ -21,5 +21,6 @@ export async function updatedProduct({
     quantityInStock,
     size,
     category,
+    subCategory: "1"
   }).catch((error) => console.log(error));
 }

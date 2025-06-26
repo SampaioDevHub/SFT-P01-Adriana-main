@@ -17,6 +17,7 @@ export async function createProduct({
     price,
     quantityInStock,
     size,
-    category
+    category,
+    subCategory: "1"
   });
 }
