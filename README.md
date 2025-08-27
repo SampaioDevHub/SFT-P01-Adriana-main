@@ -74,17 +74,13 @@ O MVP do Adriana Showroom é uma plataforma digital projetada para otimizar e mo
 
 ## Time de Desenvolvimento 👥
 
-### **Gerente de Projeto:**
-- Vinícius Sampaio
 
 ### **Desenvolvedores Frontend:**
-- Gabril Lingnal
-- Nathan 
+- Vinicius Moreira
+
 
 ### **Desenvolvedores Backend:**
-- Eduardo   
-- Robert
-- Junior
+- Danilo Barreto
 ---
 
 ## Contato 📩
